@@ -1,0 +1,663 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="凌冬">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="面试题https:&#x2F;&#x2F;blog.csdn.net&#x2F;adminpd&#x2F;article&#x2F;details&#x2F;122910606 基本操作连接数据库：mysql -h localhost -u root -p123456   123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mysql 笔记">
+<meta property="og:url" content="https://hukaichao.me/2022/03/27/Mysql%20%E7%AC%94%E8%AE%B0-mysqlbi-ji/index.html">
+<meta property="og:site_name" content="凌冬的个人博客">
+<meta property="og:description" content="面试题https:&#x2F;&#x2F;blog.csdn.net&#x2F;adminpd&#x2F;article&#x2F;details&#x2F;122910606 基本操作连接数据库：mysql -h localhost -u root -p123456   123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-03-26T16:21:20.277Z">
+<meta property="article:modified_time" content="2022-04-17T08:55:30.419Z">
+<meta property="article:author" content="凌冬">
+<meta property="article:tag" content="数据库">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Mysql 笔记 - 凌冬的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>凌冬的个人博客</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Mysql 笔记"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-03-27 00:21" pubdate>
+          2022年3月27日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          80 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Mysql 笔记</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="面试题"><a href="#面试题" class="headerlink" title="面试题"></a>面试题</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/adminpd/article/details/122910606">https://blog.csdn.net/adminpd/article/details/122910606</a></p>
+<h2 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h2><p>连接数据库：mysql -h localhost -u root -p123456  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><code class="hljs mysql">//创建数据库<br>create database h_test;        <br>//查看数据库<br>show databases;  <br>//查看数据库信息    <br>show create database h_test;<br>//修改数据库的编码，可使用上一条语句查看是否修改成功<br>alter database h_test default character set gbk collate gbk_bin;      <br>//删除数据库<br>drop database h_test;<br>//综上，可以直接创建数据库且设置编码方式<br>CREATE DATABASE h_test DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;<br><br>//首先选定操作的数据库<br>use h_test;<br>//创建表student<br>create table student(<br>  id  int(11) not null primary key,<br>  name  varchar(20),<br>  age int(11)<br>);<br>//查看数据表<br>show tables;<br>//查看表的的字段信息<br>desc student;<br>//修改表名<br>alter table student rename [to] h_student;<br>//修改字段名<br>alter table h_student change name stu_name varchar(20);<br>//修改字段的数据类型<br>alter table h_student modify id int(20);<br>//添加字段<br>alter table h_student add grade float;<br>//删除字段<br>alter table h_student drop grade;<br>//修改字段的位置<br>alter table h_student modify stu_name varchar(20) first;<br>alter table h_student modify id int(11) after age;<br>//删除数据表<br>drop table h_student;<br>//添加外键约束<br>alter table student add constraint FK_ID foreign key(cid) references class(id);<br>//删除外键约束<br>alter table student drop foreign key FK_ID;<br><br>//插入一条数据，也可以少某个字段的同时也少对应的数据<br>insert into student(id,name,grade) values(1,&#x27;howie&#x27;,70);<br>//也可以不指定字段名，但要注意顺序<br>insert into student values(2,&#x27;howie&#x27;,80);<br>//也可以这样添加数据<br>insert into student set id=3,name=&quot;howie&quot;,grade=90;<br>//同时添加多条数据<br>insert into student values<br>(4,&#x27;howie&#x27;,80),<br>(5,&#x27;howie&#x27;,80),<br>(6,&#x27;howie&#x27;,80);<br><br>//更新id=1的数据<br>update student set name=&quot;howie1&quot;,grade=60 where id=1;<br>//批量更新,如果没有where子句，会更新表中所有对应数据<br>update student set grade=100 where id&lt;4;<br><br>//删除id=6的数据<br>delete from student where id=6;<br>//批量删除数据<br>delete from student where id&gt;3;<br>//删除所有数据,DDL(数据定义语言)语句 truncate table student也可以删除表内所有数据<br>delete from student;<br></code></pre></td></tr></table></figure>
+
+<h2 id="表的约束"><a href="#表的约束" class="headerlink" title="表的约束"></a>表的约束</h2><p>PRIMARY KEY    主键约束，用于唯一标识对应的记录<br>FOREIGN KEY    外键约束<br>NOT NULL    非空约束<br>UNIQUE    唯一性约束<br>DEFAULT    默认值约束，用于设置字段的默认值</p>
+<h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><p>作用：提高表中数据的查询速度<br>1.普通索引<br>2.唯一性索引<br>3.全文索引<br>4.单列索引<br>5.多列索引<br>6.空间索引</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br></pre></td><td class="code"><pre><code class="hljs Mysql">//创建索引<br>//一.创建表的时候创建索引<br>create table 表名(<br>        字段名 数据类型[完整性约束条件],<br>        ...<br>        字段名 数据类型,<br>        [UNIQUE|FULLTEXT|SPATIAL] INDEX|KEY<br>  );<br>//1-1.创建普通索引<br>create table test1(<br>  id  INT,<br>  name VARCHAR(20),<br>  age INT,<br>  INDEX (id)<br>);<br>//可以插入一条数据,查看索引是否被使用<br>explain select * from test1 where id=1 \G;<br>//1-2.创建唯一性索引<br>create table test2(<br>  id  INT,<br>  name VARCHAR(20),<br>  age INT,<br>  UNIQUE INDEX unique_id(id asc)<br>);<br>//1-3.创建全文索引<br>create table test3(<br>  id  INT,<br>  name VARCHAR(20),<br>  age INT,<br>  FULLTEXT INDEX fulltext_name(name)<br>)ENGINE=MyISAM;<br>//1-4.创建单列索引<br>create table test4(<br>  id  INT,<br>  name VARCHAR(20),<br>  age INT,<br>  INDEX single_name(name(20))<br>);<br>//1-5.创建多列索引<br>create table test5(<br>  id  INT,<br>  name VARCHAR(20),<br>  age INT,<br>  INDEX multi(id,name(20))<br>);<br>//1-6.创建空间索引<br>create table test6(<br>  id  INT,<br>  space GEOMETRY NOT NULL,<br>  SPATIAL INDEX sp(space)<br>)ENGINE=MyISAM;<br>---------------------------------------------------<br>//二.使用create index语句在已经存在的表上创建索引<br>//首先新建一个表,这个表没有索引<br>create table student(<br>  id int,<br>  age int,<br>  name varchar(20),<br>  intro varchar(40),<br>  g GEOMETRY NOT NULL<br>)ENGINE=MyISAM;<br>//2-1.创建普通索引<br>create index index_id on student(id);<br>//2-2.创建唯一性索引<br>create unique index uniqueidx on student(id);<br>//2-3.创建单列索引<br>create index singleidx on student(age);<br>//2-4.创建多列索引<br>create index mulitidx on student(name(20),intro(40));<br>//2-5.创建全文索引<br>create fulltext index fulltextidx on student(name);<br>//2-6.创建空间索引<br>create spatial index spatidx on student(g); <br>---------------------------------------------------<br>//三.使用alter table语句在已经存在的表上创建索引<br>//删除student表，重新创建<br>drop table student;<br>create table student(<br>  id int,<br>  age int,<br>  name varchar(20),<br>  intro varchar(40),<br>  space GEOMETRY NOT NULL<br>)ENGINE=MyISAM;<br>//3-1.创建普通索引<br>alter table student add index index_id(id);<br>//3-2.创建唯一性索引<br>alter table student add unique uniqueidx(id);<br>//3-3.创建单列索引<br>alter table student add index singleidx (age);<br>//3-4.创建多列索引<br>alter table student add index multidx(name(20),intro(40));<br>//3-5.创建全文索引<br>alter table student add fulltext index fulltextidx(name);<br>//3-6.创建空间索引<br>alter table student add spatial index spatidx(space);<br>---------------------------------------------------<br>//删除索引，有下面两种方式<br>//1.使用alter table删除索引fulltextidx<br>alter table student drop index fulltextidx;<br>//2.使用drop index删除索引spatidx<br>drop index spatidx on student;<br></code></pre></td></tr></table></figure>
+
+<h2 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><code class="hljs mysql">//查询全部<br>select * from student;<br>//查询某个字段<br>select name from student;<br>//条件查询,查询id=2学生的信息<br>select * from student where id=2;<br>//in关键字查询,也可以使用not in<br>select * from student where id IN(1,2,3);<br>//between and关键字查询<br>select * from student where id between 2 and 5;<br>//空值(NULL)查询，使用IS NULL来判断<br>select * from student where grade is [not] null;<br>//distinct关键字查询<br>select distinct name from student;<br>//like关键字查询,查询以h开头，e结尾的数据<br>select * from student where name like &quot;h%e&quot;;<br>//and关键字多条件查询,or关键字的使用也是类似<br>select * from student where id&gt;5 and grade&gt;60;<br><br>//聚合函数<br>//count()函数,sum()函数,avg()函数,max()函数,min()函数<br>select count(*) from student;<br>select sum(grade) from student;<br>select avg(grade) from student;<br>select max(grade) from student;<br>select min(grade) from student;<br>//对查询结果进行排序<br>select * from student order by grade;<br>//分组查询<br>//1.单独使用group by分组<br>select * from student group by grade;<br>//2.和聚合函数一起使用<br>select count(*),grade from student group by grade;<br>//3.和having关键字一起使用<br>select sum(grade),name from student group by grade having sum(grade) &gt;100;<br>//使用limit限制查询结果的数量<br>select * from student limit 5;<br>select * from student limit 2,2;//跳过a条查询b条<br>select * from student order by grade desc limit 2,2;<br>//函数,mysql提供了许多函数，CONCAT()函数用于连接字符串<br>select concat(id,&#x27;:&#x27;,name,&#x27;:&#x27;,grade) from student;<br>//为表取别名<br>select * from student as stu where stu.name=&quot;howie&quot;;<br>//为字段取别名,as关键字也可以不写<br>select name as stu_name,grade stu_grade from student;<br><br>//连接操作<br>//交叉连接<br>select * from student cross join class;<br>//内连接，该功能也可以使用where语句实现<br>select student.stu_name,class.classname from student join class on class.id=student.cid;<br>//外连接<br>//左连接，右连接<br>select s.stu_id,s.stu_name,c.classname from student s left join class c on c.id=s.cid;<br>select s.stu_id,s.stu_name,c.classname from student s right join class c on c.id=s.cid;<br>//复合条件连接查询就是添加过滤条件<br>//子查询<br>//in关键字子查询跟上面的in关键字查询类似<br>select * from student where cid in(select id from class where id=2);<br>//exists关键字查询,相当于测试，不产生数据，只返回true或者false，只有返回true，外层才会执行<br>select * from student where exists(select id from class where id=12);   -- 外层不会执行<br>select * from student where exists(select id from class where id=1);    -- 外层会执行<br>//any关键字查询<br> select * from student where cid&gt;any(select id from class);<br>//all关键字查询<br> select * from student where cid=any(select id from class);<br></code></pre></td></tr></table></figure>
+
+<h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><p>事务的概念，会开启、提交和回滚事务<br>事务的四种隔离级别<br>创建存储过程<br>调用、查看、修改和删除存储过程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><code class="hljs mysql">start transaction;  -- 开启事务<br>commit;             -- 提交事务<br>rollback;           -- 取消事务(回滚)<br>//创建表account，插入数据<br>create table account(<br>  id int primary key auto_increment,<br>  name varchar(40),<br>  money float<br>);<br>insert into account(name,money) values(&#x27;a&#x27;,1000),(&#x27;b&#x27;,2000),(&#x27;c&#x27;,3000);<br>//利用事务实现转账功能，首先开启事务，然后执行语句，提交事务<br>start transaction;<br>update account set money=money-100 where name=&#x27;a&#x27;;<br>update account set money=money+100 where name=&#x27;b&#x27;;<br>commit;<br>//事务的提交，通过这个命令查看mysql提交方式<br>select @@autocommit; -- 若为1，表示自动提交，为0，就要手动提交<br>//若事务的提交方式为手动提交<br>set @@autocommit = 0; -- 设置为手动提交<br>start transaction;<br>update account set money=money+100 where name=&#x27;a&#x27;;<br>update account set money=money-100 where name=&#x27;b&#x27;;<br>//现在执行select * from account 可以看到转账成功，若此时退出数据库重新登录，会看到各账户余额没有改变，所以一定要用commit语句提交事务，否则会失败<br>//事务的回滚，别忘记设置为手动提交的模式<br>start transaction;<br>update account set money=money-100 where name=&#x27;a&#x27;;<br>update account set money=money+100 where name=&#x27;b&#x27;;<br>//若此时a不想转账给b，可以使用事务的回滚<br>rollback;<br><br>//事务的隔离级别<br>read uncommitted;<br>read committed;<br>repeatable read;<br>serializable;<br><br>//存储过程<br>//创建查看student表的存储过程<br>//创建student表<br>create table student( <br>  id int not null primary key auto_increment, <br>  name varchar(4), <br>  grade float <br>)ENGINE=InnoDB default character set utf8;<br>delimiter //  -- 将mysql的结束符设置为//<br>create procedure Proc()<br>  begin<br>  select * from student;<br>  end //<br>delimiter ;   -- 将mysql的结束符设置为;<br>call Proc();  -- 这样就可以调用该存储过程<br>//变量的使用,mysql中变量不用事前申明，在用的时候直接用“@变量名”使用就可以<br>set @number=100; -- 或set @num:=1;<br>//定义条件和处理程序<br>//光标的使用<br>//1.声明光标<br>DECLARE * cursor_name* CURSOR FOR select_statement<br>2. 光标OPEN语句<br>OPEN cursor_name<br>3. 光标FETCH语句<br>FETCH cursor_name INTO var_name [, var_name] ...<br>4. 光标CLOSE语句<br>CLOSE cursor_name<br>//流程控制的使用  不做介绍<br><br>//调用存储过程<br>//定义存储过程<br>delimiter //<br>create procedure proc1(in name varchar(4),out num int)<br>begin<br>select count(*) into num from student where name=name;<br>end//<br>delimiter ;<br>//调用存储过程<br>call proc1(&quot;tom&quot;,@num) -- 查找名为tom学生人数<br>//查看结果<br>select @num;  <br><br>//查看存储过程<br> show procedure status like &#x27;p%&#x27; \G -- 获得以p开头的存储过程信息<br>//修改存储过程<br>alter &#123;procedure|function&#125; sp_name[characteristic...]<br>//删除存储过程<br>drop procedure proc1;<br></code></pre></td></tr></table></figure>
+
+<h2 id="视图"><a href="#视图" class="headerlink" title="视图"></a>视图</h2><p>如何创建视图<br>查看、修改、更新、删除视图</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs MySQL">//在单表上创建视图,重新创建student表，插入数据<br>create table student(<br>  id int not null primary key auto_increment,<br>  name varchar(10) not null,<br>  math float,<br>  chinese float<br>);<br>insert into student(name,math,chinese) values<br>(&#x27;howie1&#x27;,66,77),<br>(&#x27;howie2&#x27;,66,77),<br>(&#x27;howie3&#x27;,66,77);<br>//开始创建视图<br>create view stu_view as select math,chinese,math+chinese from student;  -- 下图可看出创建成功<br>//也可以创建自定义字段名称的视图<br>create view stu_view2(math,chin,sum) as select math,chinese,math+chinese from student;<br><br>//在多表上创建视图，创建表stu_info，插入数据<br>create table stu_info(<br>  id int not null primary key auto_increment,<br>  class varchar(10) not null,<br>  addr varchar(100)<br>);<br>insert into stu_info(class,addr) values<br>(&#x27;1&#x27;,&#x27;anhui&#x27;),<br>(&#x27;2&#x27;,&#x27;fujian&#x27;),<br>(&#x27;3&#x27;,&#x27;guangdong&#x27;);<br>//创建视图stu_class<br>create view stu_class(id,name,class) as <br>select student.id,student.name,stu_info.class from <br>student,stu_info where student.id=stu_info.id;<br>//查看视图<br>desc stu_class;<br>show table status like &#x27;stu_class&#x27;\G<br>show create view stu_class\G<br>//修改视图<br>create or replace view stu_view as select * from student;<br>alter view stu_view as select chinese from student;<br>//更新视图<br>update stu_view set chinese=100;<br>insert into student values(null,&#x27;haha&#x27;,100,100);<br>delete from stu_view2 where math=100;<br>//删除视图<br>drop view if exists stu_view2;<br></code></pre></td></tr></table></figure>
+
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="category-chain-item">数据库</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">#数据库</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Mysql 笔记</div>
+      <div>https://hukaichao.me/2022/03/27/Mysql 笔记-mysqlbi-ji/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>凌冬</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年3月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/03/27/Mysql%E4%B9%A0%E9%A2%98%E2%80%94%E2%80%94%E7%AC%ACN%E9%AB%98%E7%9A%84%E8%96%AA%E6%B0%B4-mysql-xi-ti--di-n-gao-de-xin-shui/" title="Mysql习题——第N高的薪水">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Mysql习题——第N高的薪水</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/03/25/%E9%9D%A2%E7%BB%8F%E2%80%94%E2%80%94%E5%8C%97%E4%BA%AC%E9%BE%99%E5%AF%B0%E7%A7%91%E6%8A%80%EF%BC%88%E4%B8%80%E9%9D%A2%EF%BC%89-mian-jing--bei-jing-long-huan-ke-ji--yi-mian-/" title="面经——北京龙寰科技（一面）">
+                        <span class="hidden-mobile">面经——北京龙寰科技（一面）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
