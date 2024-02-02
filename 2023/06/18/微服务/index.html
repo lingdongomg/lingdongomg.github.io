@@ -1,0 +1,701 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="凌冬">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="分布式基础概念1、微服务微服务架构风格，就像是把一个单独的应用程序开发为一套小服务，每个小服务运行在自己的进程中，并使用轻量级机制通信，通常是HTTP API。这些服务围绕业务能力来构建，并通过完全自动化部署机制来独立部署。这些服务使用不同的编程语言书写，以及不同数据存储技术，并保持最低限度的集中式管理。简而言之：拒绝大型单体应用，基于业务边界进行服务微化拆分，各个服务独立部署运行。 2、集群&amp;a">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微服务">
+<meta property="og:url" content="https://hukaichao.me/2023/06/18/%E5%BE%AE%E6%9C%8D%E5%8A%A1/index.html">
+<meta property="og:site_name" content="凌冬的个人博客">
+<meta property="og:description" content="分布式基础概念1、微服务微服务架构风格，就像是把一个单独的应用程序开发为一套小服务，每个小服务运行在自己的进程中，并使用轻量级机制通信，通常是HTTP API。这些服务围绕业务能力来构建，并通过完全自动化部署机制来独立部署。这些服务使用不同的编程语言书写，以及不同数据存储技术，并保持最低限度的集中式管理。简而言之：拒绝大型单体应用，基于业务边界进行服务微化拆分，各个服务独立部署运行。 2、集群&amp;a">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-06-18T11:47:28.000Z">
+<meta property="article:modified_time" content="2024-02-02T07:27:40.330Z">
+<meta property="article:author" content="凌冬">
+<meta property="article:tag" content="面经笔经">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>微服务 - 凌冬的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="微服务"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-06-18 19:47" pubdate>
+          2023年6月18日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          38 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">微服务</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="分布式基础概念"><a href="#分布式基础概念" class="headerlink" title="分布式基础概念"></a>分布式基础概念</h2><h3 id="1、微服务"><a href="#1、微服务" class="headerlink" title="1、微服务"></a>1、微服务</h3><p>微服务架构风格，就像是把一个单独的应用程序开发为一套小服务，每个小服务运行在自己的进程中，并使用轻量级机制通信，通常是HTTP API。这些服务围绕业务能力来构建，并通过完全自动化部署机制来独立部署。这些服务使用不同的编程语言书写，以及不同数据存储技术，并保持最低限度的集中式管理。<br>简而言之：拒绝大型单体应用，基于业务边界进行服务微化拆分，各个服务独立部署运行。</p>
+<h3 id="2、集群-分布式-节点"><a href="#2、集群-分布式-节点" class="headerlink" title="2、集群&amp;分布式&amp;节点"></a>2、集群&amp;分布式&amp;节点</h3><p>集群是个物理形态，分布式是个工作方式。<br>只要是一堆机器，就可以叫集群，他们是不是一起协作着干活，这个谁也不知道；</p>
+<p>《分布式系统原理与范型》定义：<br>“分布式系统是若干独立计算机的集合，这些计算机对于用户来说就像单个相关系统”<br>分布式系统（distributed system）是建立在网络之上的软件系统。<br>分布式是指将不同的业务分布在不同的地方。<br>集群指的是将几台服务器集中在一起，实现同一业务。</p>
+<p>例如：京东是一个分布式系统，众多业务运行在不同的机器，所有业务构成一个大型的业务集群。每一个小的业务，比如用户系统，访问压力大的时候一台服务器是不够的。我们就应该将用户系统部署到多个服务器，也就是每一个业务系统也可以做集群化；<br>分布式中的每一个节点，都可以做集群。而集群并不一定就是分布式的。</p>
+<p>节点：集群中的一个服务器</p>
+<h3 id="3、远程调用"><a href="#3、远程调用" class="headerlink" title="3、远程调用"></a>3、远程调用</h3><p>在分布式系统中，各个服务可能处于不同主机，但是服务之间不可避免的需要互相调用，我们称为远程调用。<br>SpringCloud 中使用HTTP+JSON 的方式完成远程调用</p>
+<h3 id="4、负载均衡"><a href="#4、负载均衡" class="headerlink" title="4、负载均衡"></a>4、负载均衡</h3><p>分布式系统中，A 服务需要调用B 服务，B 服务在多台机器中都存在，A 调用任意一个服务器均可完成功能。<br>为了使每一个服务器都不要太忙或者太闲，我们可以负载均衡的调用每一个服务器，提升网站的健壮性。</p>
+<p>常见的负载均衡算法：<br>轮询：为第一个请求选择健康池中的第一个后端服务器，然后按顺序往后依次选择，直到最后一个，然后循环。<br>最小连接：优先选择连接数最少，也就是压力最小的后端服务器，在会话较长的情况下可以考虑采取这种方式。<br>散列：根据请求源的IP 的散列（hash）来选择要转发的服务器。这种方式可以一定程度上保证特定用户能连接到相同的服务器。如果你的应用需要处理状态而要求用户能连接到和之前相同的服务器，可以考虑采取这种方式。</p>
+<h3 id="5、服务注册-发现-注册中心"><a href="#5、服务注册-发现-注册中心" class="headerlink" title="5、服务注册&#x2F;发现&amp;注册中心"></a>5、服务注册&#x2F;发现&amp;注册中心</h3><p>A 服务调用 B 服务，A 服务并不知道B 服务当前在哪几台服务器有，哪些正常的，哪些服务已经下线。解决这个问题可以引入注册中心；<br>如果某些服务下线，我们其他人可以实时的感知到其他服务的状态，从而避免调用不可用的服务</p>
+<h3 id="6、配置中心"><a href="#6、配置中心" class="headerlink" title="6、配置中心"></a>6、配置中心</h3><p>每一个服务最终都有大量的配置，并且每个服务都可能部署在多台机器上。我们经常需要变更配置，我们可以让每个服务在配置中心获取自己的配置。<br>配置中心用来集中管理微服务的配置信息</p>
+<h3 id="7、服务熔断-服务降级"><a href="#7、服务熔断-服务降级" class="headerlink" title="7、服务熔断&amp;服务降级"></a>7、服务熔断&amp;服务降级</h3><p>在微服务架构中，微服务之间通过网络进行通信，存在相互依赖，当其中一个服务不可用时，有可能会造成雪崩效应。要防止这样的情况，必须要有容错机制来保护服务。<br>1）、服务熔断<br>a. 设置服务的超时，当被调用的服务经常失败到达某个阈值，我们可以开启断路保护机制，后来的请求不再去调用这个服务。本地直接返回默认<br>的数据<br>2）、服务降级<br>a. 在运维期间，当系统处于高峰期，系统资源紧张，我们可以让非核心业务降级运行。降级：某些服务不处理，或者简单处理【抛异常、返回NULL、调用Mock 数据、调用Fallback 处理逻辑】。</p>
+<h3 id="8、API-网关"><a href="#8、API-网关" class="headerlink" title="8、API 网关"></a>8、API 网关</h3><p>在微服务架构中，API Gateway 作为整体架构的重要组件，它抽象了微服务中都需要的公共<br>功能，同时提供了客户端负载均衡，服务自动熔断，灰度发布，统一认证，限流流控，日志统计等丰富的功能，帮助我们解决很多API 管理难题。</p>
+<h2 id="SpringCloud-Alibaba简介"><a href="#SpringCloud-Alibaba简介" class="headerlink" title="SpringCloud Alibaba简介"></a>SpringCloud Alibaba简介</h2><h3 id="4-1-搭配环境"><a href="#4-1-搭配环境" class="headerlink" title="4.1 搭配环境"></a>4.1 搭配环境</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;spring-boot.version&gt;2.1.8.RELEASE&lt;/spring-boot.version&gt;</span><br><span class="line">&lt;spring-cloud.version&gt;Greenwich.SR3&lt;/spring-cloud.version&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">在common的pom.xml中加入</span><br><span class="line"># 下面是依赖管理，相当于以后再dependencies里引spring cloud alibaba就不用写版本号， 全用dependencyManagement进行管理</span><br><span class="line">&lt;dependencyManagement&gt;</span><br><span class="line">     &lt;dependencies&gt;</span><br><span class="line">         &lt;dependency&gt;</span><br><span class="line">             &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;</span><br><span class="line">             &lt;artifactId&gt;spring-cloud-alibaba-dependencies&lt;/artifactId&gt;</span><br><span class="line">             &lt;version&gt;2.1.0.RELEASE&lt;/version&gt;</span><br><span class="line">             &lt;type&gt;pom&lt;/type&gt;</span><br><span class="line">             &lt;scope&gt;import&lt;/scope&gt;</span><br><span class="line">         &lt;/dependency&gt;</span><br><span class="line">     &lt;/dependencies&gt;</span><br><span class="line">&lt;/dependencyManagement&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-Nacos"><a href="#4-2-Nacos" class="headerlink" title="4.2 Nacos"></a>4.2 Nacos</h3><p>一个更易于构建云原生应用的动态服务发现、配置管理和服务管理平台。<br>作为我们的注册中心和配置中心。</p>
+<p>先了解一下 Spring Cloud 应用如何接入 Nacos Discovery。<br>1 首先，修改 common中的pom.xml 文件，引入 Nacos Discovery Starter。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-discovery&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<p>2 在应用的common中的application.yml 配置文件中配置 Nacos Server 地址和微服务名称</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"># Tomcat</span><br><span class="line">server: </span><br><span class="line">  port: 9200</span><br><span class="line"></span><br><span class="line"># Spring</span><br><span class="line">spring: </span><br><span class="line">  application:</span><br><span class="line">    # 应用名称</span><br><span class="line">    name: ruoyi-auth</span><br><span class="line">  profiles:</span><br><span class="line">    # 环境配置</span><br><span class="line">    active: dev</span><br><span class="line">  cloud:</span><br><span class="line">    nacos:</span><br><span class="line">      discovery:</span><br><span class="line">        # 服务注册地址</span><br><span class="line">        server-addr: 127.0.0.1:8848</span><br><span class="line">      config:</span><br><span class="line">        # 配置中心地址</span><br><span class="line">        server-addr: 127.0.0.1:8848</span><br><span class="line">        # 配置文件格式</span><br><span class="line">        file-extension: yml</span><br><span class="line">        # 共享配置</span><br><span class="line">        shared-configs:</span><br><span class="line">          - application-$&#123;spring.profiles.active&#125;.$&#123;spring.cloud.nacos.config.file-extension&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3 我们要配置nacos服务器的地址，也就是注册中心地址，但是我们还没有nacos服务器，所以我们需要启动nacos server创建nacos服务器（软件官方可以下载）<br>windows启动命令：startup.cmd -m standalone</p>
+<p>推荐使用docker进行部署：<br>docker-compose:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">ruoyi-nacos:</span><br><span class="line">    container_name: ruoyi-nacos</span><br><span class="line">    image: nacos/nacos-server</span><br><span class="line">    build:</span><br><span class="line">      context: ./nacos</span><br><span class="line">    environment:</span><br><span class="line">      - MODE=standalone</span><br><span class="line">    volumes:</span><br><span class="line">      - ./nacos/logs/:/home/nacos/logs</span><br><span class="line">      - ./nacos/conf/application.properties:/home/nacos/conf/application.properties</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;8848:8848&quot;</span><br><span class="line">      - &quot;9848:9848&quot;</span><br><span class="line">      - &quot;9849:9849&quot;</span><br><span class="line">    depends_on:</span><br><span class="line">      - ruoyi-mysql</span><br></pre></td></tr></table></figure>
+<p>docker file(这个好像不需要)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 基础镜像</span><br><span class="line">FROM nacos/nacos-server</span><br><span class="line"># author</span><br><span class="line">MAINTAINER ruoyi</span><br><span class="line"></span><br><span class="line"># 复制conf文件到路径</span><br><span class="line">COPY ./conf/application.properties /home/nacos/conf/application.properties</span><br></pre></td></tr></table></figure>
+
+<p>application.properties</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">spring.datasource.platform=mysql</span><br><span class="line">db.num=1</span><br><span class="line">db.url.0=jdbc:mysql://ruoyi-mysql:3306/ry-config?characterEncoding=utf8&amp;connectTimeout=1000&amp;socketTimeout=3000&amp;autoReconnect=true&amp;useUnicode=true&amp;useSSL=false&amp;serverTimezone=UTC</span><br><span class="line">db.user=root</span><br><span class="line">db.password=password</span><br><span class="line"></span><br><span class="line">nacos.naming.empty-service.auto-clean=true</span><br><span class="line">nacos.naming.empty-service.clean.initial-delay-ms=50000</span><br><span class="line">nacos.naming.empty-service.clean.period-time-ms=30000</span><br><span class="line"></span><br><span class="line">management.endpoints.web.exposure.include=*</span><br><span class="line"></span><br><span class="line">management.metrics.export.elastic.enabled=false</span><br><span class="line">management.metrics.export.influx.enabled=false</span><br><span class="line"></span><br><span class="line">server.tomcat.accesslog.enabled=true</span><br><span class="line">server.tomcat.accesslog.pattern=%h %l %u %t &quot;%r&quot; %s %b %D %&#123;User-Agent&#125;i %&#123;Request-Source&#125;i</span><br><span class="line"></span><br><span class="line">server.tomcat.basedir=/home/ruoyi/nacos/tomcat/logs</span><br><span class="line"></span><br><span class="line">nacos.security.ignore.urls=/,/error,/**/*.css,/**/*.js,/**/*.html,/**/*.map,/**/*.svg,/**/*.png,/**/*.ico,/console-ui/public/**,/v1/auth/**,/v1/console/health/**,/actuator/**,/v1/console/server/**</span><br><span class="line"></span><br><span class="line">nacos.core.auth.system.type=nacos</span><br><span class="line">nacos.core.auth.enabled=false</span><br><span class="line">nacos.core.auth.default.token.expire.seconds=18000</span><br><span class="line">nacos.core.auth.default.token.secret.key=SecretKey012345678901234567890123456789012345678901234567890123456789</span><br><span class="line">nacos.core.auth.caching.enabled=true</span><br><span class="line">nacos.core.auth.enable.userAgentAuthWhite=false</span><br><span class="line">nacos.core.auth.server.identity.key=serverIdentity</span><br><span class="line">nacos.core.auth.server.identity.value=security</span><br><span class="line"></span><br><span class="line">nacos.istio.mcp.server.enabled=false</span><br></pre></td></tr></table></figure>
+
+<p>上面可以看到，配置nacos是需要MySQL数据库的，数据库中要导入官方指定的sql文件：<code>https://github.com/alibaba/nacos/blob/develop/distribution/conf/mysql-schema.sql</code></p>
+<p>4 使用 @EnableDiscoveryClient 注解开启服务注册与发现功能</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">package com.yxj.gulimall.coupon;</span><br><span class="line"></span><br><span class="line">import org.mybatis.spring.annotation.MapperScan;</span><br><span class="line">import org.springframework.boot.SpringApplication;</span><br><span class="line">import org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line">import org.springframework.cloud.client.discovery.EnableDiscoveryClient;</span><br><span class="line"></span><br><span class="line">@SpringBootApplication</span><br><span class="line">@MapperScan(&quot;com.yxj.gulimall.coupon.dao&quot;)</span><br><span class="line">@EnableDiscoveryClient</span><br><span class="line">public class GulimallCouponApplication &#123;</span><br><span class="line">    public static void main(String[] args) &#123;    </span><br><span class="line">       SpringApplication.run(GulimallCouponApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>5 访问<a target="_blank" rel="noopener" href="http://127.0.0.1:8848/nacos/">http://127.0.0.1:8848/nacos/</a>  账号密码nacos<br>出现页面，则表示访问成功</p>
+<h3 id="4-3-测试member和coupon的远程调用"><a href="#4-3-测试member和coupon的远程调用" class="headerlink" title="4.3 测试member和coupon的远程调用"></a>4.3 测试member和coupon的远程调用</h3><p>该部分来自于gulimail，服务部署的部分进行了跳过，只需要知道有一个会员服务和一个优惠券服务即可。<br>想要获取当前会员领取到的所有优惠券。先去注册中心找优惠券服务，注册中心调一台优惠券服务器给会员，会员服务器发送请求给这台优惠券服务器，然后对方响应。</p>
+<p>Feign与注册中心<br>spring cloud feign</p>
+<p>声明式远程调用</p>
+<p>feign是一个声明式的HTTP客户端，他的目的就是让远程调用更加简单。<br>给远程服务发的是HTTP请求。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line">1 会员服务想要远程调用优惠券服务，只需要给会员服务里引入</span><br><span class="line">openfeign依赖，他就有了远程调用其他服务的能力。</span><br><span class="line"></span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-cloud-starter-openfeign&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line"></span><br><span class="line">2 在coupon中修改如下的内容</span><br><span class="line">@RequestMapping(&quot;coupon/coupon&quot;)</span><br><span class="line">public class CouponController &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    private CouponService couponService;</span><br><span class="line"></span><br><span class="line">    @RequestMapping(&quot;/member/list&quot;)</span><br><span class="line">    public R membercoupons()&#123;    //全系统的所有返回都返回R</span><br><span class="line">        // 应该去数据库查用户对于的优惠券，但这个我们简化了，不去数据库查了，构造了一个优惠券给他返回</span><br><span class="line">        CouponEntity couponEntity = new CouponEntity();</span><br><span class="line">        couponEntity.setCouponName(&quot;满100减10&quot;);//优惠券的名字</span><br><span class="line">        return R.ok().put(&quot;coupons&quot;,Arrays.asList(couponEntity));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">3 这样我们准备好了优惠券的调用内容</span><br><span class="line">在member的配置类上加注解@EnableFeignClients(basePackages=&quot;com.yxj.gulimall.member.feign&quot;)，</span><br><span class="line">告诉spring这里面是一个远程调用客户端，member要调用的接口</span><br><span class="line"></span><br><span class="line">package com.yxj.gulimall.member;</span><br><span class="line">import org.mybatis.spring.annotation.MapperScan;</span><br><span class="line">import org.springframework.boot.SpringApplication;</span><br><span class="line">import org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line">import org.springframework.cloud.client.discovery.EnableDiscoveryClient;</span><br><span class="line">import org.springframework.cloud.openfeign.EnableFeignClients;</span><br><span class="line"></span><br><span class="line">@SpringBootApplication</span><br><span class="line">@MapperScan(&quot;com.yxj.gulimall.member.dao&quot;)</span><br><span class="line">@EnableDiscoveryClient</span><br><span class="line">@EnableFeignClients(basePackages=&quot;com.yxj.gulimall.member.feign&quot;)</span><br><span class="line">public class GulimallMemberApplication &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        SpringApplication.run(GulimallMemberApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">4 那么要调用什么东西呢？就是我们刚才写的优惠券的功能，</span><br><span class="line">复制函数部分，在member的com.yxj.gulimall.member.feign包下新建类：</span><br><span class="line">package com.yxj.gulimall.member.feign;</span><br><span class="line"></span><br><span class="line">import com.yxj.common.utils.R;</span><br><span class="line">import org.springframework.cloud.openfeign.FeignClient;</span><br><span class="line">import org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line"></span><br><span class="line">@FeignClient(&quot;gulimall-coupon&quot;) //告诉spring cloud这个接口是一个远程客户端，要调用coupon服务，再去调用coupon服务/coupon/coupon/member/list对应的方法</span><br><span class="line">public interface CouponFeignService &#123;</span><br><span class="line">    @RequestMapping(&quot;/coupon/coupon/member/list&quot;) </span><br><span class="line">    public R membercoupons();//得到一个R对象</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">5 然后我们在member的控制层写一个测试请求</span><br><span class="line">@RestController</span><br><span class="line">@RequestMapping(&quot;member/member&quot;)</span><br><span class="line">public class MemberController &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    private MemberService memberService;</span><br><span class="line"></span><br><span class="line">    @Autowired</span><br><span class="line">    CouponFeignService couponFeignService;</span><br><span class="line"></span><br><span class="line">    @RequestMapping(&quot;/coupons&quot;)</span><br><span class="line">    public R test()&#123;</span><br><span class="line">        MemberEntity memberEntity = new MemberEntity();</span><br><span class="line">        memberEntity.setNickname(&quot;张三&quot;);</span><br><span class="line">        R membercoupons = couponFeignService.membercoupons(); //假设张三去数据库查了后返回了张三的优惠券信息</span><br><span class="line"></span><br><span class="line">        // 打印会员和优惠券信息</span><br><span class="line">        return R.ok().put(&quot;member&quot;,memberEntity).put(&quot;coupons&quot;,membercoupons.get(&quot;coupons&quot;));</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">6 重新启动服务</span><br><span class="line">http://localhost:8000/member/member/coupons</span><br><span class="line">&#123;&quot;msg&quot;:&quot;success&quot;,&quot;code&quot;:0,&quot;coupons&quot;:[&#123;&quot;id&quot;:null,&quot;couponType&quot;:null,&quot;couponImg&quot;:null,&quot;couponName&quot;:&quot;满100减10&quot;,&quot;num&quot;:null,&quot;amount&quot;:null,&quot;perLimit&quot;:null,&quot;minPoint&quot;:null,&quot;startTime&quot;:null,&quot;endTime&quot;:null,&quot;useType&quot;:null,&quot;note&quot;:null,&quot;publishCount&quot;:null,&quot;useCount&quot;:null,&quot;receiveCount&quot;:null,&quot;enableStartTime&quot;:null,&quot;enableEndTime&quot;:null,&quot;code&quot;:null,&quot;memberLevel&quot;:null,&quot;publish&quot;:null&#125;],&quot;member&quot;:&#123;&quot;id&quot;:null,&quot;levelId&quot;:null,&quot;username&quot;:null,&quot;password&quot;:null,&quot;nickname&quot;:&quot;张三&quot;,&quot;mobile&quot;:null,&quot;email&quot;:null,&quot;header&quot;:null,&quot;gender&quot;:null,&quot;birth&quot;:null,&quot;city&quot;:null,&quot;job&quot;:null,&quot;sign&quot;:null,&quot;sourceType&quot;:null,&quot;integration&quot;:null,&quot;growth&quot;:null,&quot;status&quot;:null,&quot;createTime&quot;:null&#125;&#125;</span><br><span class="line"></span><br><span class="line">7 coupon里的R.ok()是什么 </span><br><span class="line"># coupon里的控制层就是new了个couponEntity然后放到hashmap（R）里而已。</span><br><span class="line">public class R extends HashMap&lt;String, Object&gt; &#123;</span><br><span class="line">	public static R ok() &#123;</span><br><span class="line">		return new R();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public R put(String key, Object value) &#123;</span><br><span class="line">		super.put(key, value);</span><br><span class="line">		return this;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="4-4-配置中心"><a href="#4-4-配置中心" class="headerlink" title="4.4 配置中心"></a>4.4 配置中心</h3><p>我们还可以用nacos作为配置中心。配置中心的意思是不在application.properties等文件中配置了，而是放到nacos配置中心公用，这样无需每台机器都改。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">1 引入配置中心依赖，放到common中</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">     &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;</span><br><span class="line">     &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-config&lt;/artifactId&gt;</span><br><span class="line"> &lt;/dependency&gt;</span><br><span class="line"> </span><br><span class="line">2 在coupons项目中创建/src/main/resources/bootstrap.properties ，这个文件是</span><br><span class="line">springboot里规定的，他优先级比application.properties高</span><br><span class="line"># 改名字，对应nacos里的配置文件名</span><br><span class="line">spring.application.name=gulimall-coupon</span><br><span class="line">spring.cloud.nacos.config.server-addr=192.168.11.1:8848</span><br><span class="line"></span><br><span class="line">3 @RestController</span><br><span class="line">@RequestMapping(&quot;coupon/coupon&quot;)</span><br><span class="line">public class CouponController &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    private CouponService couponService;</span><br><span class="line"></span><br><span class="line">    @Value(&quot;$&#123;coupon.user.name&#125;&quot;)//从application.properties中获取//不要写user.name，他是环境里的变量</span><br><span class="line">    private String name;</span><br><span class="line">    @Value(&quot;$&#123;coupon.user.age&#125;&quot;)</span><br><span class="line">    private Integer age;</span><br><span class="line">    @RequestMapping(&quot;/test&quot;)</span><br><span class="line">    public R test()&#123;</span><br><span class="line">        return R.ok().put(&quot;name&quot;,name).put(&quot;age&quot;,age);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">4 浏览器去nacos里的配置列表，点击＋号，data ID：gulimall-coupon.properties，配置</span><br><span class="line"># gulimall-coupon.properties</span><br><span class="line">coupon.user.name=&quot;张三&quot;      </span><br><span class="line">coupon.user.age=12</span><br><span class="line"></span><br><span class="line">5 然后点击发布。重启coupon，http://localhost:7000/coupon/coupon/test</span><br><span class="line">&#123;&quot;msg&quot;:&quot;success&quot;,&quot;code&quot;:0,&quot;name&quot;:&quot;张三&quot;,&quot;age&quot;:12&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">6 但是修改怎么办？实际生产中不能重启应用。在coupon的控制层上加</span><br><span class="line">@RefreshScope</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">7 最终代码如下</span><br><span class="line">@RefreshScope</span><br><span class="line">@RestController</span><br><span class="line">@RequestMapping(&quot;coupon/coupon&quot;)</span><br><span class="line">public class CouponController &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    private CouponService couponService;</span><br><span class="line"></span><br><span class="line">    @Value(&quot;$&#123;coupon.user.name&#125;&quot;)//从application.properties中获取//不要写user.name，他是环境里的变量</span><br><span class="line">    private String name;</span><br><span class="line">    @Value(&quot;$&#123;coupon.user.age&#125;&quot;)</span><br><span class="line">    private Integer age;</span><br><span class="line">    @RequestMapping(&quot;/test&quot;)</span><br><span class="line">    public R test()&#123;</span><br><span class="line">        return R.ok().put(&quot;name&quot;,name).put(&quot;age&quot;,age);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">8 重启后，在nacos浏览器里修改配置，修改就可以观察到能动态修改了</span><br><span class="line">nacos的配置内容优先于项目本地的配置内容。</span><br></pre></td></tr></table></figure>
+<h3 id="4-5-配置中心进阶"><a href="#4-5-配置中心进阶" class="headerlink" title="4.5 配置中心进阶"></a>4.5 配置中心进阶</h3><p>在nacos浏览器中还可以配置：</p>
+<p>命名空间：用作配置隔离。（一般每个微服务一个命名空间）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">默认public。默认新增的配置都在public空间下</span><br><span class="line"></span><br><span class="line">开发、测试、开发可以用命名空间分割。properties每个空间有一份。</span><br><span class="line"></span><br><span class="line">在bootstrap.properties里配置</span><br><span class="line"></span><br><span class="line">spring.cloud.nacos.config.namespace=b176a68a-6800-4648-833b-be10be8bab00  	# 可以选择对应的命名空间 ,即写上对应环境的命名空间ID</span><br><span class="line">	</span><br><span class="line">也可以为每个微服务配置一个命名空间，微服务互相隔离</span><br></pre></td></tr></table></figure>
+
+<p>配置集：一组相关或不相关配置项的集合。</p>
+<p>配置集ID：类似于配置文件名，即Data ID</p>
+<p>配置分组：默认所有的配置集都属于DEFAULT_GROUP。自己可以创建分组，比如双十一，618，双十二</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">spring.cloud.nacos.config.group=DEFAULT_GROUP  # 更改配置分组</span><br><span class="line">最终方案：每个微服务创建自己的命名空间，然后使用配置分组区分环境（dev/test/prod）</span><br><span class="line"></span><br><span class="line">加载多配置集</span><br><span class="line">我们要把原来application.yml里的内容都分文件抽离出去。我们在nacos里创建好</span><br><span class="line">后，在coupons里指定要导入的配置即可。</span><br><span class="line"></span><br><span class="line">bootstrap.properties</span><br><span class="line">spring.application.name=gulimall-coupon</span><br><span class="line">spring.cloud.nacos.config.server-addr=192.168.11.1:8848</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">spring.cloud.nacos.config.namespace=ed042b3b-b7f3-4734-bdcb-0c516cb357d7  # # 可以选择对应的命名空间 ，即写上对应环境的命名空间ID</span><br><span class="line">spring.cloud.nacos.config.group=dev  # 配置文件所在的组</span><br><span class="line"></span><br><span class="line">spring.cloud.nacos.config.ext-config[0].data-id=datasource.yml</span><br><span class="line">spring.cloud.nacos.config.ext-config[0].group=dev</span><br><span class="line">spring.cloud.nacos.config.ext-config[0].refresh=true</span><br><span class="line"></span><br><span class="line">spring.cloud.nacos.config.ext-config[1].data-id=mybatis.yml</span><br><span class="line">spring.cloud.nacos.config.ext-config[1].group=dev</span><br><span class="line">spring.cloud.nacos.config.ext-config[1].refresh=true</span><br><span class="line"></span><br><span class="line">spring.cloud.nacos.config.ext-config[2].data-id=other.yml</span><br><span class="line">spring.cloud.nacos.config.ext-config[2].group=dev</span><br><span class="line">spring.cloud.nacos.config.ext-config[2].refresh=true</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">datasource.yml</span><br><span class="line">spring:</span><br><span class="line">  datasource:</span><br><span class="line">    driver-class-name: com.mysql.cj.jdbc.Driver</span><br><span class="line">    url: jdbc:mysql://192.168.1.103:3306/gulimall_sms?useUnicode=true&amp;characterEncoding=UTF-8&amp;useSSL=false&amp;serverTimezone=Asia/Shanghai</span><br><span class="line">    username: root</span><br><span class="line">    password: root</span><br><span class="line"></span><br><span class="line">mybatis.yml</span><br><span class="line">mybatis-plus:</span><br><span class="line">  mapper-locations: classpath:/mapper/**/*.xml</span><br><span class="line">  global-config:</span><br><span class="line">    db-config:</span><br><span class="line">      id-type: auto</span><br><span class="line"></span><br><span class="line">other.yml</span><br><span class="line">spring:</span><br><span class="line">  application:</span><br><span class="line">    name: gulimall-coupon</span><br><span class="line">  cloud:</span><br><span class="line">    nacos:</span><br><span class="line">      discovery:</span><br><span class="line">        server-addr: 192.168.11.1:8848</span><br><span class="line"></span><br><span class="line">server:</span><br><span class="line">  port: 7000</span><br></pre></td></tr></table></figure>
+<h3 id="4-6-网关"><a href="#4-6-网关" class="headerlink" title="4.6 网关"></a>4.6 网关</h3><p>发送请求需要知道商品服务的地址，如果商品服务器有100服务器，1号掉线后，还得改，所以需要网关动态地管理，他能从注册中心中实时地感知某个服务上线还是下线。</p>
+<p>请求也要加上询问权限，看用户有没有权限访问这个请求，也需要网关。</p>
+<p>所以我们使用spring cloud的gateway组件做网关功能。</p>
+<p>网关是请求浏览的入口，常用功能包括路由转发，权限校验，限流控制等。springcloud gateway取到了zuul网关。</p>
+<p>三大核心概念：</p>
+<p>路由。路由是网关最基础的部分，路由信息有一个ID、一个目的URL、一组断言和一组Filter 组成。如果断言路由为真，则说明请求的URL 和配置匹配<br>断言。Java8 中的断言函数。Spring Cloud Gateway 中的断言函数输入类型是Spring5.0 框架中的ServerWebExchange。Spring Cloud Gateway 中的断言函数允许开发者去定义匹配来自于http request 中的任何信息，比如请求头和参数等。<br>过滤器。一个标准的Spring webFilter。Spring cloud gateway 中的filter 分为两种类型的Filter，分别是Gateway Filter 和Global Filter。过滤器Filter 将会对请求和响应进行修改处理</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line">4.6.1 创建模块gulimall-gateway</span><br><span class="line"></span><br><span class="line">1 在pom.xml引入</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;com.atguigu.gulimall&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;gulimall-common&lt;/artifactId&gt;</span><br><span class="line">            &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line"></span><br><span class="line">版本环境需保持一致</span><br><span class="line">&lt;spring-boot.version&gt;2.1.8.RELEASE&lt;/spring-boot.version&gt;</span><br><span class="line">&lt;spring-cloud.version&gt;Greenwich.SR3&lt;/spring-cloud.version&gt;</span><br><span class="line"></span><br><span class="line">2 开启注册服务发现@EnableDiscoveryClient</span><br><span class="line">package com.yxj.gulimall.gateway;</span><br><span class="line"></span><br><span class="line">import org.springframework.boot.SpringApplication;</span><br><span class="line">import org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line">import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;</span><br><span class="line">import org.springframework.cloud.client.discovery.EnableDiscoveryClient;</span><br><span class="line"></span><br><span class="line">@SpringBootApplication(exclude = &#123;DataSourceAutoConfiguration.class&#125;)</span><br><span class="line">@EnableDiscoveryClient</span><br><span class="line">public class GulimallGatewayApplication &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        SpringApplication.run(GulimallGatewayApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">3 配置nacos注册中心地址applicaion.properties</span><br><span class="line">spring.application.name=gulimall-gateway</span><br><span class="line">spring.cloud.nacos.discovery.server-addr=192.168.11.1:8848</span><br><span class="line">server.port=88</span><br><span class="line"></span><br><span class="line">4 bootstrap.properties 填写配置中心地址</span><br><span class="line">spring.application.name=gulimall-coupon</span><br><span class="line">spring.cloud.nacos.config.server-addr=192.168.11.1:8848</span><br><span class="line"></span><br><span class="line">spring.cloud.nacos.config.namespace=a791fa0e-cef8-47ee-8f07-5ac5a63ea061</span><br><span class="line"></span><br><span class="line">5 nacos里创建命名空间gateway，然后在命名空间里创建文件guilmall-gateway.yml</span><br><span class="line"></span><br><span class="line">spring:</span><br><span class="line">    application:</span><br><span class="line">        name: gulimall-gateway</span><br><span class="line"></span><br><span class="line">6 在项目里创建application.yml</span><br><span class="line">spring:</span><br><span class="line">cloud:</span><br><span class="line">gateway:</span><br><span class="line">routes:</span><br><span class="line">id: baidu_route</span><br><span class="line">uri: http://www.baidu.com</span><br><span class="line">predicates:</span><br><span class="line">Query=url,baidu</span><br><span class="line"></span><br><span class="line">id: test_route</span><br><span class="line">uri: http://www.qq.com</span><br><span class="line">predicates:</span><br><span class="line">Query=url,qq</span><br><span class="line"></span><br><span class="line">测试 localhost:8080?url=baidu # 跳到百度页面</span><br><span class="line">测试 localhost:8080?url=baidu # 跳到qq页面</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E9%9D%A2%E7%BB%8F%E7%AC%94%E7%BB%8F/" class="category-chain-item">面经笔经</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E9%9D%A2%E7%BB%8F%E7%AC%94%E7%BB%8F/" class="print-no-link">#面经笔经</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>微服务</div>
+      <div>https://hukaichao.me/2023/06/18/微服务/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>凌冬</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年6月18日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/06/18/%E5%B9%B6%E5%8F%91%E6%A1%86%E6%9E%B6%EF%BC%88JUC%EF%BC%89/" title="并发框架（JUC）">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">并发框架（JUC）</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/06/18/%E7%94%A8%E5%8F%8B%E5%AE%9E%E4%B9%A0%E4%B8%A4%E6%9C%88%E8%AE%B0%E5%BD%95/" title="用友实习两月记录">
+                        <span class="hidden-mobile">用友实习两月记录</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

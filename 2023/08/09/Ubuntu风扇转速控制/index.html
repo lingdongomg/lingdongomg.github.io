@@ -1,0 +1,687 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="凌冬">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言这个文档是根据我当时配置风扇时询问ChatGPT的时候问的问题进行的记录，离我配置风扇已经过去两个月了，里面的细节已经完全记不清，所以只能记录下GPT的问题和回答，下次用的时候有一个参考，记得当时设置风扇转速花了一整天时间研究。 windows系统可以用fan contraller软件对显卡外接风扇进行转速控制，现在我重新装了ubuntu系统，需要对风扇转速进行访问我的显卡的风扇是自己改装加上">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ubuntu风扇转速控制">
+<meta property="og:url" content="https://hukaichao.me/2023/08/09/Ubuntu%E9%A3%8E%E6%89%87%E8%BD%AC%E9%80%9F%E6%8E%A7%E5%88%B6/index.html">
+<meta property="og:site_name" content="凌冬的个人博客">
+<meta property="og:description" content="前言这个文档是根据我当时配置风扇时询问ChatGPT的时候问的问题进行的记录，离我配置风扇已经过去两个月了，里面的细节已经完全记不清，所以只能记录下GPT的问题和回答，下次用的时候有一个参考，记得当时设置风扇转速花了一整天时间研究。 windows系统可以用fan contraller软件对显卡外接风扇进行转速控制，现在我重新装了ubuntu系统，需要对风扇转速进行访问我的显卡的风扇是自己改装加上">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-08-09T06:34:51.000Z">
+<meta property="article:modified_time" content="2024-02-02T07:27:40.290Z">
+<meta property="article:author" content="凌冬">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Ubuntu风扇转速控制 - 凌冬的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Ubuntu风扇转速控制"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-08-09 14:34" pubdate>
+          2023年8月9日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          11 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Ubuntu风扇转速控制</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这个文档是根据我当时配置风扇时询问ChatGPT的时候问的问题进行的记录，离我配置风扇已经过去两个月了，里面的细节已经完全记不清，所以只能记录下GPT的问题和回答，下次用的时候有一个参考，记得当时设置风扇转速花了一整天时间研究。</p>
+<p>windows系统可以用fan contraller软件对显卡外接风扇进行转速控制，现在我重新装了ubuntu系统，需要对风扇转速进行访问<br>我的显卡的风扇是自己改装加上去的，插在主板的四针供电接口上</p>
+<h2 id="安装工具"><a href="#安装工具" class="headerlink" title="安装工具"></a>安装工具</h2><p>在Ubuntu中，你可以尝试使用 lm-sensors 工具来监测硬件传感器和风扇速度。请按照以下步骤进行：</p>
+<p>安装 lm-sensors：</p>
+<p>打开终端。<br>运行以下命令以安装 lm-sensors：<br><code>sudo apt-get install lm-sensors</code></p>
+<p>安装过程中可能会要求你输入密码。输入密码并等待安装完成。</p>
+<p>配置和探测传感器：</p>
+<p>在终端中运行以下命令以配置传感器：<br><code>sudo sensors-detect</code></p>
+<p>它会问你一些问题，可以一路回车使用默认选项。</p>
+<p>检查传感器读数：</p>
+<p>在终端中运行以下命令以查看传感器读数：<br><code>sensors</code><br>这将显示你计算机上各个传感器的读数，包括风扇速度。<br>注意：lm-sensors 工具的可用性和准确性可能因计算机硬件而异。如果 lm-sensors 无法正确读取风扇转速或相关传感器信息，你可能需要尝试其他专门针对你的硬件的工具或方法。</p>
+<p>此时我通过sensor查看到了我的显卡和cpu的温度，并没有查看到风扇信息和转速</p>
+<p>如果你使用 lm-sensors 没有成功查看风扇信息和转速，那可能是因为传感器识别不到你的风扇或没有适配的驱动程序来支持它。在这种情况下，你可以尝试以下方法来进一步探索和控制你的风扇：</p>
+<p>安装并使用 fancontrol 工具：</p>
+<p>打开终端。<br>运行以下命令以安装 fancontrol：<br><code>sudo apt-get install fancontrol</code></p>
+<p>安装完成后，运行以下命令以配置 fancontrol：<br><code>sudo pwmconfig</code><br>根据提示，该命令将尝试检测和配置你的风扇。请按照提示完成配置过程。</p>
+<p>配置过程如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">root@hukaichao:/sys/class/hwmon/hwmon0/device# pwmconfig</span><br><span class="line"># pwmconfig version 3.6.0</span><br><span class="line">This program will search your sensors for pulse width modulation (pwm)</span><br><span class="line">controls, and test each one to see if it controls a fan on</span><br><span class="line">your motherboard. Note that many motherboards do not have pwm</span><br><span class="line">circuitry installed, even if your sensor chip supports pwm.</span><br><span class="line"></span><br><span class="line">We will attempt to briefly stop each fan using the pwm controls.</span><br><span class="line">The program will attempt to restore each fan to full speed</span><br><span class="line">after testing. However, it is ** very important ** that you</span><br><span class="line">physically verify that the fans have been to full speed</span><br><span class="line">after the program has completed.</span><br><span class="line"></span><br><span class="line">Found the following devices:</span><br><span class="line">   hwmon0 is nvme</span><br><span class="line">   hwmon1 is coretemp</span><br><span class="line">   hwmon2 is nct6793</span><br><span class="line"></span><br><span class="line">Found the following PWM controls:</span><br><span class="line">   hwmon2/pwm1           current value: 22</span><br><span class="line">hwmon2/pwm1 is currently setup for automatic speed control.</span><br><span class="line">In general, automatic mode is preferred over manual mode, as</span><br><span class="line">it is more efficient and it reacts faster. Are you sure that</span><br><span class="line">you want to setup this output for manual control? (n) </span><br></pre></td></tr></table></figure>
+<p>此处输入y，将自动转为手动</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">No correlations were detected.</span><br><span class="line">There is either no fan connected to the output of hwmon2/pwm5,</span><br><span class="line">or the connected fan has no rpm-signal connected to one of</span><br><span class="line">the tested fan sensors. (Note: not all motherboards have</span><br><span class="line">the pwm outputs connected to the fan connectors,</span><br><span class="line">check out the hardware database on http://www.almico.com/forumindex.php)</span><br><span class="line"></span><br><span class="line">Did you see/hear a fan stopping during the above test (n)? n</span><br><span class="line"></span><br><span class="line">Testing is complete.</span><br><span class="line">Please verify that all fans have returned to their normal speed.</span><br><span class="line"></span><br><span class="line">The fancontrol script can automatically respond to temperature changes</span><br><span class="line">of your system by changing fanspeeds.</span><br><span class="line">Do you want to set up its configuration file now (y)? y</span><br><span class="line">What should be the path to your fancontrol config file (/etc/fancontrol)? </span><br><span class="line"></span><br><span class="line">Select fan output to configure, or other action:</span><br><span class="line">1) Change INTERVAL</span><br><span class="line">2) Just quit</span><br><span class="line">3) Save and quit</span><br><span class="line">4) Show configuration</span><br><span class="line">select (1-n): </span><br></pre></td></tr></table></figure>
+<p>此处输入1，进入修改模式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">Devices:</span><br><span class="line">hwmon0 is nvme</span><br><span class="line">hwmon1 is coretemp</span><br><span class="line">hwmon2 is nct6793</span><br><span class="line"></span><br><span class="line">Current temperature readings are as follows:</span><br><span class="line">hwmon0/temp1_input      36</span><br><span class="line">hwmon1/temp1_input      36</span><br><span class="line">hwmon1/temp2_input      32</span><br><span class="line">hwmon1/temp3_input      31</span><br><span class="line">hwmon1/temp4_input      33</span><br><span class="line">hwmon1/temp5_input      31</span><br><span class="line">hwmon1/temp6_input      32</span><br><span class="line">hwmon1/temp7_input      33</span><br><span class="line">hwmon1/temp8_input      34</span><br><span class="line">hwmon1/temp9_input      32</span><br><span class="line">hwmon2/temp1_input      118</span><br><span class="line">hwmon2/temp2_input      46</span><br><span class="line">hwmon2/temp3_input      25</span><br><span class="line">hwmon2/temp4_input      127</span><br><span class="line">hwmon2/temp5_input      127</span><br><span class="line">hwmon2/temp6_input      127</span><br><span class="line">hwmon2/temp7_input      17</span><br><span class="line">hwmon2/temp8_input      0</span><br><span class="line">hwmon2/temp9_input      0</span><br><span class="line"></span><br><span class="line">Select a temperature sensor as source for hwmon2/pwm2:</span><br><span class="line">1) hwmon0/temp1_input                      6) hwmon1/temp5_input                    11) hwmon2/temp1_input                    16) hwmon2/temp6_input</span><br><span class="line">2) hwmon1/temp1_input                      7) hwmon1/temp6_input                    12) hwmon2/temp2_input                    17) hwmon2/temp7_input</span><br><span class="line">3) hwmon1/temp2_input                      8) hwmon1/temp7_input                    13) hwmon2/temp3_input                    18) hwmon2/temp8_input</span><br><span class="line">4) hwmon1/temp3_input                      9) hwmon1/temp8_input                    14) hwmon2/temp4_input                    19) hwmon2/temp9_input</span><br><span class="line">5) hwmon1/temp4_input                     10) hwmon1/temp9_input                    15) hwmon2/temp5_input                    20) None (Do not affect this PWM output)</span><br><span class="line">select (1-n): </span><br></pre></td></tr></table></figure>
+
+<p>此时我不知道选那个，因为我不知道hwmon2&#x2F;pwm2这个设备对应的是传感器中第几个温度读数</p>
+<p>无法确定 hwmon2&#x2F;pwm2 设备对应的确切温度传感器。请再次运行 pwmconfig 命令，并在选择温度传感器时仔细观察输出，确保选择正确的温度传感器对应于你想要控制风扇的部件或传感器。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Select fan output to configure, or other action:</span><br><span class="line">1) hwmon2/pwm2</span><br><span class="line">2) Change INTERVAL</span><br><span class="line">3) Just quit</span><br><span class="line">4) Save and quit</span><br><span class="line">5) Show configuration</span><br><span class="line">select (1-n): 2</span><br><span class="line"></span><br><span class="line">Current interval is 10 seconds.</span><br><span class="line">Enter the interval at which fancontrol should update PWM values (in s): </span><br></pre></td></tr></table></figure>
+<p>在这个选项中，你可以更改 fancontrol 更新 PWM 值的时间间隔。默认的时间间隔是每 10 秒更新一次。</p>
+<p>当你选择选项 2 并按回车键后，程序会要求你输入希望 fancontrol 更新 PWM 值的时间间隔。你可以根据自己的需求输入一个新的时间间隔（以秒为单位）。例如，如果你希望每 5 秒更新一次 PWM 值，你可以输入 “5” 并按回车键。</p>
+<p>请根据你的需求输入一个合适的时间间隔，并按回车键进行更改。如果你想继续保持默认的 10 秒间隔，你可以直接按回车键跳过输入。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/fancontrol</span><br><span class="line">INTERVAL=10</span><br><span class="line">DEVPATH=hwmon2=devices/platform/nct6775.2592</span><br><span class="line">DEVNAME=hwmon2=nct6793</span><br><span class="line">FCTEMPS=&lt;PWM输出1&gt;=&lt;温度传感器1路径&gt; &lt;PWM输出2&gt;=&lt;温度传感器2路径&gt; ...</span><br><span class="line">FCFANS= hwmon2/pwm2=hwmon2/fan2_input</span><br><span class="line">MINTEMP=40</span><br><span class="line">MAXTEMP=70</span><br><span class="line">MINSTART=20</span><br><span class="line">MINSTOP=10</span><br></pre></td></tr></table></figure>
+
+<p>在修改 fancontrol 配置文件后，你需要重新启动 fancontrol 服务，以使新的配置生效。以下是在 Ubuntu 上重新启动 fancontrol 服务的步骤：</p>
+<p>保存并关闭你所编辑的 fancontrol 配置文件。</p>
+<p>打开终端。输入以下命令以停止 fancontrol 服务：</p>
+<p><code>sudo service fancontrol stop</code></p>
+<p>确保 fancontrol 服务已停止。你可以使用以下命令检查服务状态：</p>
+<p><code>sudo service fancontrol status</code></p>
+<p>如果输出中显示服务已停止，则可以继续下一步。</p>
+<p>输入以下命令以启动 fancontrol 服务：</p>
+<p><code>sudo service fancontrol start</code></p>
+<p>确保 fancontrol 服务已成功启动。你可以再次使用以下命令检查服务状态：<br><code>sudo service fancontrol status</code></p>
+<p>配置完成后，你可以使用以下命令启动 fancontrol：<br>sudo fancontrol<br>fancontrol 将根据你的配置监测温度并自动调整风扇转速。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/linux/" class="category-chain-item">linux</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/linux/" class="print-no-link">#linux</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Ubuntu风扇转速控制</div>
+      <div>https://hukaichao.me/2023/08/09/Ubuntu风扇转速控制/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>凌冬</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年8月9日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/08/09/Java%E5%AE%9E%E7%8E%B0%E6%96%87%E4%BB%B6%E7%9B%91%E5%90%AC/" title="Java实现文件监听">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Java实现文件监听</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/06/18/ES6%20%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/" title="ES6 基础使用">
+                        <span class="hidden-mobile">ES6 基础使用</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

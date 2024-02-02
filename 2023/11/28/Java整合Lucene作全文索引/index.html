@@ -1,0 +1,672 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="凌冬">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="lucene介绍Lucene 是一个用于全文检索和信息检索的开源软件库。它提供了一个强大而灵活的工具集，可以用于构建各种搜索应用，从简单的文本搜索到复杂的企业级搜索引擎。以下是 Lucene 的一些关键特点和详细信息： 核心概念文档（Document）： Lucene 中的文档是一个字段的集合，每个字段都有一个名称和一个值。文档可以是任何形式的信息，例如一篇文章、一个网页、一封电子邮件等。 字段（">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java整合Lucene作全文索引">
+<meta property="og:url" content="https://hukaichao.me/2023/11/28/Java%E6%95%B4%E5%90%88Lucene%E4%BD%9C%E5%85%A8%E6%96%87%E7%B4%A2%E5%BC%95/index.html">
+<meta property="og:site_name" content="凌冬的个人博客">
+<meta property="og:description" content="lucene介绍Lucene 是一个用于全文检索和信息检索的开源软件库。它提供了一个强大而灵活的工具集，可以用于构建各种搜索应用，从简单的文本搜索到复杂的企业级搜索引擎。以下是 Lucene 的一些关键特点和详细信息： 核心概念文档（Document）： Lucene 中的文档是一个字段的集合，每个字段都有一个名称和一个值。文档可以是任何形式的信息，例如一篇文章、一个网页、一封电子邮件等。 字段（">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-11-28T01:19:06.000Z">
+<meta property="article:modified_time" content="2024-02-02T07:27:40.256Z">
+<meta property="article:author" content="凌冬">
+<meta property="article:tag" content="java学习">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Java整合Lucene作全文索引 - 凌冬的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Java整合Lucene作全文索引"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-11-28 09:19" pubdate>
+          2023年11月28日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          11 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Java整合Lucene作全文索引</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="lucene介绍"><a href="#lucene介绍" class="headerlink" title="lucene介绍"></a>lucene介绍</h2><p>Lucene 是一个用于全文检索和信息检索的开源软件库。它提供了一个强大而灵活的工具集，可以用于构建各种搜索应用，从简单的文本搜索到复杂的企业级搜索引擎。以下是 Lucene 的一些关键特点和详细信息：</p>
+<h3 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h3><p>文档（Document）： Lucene 中的文档是一个字段的集合，每个字段都有一个名称和一个值。文档可以是任何形式的信息，例如一篇文章、一个网页、一封电子邮件等。</p>
+<p>字段（Field）： 文档中的每个属性都由字段表示，字段有不同的类型，如文本字段、数字字段等。字段可以用于索引和搜索。</p>
+<p>索引（Index）： 索引是 Lucene 存储信息的结构，它允许快速且高效地搜索文档。索引包含了字段的词汇表和反向索引。</p>
+<p>分析器（Analyzer）： 分析器用于将文档的文本拆分成独立的词汇，以便进行索引和搜索。Lucene 提供了多种分析器，包括标准分析器、简单分析器等。</p>
+<h3 id="搜索过程"><a href="#搜索过程" class="headerlink" title="搜索过程"></a>搜索过程</h3><p>创建索引： 在搜索之前，需要将文档添加到索引中。这个过程称为创建索引。索引包含了文档的关键词和它们在文档中的位置。</p>
+<p>查询： 查询是搜索的过程，它涉及构建一个查询对象，描述你想要匹配的文档的条件。Lucene 提供了丰富的查询 API，包括词汇查询、范围查询、布尔查询等。</p>
+<p>评分（Scoring）： Lucene 使用 TF-IDF 等算法对搜索结果进行评分，以便返回最相关的文档。评分考虑了匹配的关键词频率、字段的重要性等因素。</p>
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><p>导入依赖</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- lucene核心库 --&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.apache.lucene&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;lucene-core&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;8.10.1&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.apache.lucene&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;lucene-analyzers-common&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;8.10.1&lt;/version&gt; </span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;!-- Lucene的查询解析器 --&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.apache.lucene&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;lucene-queryparser&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;8.10.1&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;!-- lucene的高亮显示 --&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.apache.lucene&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;lucene-highlighter&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;8.10.1&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<p>PatchIndexer</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">public class PatchIndexer &#123;</span><br><span class="line"></span><br><span class="line">    private static final String INDEX_DIRECTORY = &quot;./lucene&quot;; // 指定你的索引存储路径</span><br><span class="line"></span><br><span class="line">    public void createIndex() throws IOException &#123;</span><br><span class="line">        Directory directory = FSDirectory.open(Paths.get(INDEX_DIRECTORY));</span><br><span class="line">        Analyzer analyzer = new StandardAnalyzer();</span><br><span class="line">        IndexWriterConfig config = new IndexWriterConfig(analyzer);</span><br><span class="line"></span><br><span class="line">        try (IndexWriter writer = new IndexWriter(directory, config)) &#123;</span><br><span class="line">            Files.walkFileTree(Paths.get(&quot;./upload&quot;), Collections.singleton(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new SimpleFileVisitor&lt;Path&gt;() &#123;</span><br><span class="line">                @Override</span><br><span class="line">                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException &#123;</span><br><span class="line">                    indexPatchFile(writer, file);</span><br><span class="line">                    return FileVisitResult.CONTINUE;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private void indexPatchFile(IndexWriter writer, Path file) throws IOException &#123;</span><br><span class="line">        String fileName = file.getFileName().toString().toLowerCase();</span><br><span class="line">        // 只对 diff 和 patch 文件建立索引</span><br><span class="line">        if (fileName.endsWith(&quot;.diff&quot;) || fileName.endsWith(&quot;.patch&quot;)) &#123;</span><br><span class="line">            Document doc = new Document();</span><br><span class="line">            doc.add(new TextField(&quot;content&quot;, new String(Files.readAllBytes(file)), Field.Store.YES));</span><br><span class="line">            doc.add(new StringField(&quot;path&quot;, file.toString(), Field.Store.YES));</span><br><span class="line">            writer.addDocument(doc);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>PatchSearcher</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">public class PatchSearcher &#123;</span><br><span class="line"></span><br><span class="line">    private static final String INDEX_DIRECTORY = &quot;./lucene&quot;; // 指定你的索引存储路径</span><br><span class="line"></span><br><span class="line">    public void search(String searchString) throws IOException, ParseException, InvalidTokenOffsetsException &#123;</span><br><span class="line">        Directory directory = FSDirectory.open(Paths.get(INDEX_DIRECTORY));</span><br><span class="line">        IndexReader reader = DirectoryReader.open(directory);</span><br><span class="line">        IndexSearcher searcher = new IndexSearcher(reader);</span><br><span class="line">        Analyzer analyzer = new StandardAnalyzer();</span><br><span class="line">        QueryParser parser = new QueryParser(&quot;content&quot;, analyzer);</span><br><span class="line"></span><br><span class="line">        Query query = parser.parse(searchString);</span><br><span class="line">        TopDocs results = searcher.search(query, 10);</span><br><span class="line">        SimpleHTMLFormatter simpleHTMLFormatter = new SimpleHTMLFormatter(&quot;&lt;span style=&#x27;color:red&#x27;&gt;&quot;, &quot;&lt;/span&gt;&quot;);</span><br><span class="line">        Highlighter highlighter = new Highlighter(simpleHTMLFormatter, new QueryScorer(query));</span><br><span class="line">        for (ScoreDoc scoreDoc : results.scoreDocs) &#123;</span><br><span class="line">            Document doc = searcher.doc(scoreDoc.doc);</span><br><span class="line">            System.out.println(&quot;Content: &quot; + doc.get(&quot;content&quot;));</span><br><span class="line">            TokenStream tokenStream = analyzer.tokenStream(&quot;content&quot;, new StringReader(doc.get(&quot;content&quot;)));</span><br><span class="line">            System.out.println(&quot;Path: &quot; + doc.get(&quot;path&quot;));</span><br><span class="line">            String content = highlighter.getBestFragment(tokenStream, doc.get(&quot;content&quot;));</span><br><span class="line">            System.out.println(&quot;Highlighter content: &quot; + content);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        reader.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Analyzer 负责将文本拆分成独立的词汇，这是索引和搜索的一部分。在这里，使用了 StandardAnalyzer，它是 Lucene 提供的标准分析器，能够处理英文文本的分词。</li>
+<li>QueryParser 用于解析用户输入的搜索字符串，将其转换为 Lucene 的查询对象（Query）。</li>
+<li>IndexSearcher 是 Lucene 中用于执行搜索的核心组件。它打开一个索引并执行搜索操作。</li>
+<li>TopDocs 包含了搜索的结果，其中包括匹配文档的得分和排序信息。</li>
+<li>Highlighter 用于在搜索结果中高亮显示与搜索查询匹配的部分。在这里，使用了 SimpleHTMLFormatter 来定义高亮显示的 HTML 标签，QueryScorer 用于评分高亮显示的片段。</li>
+<li>TokenStream 是 Lucene 中的一个抽象类，表示文本的标记流。在这里，使用 analyzer.tokenStream 获取 TokenStream，它将被用于确定要高亮显示的文本范围。</li>
+</ul>
+<p>调用：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">PatchIndexer patchIndexer = new PatchIndexer();</span><br><span class="line">        PatchSearcher patchSearcher = new PatchSearcher();</span><br><span class="line">        String searchString = &quot;STOREPACKAGENAME&quot;;</span><br><span class="line">        patchIndexer.createIndex();</span><br><span class="line">        patchSearcher.search(searchString);</span><br></pre></td></tr></table></figure>
+<h2 id="Elasticsearch"><a href="#Elasticsearch" class="headerlink" title="Elasticsearch"></a>Elasticsearch</h2><p>Elasticsearch 是基于 Lucene 构建的分布式搜索引擎，它不仅包含了 Lucene 的搜索能力，还提供了分布式和实时性的支持。Elasticsearch 的目标是构建一个实时、可扩展、分布式的搜索和分析引擎，适用于大规模数据和复杂查询。<br>Elasticsearch 有内置的分布式文件系统，将索引数据分布在集群中的多个节点上。Elasticsearch 负责索引的创建、分片、复制、故障恢复等任务，大大简化了索引管理的工作。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="category-chain-item">java学习笔记</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/java%E5%AD%A6%E4%B9%A0/" class="print-no-link">#java学习</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Java整合Lucene作全文索引</div>
+      <div>https://hukaichao.me/2023/11/28/Java整合Lucene作全文索引/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>凌冬</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年11月28日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/11/28/%E8%AE%BA%E5%9D%9B%E5%A4%87%E4%BB%BD/" title="论坛备份">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">论坛备份</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/11/24/GMS%E6%B5%8B%E8%AF%95%E7%BB%93%E6%9E%9C%E5%88%86%E6%9E%90/" title="GMS测试结果分析">
+                        <span class="hidden-mobile">GMS测试结果分析</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

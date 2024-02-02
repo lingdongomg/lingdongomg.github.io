@@ -1,0 +1,740 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="凌冬">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="简介项目：补丁仓库，用于存放上层和嵌入式人员的补丁，提供查询功能，便于复用。 框架：基于 GitHub 开源项目 RuoYi  前端：Vue3 （Element-Plus） 后端：SpringBoot + SpringSecurity 数据库：Mysql8.0 中间件：Redis 部署方式：Docker-compose  部署过程首先划分模块，根据技术选型发现所需要的容器服务有： 1、MySQL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker-compose前后端项目部署笔记.md">
+<meta property="og:url" content="https://hukaichao.me/2023/11/06/Docker-compose%E5%89%8D%E5%90%8E%E7%AB%AF%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2%E7%AC%94%E8%AE%B0.md/index.html">
+<meta property="og:site_name" content="凌冬的个人博客">
+<meta property="og:description" content="简介项目：补丁仓库，用于存放上层和嵌入式人员的补丁，提供查询功能，便于复用。 框架：基于 GitHub 开源项目 RuoYi  前端：Vue3 （Element-Plus） 后端：SpringBoot + SpringSecurity 数据库：Mysql8.0 中间件：Redis 部署方式：Docker-compose  部署过程首先划分模块，根据技术选型发现所需要的容器服务有： 1、MySQL">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-11-06T12:06:58.000Z">
+<meta property="article:modified_time" content="2024-02-02T07:27:40.241Z">
+<meta property="article:author" content="凌冬">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Docker-compose前后端项目部署笔记.md - 凌冬的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Docker-compose前后端项目部署笔记.md"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-11-06 20:06" pubdate>
+          2023年11月6日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          2.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          19 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Docker-compose前后端项目部署笔记.md</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>项目：补丁仓库，用于存放上层和嵌入式人员的补丁，提供查询功能，便于复用。</p>
+<p>框架：基于 GitHub 开源项目 RuoYi</p>
+<ul>
+<li>前端：Vue3 （Element-Plus）</li>
+<li>后端：SpringBoot + SpringSecurity</li>
+<li>数据库：Mysql8.0</li>
+<li>中间件：Redis</li>
+<li>部署方式：Docker-compose</li>
+</ul>
+<h2 id="部署过程"><a href="#部署过程" class="headerlink" title="部署过程"></a>部署过程</h2><p>首先划分模块，根据技术选型发现所需要的容器服务有：</p>
+<p>1、MySQL</p>
+<p>2、Redis</p>
+<p>3、Nginx</p>
+<p>4、Openjdk-8</p>
+<p>根据四个模块编写 docker-compose.yml 进行</p>
+<p>构建指令：<code>docker-compose build</code></p>
+<p>在构建的时候如果本地有镜像默认会使用本地的镜像，但本地的镜像会被文件中的CMD修改，所以为了使用未被修改的镜像，需要使用：<code>docker-compose build --pull</code> 该指令会从远程仓库拉取镜像</p>
+<p>启动指令：<code>docker-compose up -d</code></p>
+<p>关闭指令：<code>docker-compose down</code></p>
+<h3 id="docker-compose-yml"><a href="#docker-compose-yml" class="headerlink" title="docker-compose.yml"></a>docker-compose.yml</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">version : &#x27;3&#x27;</span><br><span class="line">name: hukaichao</span><br><span class="line">services:</span><br><span class="line">  hukaichao-mysql:</span><br><span class="line">    container_name: hukaichao-mysql</span><br><span class="line">    image: mysql:8.0.35</span><br><span class="line">    restart: always</span><br><span class="line">    build:</span><br><span class="line">      context: .</span><br><span class="line">      dockerfile: mysql-dockerfile</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;3306:3306&quot;</span><br><span class="line">    volumes:</span><br><span class="line">      - ./mysql/my.cnf:/etc/my.cnf</span><br><span class="line">      - ./mysql/logs:/var/log/</span><br><span class="line">      - ./mysql/data:/var/lib/mysql</span><br><span class="line">    command: [</span><br><span class="line">          &#x27;mysqld&#x27;,</span><br><span class="line">          &#x27;--lower-case-table-names=1&#x27;</span><br><span class="line">        ]</span><br><span class="line">    environment:</span><br><span class="line">      MYSQL_DATABASE: techvision</span><br><span class="line">      MYSQL_ROOT_PASSWORD: Techvision8888</span><br><span class="line">  hukaichao-redis:</span><br><span class="line">    restart: always</span><br><span class="line">    container_name: hukaichao-redis</span><br><span class="line">    image: redis</span><br><span class="line">    build:</span><br><span class="line">      context: .</span><br><span class="line">      dockerfile: redis-dockerfile</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;6379:6379&quot;</span><br><span class="line">    volumes:</span><br><span class="line">      - ./redis/redis.conf:/home/hukaichao/redis/redis.conf</span><br><span class="line">      - ./redis/data:/data</span><br><span class="line">    command: redis-server /home/hukaichao/redis/redis.conf</span><br><span class="line">  hukaichao-nginx:</span><br><span class="line">    restart: always</span><br><span class="line">    container_name: hukaichao-nginx</span><br><span class="line">    build:</span><br><span class="line">      context: .</span><br><span class="line">      dockerfile: nginx-dockerfile</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;80:80&quot;</span><br><span class="line">    volumes:</span><br><span class="line">      - ./nginx/conf:/nginx/</span><br><span class="line">      - ./nginx/html:/usr/webapp</span><br><span class="line">      - ./nginx/logs:/var/log/nginx</span><br><span class="line">  hukaichao-server:</span><br><span class="line">    restart: always</span><br><span class="line">    container_name: hukaichao-server</span><br><span class="line">    build:</span><br><span class="line">      context: .</span><br><span class="line">      dockerfile: hukaichao-dockerfile</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;8888:8888&quot;</span><br><span class="line">    volumes:</span><br><span class="line">      - ./hukaichao/logs:/home/v2/patch/server/logs</span><br><span class="line">      - ./hukaichao/patch:/home/v2/patch/upload</span><br><span class="line">    depends_on:</span><br><span class="line">      - hukaichao-mysql</span><br><span class="line">      - hukaichao-redis</span><br><span class="line">    links:</span><br><span class="line">      - hukaichao-mysql</span><br><span class="line">      - hukaichao-redis</span><br></pre></td></tr></table></figure>
+
+
+
+<p>其中的services就是 docker-compose 中的服务，其中包含了四个服务。以及四个服务的配置</p>
+<p>在其中可以像启动docker一样指定路径映射、端口映射、采用镜像等</p>
+<p>比较重要的是一个 docker-compose 中， <strong>所有的服务都默认在同一个网段下，但不是同一个ip</strong></p>
+<p>四个服务的 ip 分别为 192.168.240.2 、192.168.240.3 、 192.168.240.4 、192.168.240.5</p>
+<p>查看容器的 ip 地址的指令为 ：<code>docker inspect &lt;container_id&gt; | grep IPAddress</code></p>
+<p>所以容器之间不能直接用 localhost 进行调用，可以通过服务名进行调用，例如后端在连接数据库时，所填写的 url 变成了<code> url: jdbc:mysql://hukaichao-mysql:3306/techvision</code> 所以从这里的网络就会衍生出一系列问题。</p>
+<p>容器进行端口号映射之后，宿主机可以用 localhost+端口号 来调用容器内的服务，但是容器和容器之间是不能的。</p>
+<h3 id="mysql-dockerfile"><a href="#mysql-dockerfile" class="headerlink" title="mysql-dockerfile"></a>mysql-dockerfile</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 基础镜像</span><br><span class="line">FROM mysql:8.0.35</span><br><span class="line"># author</span><br><span class="line">MAINTAINER hukaichao</span><br><span class="line"></span><br><span class="line"># 执行sql脚本</span><br><span class="line">ADD ./mysql/sql/*.sql /docker-entrypoint-initdb.d/</span><br></pre></td></tr></table></figure>
+
+<p>在拉取 mysql 的镜像之后，将sql语句放到容器中的 &#x2F;docker-entrypoint-initdb.d&#x2F; 目录下，该目录下的sql语句会在容器初次启动时自动执行。mysql的文件映射如下：</p>
+<blockquote>
+<p>.&#x2F;mysql&#x2F;my.cnf:&#x2F;etc&#x2F;my.cnf</p>
+<p>.&#x2F;mysql&#x2F;logs:&#x2F;var&#x2F;log&#x2F;</p>
+<p>.&#x2F;mysql&#x2F;data:&#x2F;var&#x2F;lib&#x2F;mysql</p>
+</blockquote>
+<p>第一项 my.cnf 为 MySQL的配置文件，其中指定了 mysql异常的日志路径：log-error &#x3D; &#x2F;var&#x2F;lib&#x2F;mysql&#x2F;error.log</p>
+<p>第二项为 MySQL的日志信息</p>
+<p>第三项为 MySQL的数据文件，其中保存的为 binlog 文件 即二进制日志文件，记录了MySQL的所有执行语句，可以根据该文件还原数据库。</p>
+<p>在 连接容器中的 MySQL 的时候，还有其他异常，首先是后端连接不上，报错：<code>MySQL 异常: &quot;Host &#39;xxx&#39; is not allowed to connect to this MySQL server&quot;</code></p>
+<p>这个是因为MySQL未开启MySQL远程访问权限</p>
+<p>打开MySQL终端后输入如下指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 使用数据库mysql</span><br><span class="line">use mysql;</span><br><span class="line"># 查看主机和用户</span><br><span class="line">mysql&gt; select host, user from user;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到 host 全部都为localhost，为了让所有的远程 ip 都能够访问数据库，可以将其设置为 <code>%</code> ，具体指令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">grant all privileges on *.* to &#x27;root&#x27;@&#x27;%&#x27;;</span><br><span class="line">create user &#x27;techvision&#x27;@&#x27;%&#x27; identified by &#x27;Techvision8888&#x27;;</span><br><span class="line">grant all privileges on techvision.* to &#x27;techvision&#x27;@&#x27;%&#x27;;</span><br></pre></td></tr></table></figure>
+<p>这里可能报错：<code>You are not allowed to create a user with GRANT</code><br>解决方法是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql &gt; use mysql;</span><br><span class="line">mysql &gt; update user set host=&#x27;%&#x27; where user=&#x27;tech&#x27;;</span><br><span class="line">mysql &gt; grant all privileges on tech.* to tech@&#x27;%&#x27;</span><br></pre></td></tr></table></figure>
+
+
+<p>还有MySQL执行sql文件插入数据发送中文乱码问题</p>
+<p>解决方法首先要确定sql 文件是否为utf-8编码格式，然后采用指令将数据库中编码都改为 utf-8</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">set character set utf8;</span><br><span class="line">SET character_set_client = utf8;</span><br><span class="line">SET character_set_results = utf8;</span><br><span class="line">SET character_set_connection = utf8;</span><br></pre></td></tr></table></figure>
+
+<p>再插入中文数据就不会乱码了。</p>
+<h3 id="redis-dockerfile"><a href="#redis-dockerfile" class="headerlink" title="redis-dockerfile"></a>redis-dockerfile</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 基础镜像</span><br><span class="line">FROM redis:7.2.2</span><br><span class="line"># author</span><br><span class="line">MAINTAINER hukaichao</span><br><span class="line"></span><br><span class="line"># 挂载目录</span><br><span class="line">VOLUME /home/hukaichao/redis</span><br><span class="line"># 创建目录</span><br><span class="line">RUN mkdir -p /home/hukaichao/redis</span><br><span class="line"># 指定路径</span><br><span class="line">WORKDIR /home/hukaichao/redis</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>redis 和 MySQL类似，挂载文件同样为配置文件和数据文件，这些是数据库中需要备份的</p>
+<p>redis.conf 文件主要修改的地方有：</p>
+<ul>
+<li>注释掉绑定的	ip # bind 127.0.0.1</li>
+<li>关闭保护模式	protected-mode no</li>
+<li>为redis设置密码 	requirepass Techvision8888</li>
+</ul>
+<p>这样才能允许除了 localhost 之外的 ip 访问 redis 数据库</p>
+<h3 id="nginx-dockerfile"><a href="#nginx-dockerfile" class="headerlink" title="nginx-dockerfile"></a>nginx-dockerfile</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 基础镜像</span><br><span class="line">FROM nginx:latest</span><br><span class="line"># author</span><br><span class="line">MAINTAINER hukaichao</span><br><span class="line"></span><br><span class="line"># 复制启动脚本</span><br><span class="line">COPY nginx/conf/default.conf /etc/nginx/conf.d/default.conf</span><br></pre></td></tr></table></figure>
+
+<p>nginx主要是部署前端代码用，前端采用 vue 写的代码</p>
+<p>打包指令：<code>npm run build:prod</code></p>
+<p>打包完成得到静态资源文件，需要使用 nginx 进行代理才能访问。</p>
+<p>nginx 配置文件如下，将该配置文件替换nginx原本的配置文件即可启动。（但启动后需要手动重启一次容器，否则不生效会报 502错误，有尝试使用脚本重启nginx服务，但是没成功）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen       80;</span><br><span class="line">    listen  [::]:80;</span><br><span class="line">    server_name  hukaichao-nginx;</span><br><span class="line"></span><br><span class="line">    #access_log  /var/log/nginx/host.access.log  main;</span><br><span class="line"></span><br><span class="line">    location / &#123;</span><br><span class="line">        root   /usr/webapp/dist;</span><br><span class="line">		try_files $uri $uri/ @router;</span><br><span class="line">        index  index.html index.htm;</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">	location /prod-api/ &#123;</span><br><span class="line">		proxy_set_header Host $http_host;</span><br><span class="line">		proxy_set_header X-Real-IP $remote_addr;</span><br><span class="line">		proxy_set_header REMOTE-HOST $remote_addr;</span><br><span class="line">		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">        proxy_pass http://hukaichao-server:8888/;</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">	location @router &#123;</span><br><span class="line">            rewrite ^.*$ /index.html last;</span><br><span class="line">    &#125;</span><br><span class="line">    #error_page  404              /404.html;</span><br><span class="line"></span><br><span class="line">    # redirect server error pages to the static page /50x.html</span><br><span class="line">    #</span><br><span class="line">     error_page   500 502 503 504  /50x.html;</span><br><span class="line">     location = /50x.html &#123;</span><br><span class="line">         root   /usr/share/nginx/html;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">    # proxy the PHP scripts to Apache listening on 127.0.0.1:80</span><br><span class="line">    #</span><br><span class="line">    #location ~ \.php$ &#123;</span><br><span class="line">    #    proxy_pass   http://127.0.0.1;</span><br><span class="line">    #&#125;</span><br><span class="line"></span><br><span class="line">    # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000</span><br><span class="line">    #</span><br><span class="line">    #location ~ \.php$ &#123;</span><br><span class="line">    #    root           html;</span><br><span class="line">    #    fastcgi_pass   127.0.0.1:9000;</span><br><span class="line">    #    fastcgi_index  index.php;</span><br><span class="line">    #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;</span><br><span class="line">    #    include        fastcgi_params;</span><br><span class="line">    #&#125;</span><br><span class="line"></span><br><span class="line">    # deny access to .htaccess files, if Apache&#x27;s document root</span><br><span class="line">    # concurs with nginx&#x27;s one</span><br><span class="line">    #</span><br><span class="line">    #location ~ /\.ht &#123;</span><br><span class="line">    #    deny  all;</span><br><span class="line">    #&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中的 location &#x2F; 即多所有的请求都生效，其中 </p>
+<p>​	root 指向生成的静态资源文件。 </p>
+<p>​	try_files $uri $uri&#x2F; @router; 和下方的 location @router 一起生效，目的是解决 vue 这种单页面前端刷新后出现400 异常，给他定向到 index.html中</p>
+<p>​	 location &#x2F;prod-api&#x2F; 是对所有以 &#x2F;prod-api&#x2F;开头的请求生效，将其进行一次代理，代理后再将请求发送到 <a target="_blank" rel="noopener" href="http://hukaichao-server:8888/">http://hukaichao-server:8888/</a> 这个服务器端。目的是为了避免前端采用 post 发送请求，Apache、IIS、Nginx 等绝大多数web服务器，都不允许静态文件响应POST请求，否则会返回“HTTP&#x2F;1.1 405 Method not allowed”错误</p>
+<p>​	这里的配置注意一定要加上收尾的 <code>/</code> 不然请求会被拦截，得不到授权，springsecurity报错401。</p>
+<p>​	有的解决方式是直接用 <code>error_page 405 =200 $uri;</code>  这一行相当于是将post请求转化为了get请求，但是我这个项目依然不行，所以只能采用代理的方式解决。</p>
+<p>此外，前端的配置文件中是有指向服务端的ip的，之前是 localhost ，现在就需要改成对应的服务的ip。</p>
+<h3 id="hukaichao-dockerfile"><a href="#hukaichao-dockerfile" class="headerlink" title="hukaichao-dockerfile"></a>hukaichao-dockerfile</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"># 基础镜像</span><br><span class="line">FROM openjdk:8-jre</span><br><span class="line"># author</span><br><span class="line">MAINTAINER hukaichao</span><br><span class="line"></span><br><span class="line"># 挂载目录</span><br><span class="line">VOLUME /home/hukaichao</span><br><span class="line"># 创建目录</span><br><span class="line">RUN mkdir -p /home/hukaichao</span><br><span class="line"># 指定路径</span><br><span class="line">WORKDIR /home/hukaichao</span><br><span class="line"># 复制jar文件到路径</span><br><span class="line">COPY ./hukaichao/jar/*.jar /home/hukaichao/hukaichao.jar</span><br><span class="line"># 启动应用</span><br><span class="line">ENTRYPOINT [&quot;java&quot;,&quot;-jar&quot;,&quot;hukaichao.jar&quot;]</span><br></pre></td></tr></table></figure>
+
+<p>这个倒是没什么复杂的，难的就是 jar 包里面有很多配置是需要改的，改的和其他服务的 ip 一致。</p>
+<p>当部署时前后端出现请求传递不了的情况还有很大可能是跨域未进行配置好，此时需要在后端进行处理，允许跨域，CORS跨域资源请求也要处理好。springsecurity中的跨域配置如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">@Bean</span><br><span class="line">public CorsFilter corsFilter() &#123;</span><br><span class="line"></span><br><span class="line">    CorsConfiguration config = new CorsConfiguration();</span><br><span class="line">    config.setAllowCredentials(true);</span><br><span class="line">    // 设置访问源地址</span><br><span class="line">    config.addAllowedOriginPattern(&quot;*&quot;);</span><br><span class="line">    // 设置访问源请求头</span><br><span class="line">    config.addAllowedHeader(&quot;*&quot;);</span><br><span class="line">    // 设置访问源请求方法</span><br><span class="line">    config.addAllowedMethod(&quot;*&quot;);</span><br><span class="line">    // 有效期 1800秒</span><br><span class="line">    config.setMaxAge(1800L);</span><br><span class="line">    // 添加映射路径,拦截一切请求</span><br><span class="line">    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();</span><br><span class="line">    source.registerCorsConfiguration(&quot;/**&quot;, config);</span><br><span class="line">    // 返回新的CorsFilter</span><br><span class="line">    return new CorsFilter(source);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="部署时遇到的问题"><a href="#部署时遇到的问题" class="headerlink" title="部署时遇到的问题"></a>部署时遇到的问题</h2><h3 id="装docker-compose"><a href="#装docker-compose" class="headerlink" title="装docker-compose"></a>装docker-compose</h3><p>在服务器上，装好docker后是没有docker-compose的，这个需要单独安装，如果使用apt install安装docker-compose 安装的版本是非常低的 以至于无法启动docker-compose。所以这时可以去GitHub上下载新版本的docker-compose二进制文件：<code>https://github.com/docker/compose/releases?expanded=true</code><br>下载完成后复制到下面路径并重命名文件：<br><code>sudo cp docker-compose-linux-x86_64 /usr/local/bin/docker-compose</code></p>
+<p>将可执行权限应用于二进制文件：<br><code>sudo chmod +x /usr/local/bin/docker-compose</code></p>
+<p>创建软链：<br><code>sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose</code></p>
+<p>测试是否安装成功：<br><code>docker-compose version</code></p>
+<h3 id="报错"><a href="#报错" class="headerlink" title="报错"></a>报错</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">failed to solve: mysql:8.0.35: error getting credentials - err: exit status 1, out: `Cannot autolaunch D-Bus without X11 $DISPLAY`</span><br></pre></td></tr></table></figure>
+<p>这个问题出在Linux缺少一个密码管理包gnupg，它用于加密，我们在登录时需要这个包将密码加密后才能完成，因此直接安装<br><code>sudo apt install gnupg2 pass</code></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/linux/" class="category-chain-item">linux</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/linux/" class="print-no-link">#linux</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Docker-compose前后端项目部署笔记.md</div>
+      <div>https://hukaichao.me/2023/11/06/Docker-compose前后端项目部署笔记.md/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>凌冬</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年11月6日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/11/23/Vue%E5%9F%BA%E7%A1%80/" title="Vue基础">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Vue基础</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/11/05/Docker%E5%AE%89%E8%A3%85+%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4/" title="Docker安装+常用指令">
+                        <span class="hidden-mobile">Docker安装+常用指令</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

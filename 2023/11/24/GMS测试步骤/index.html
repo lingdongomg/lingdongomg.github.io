@@ -1,0 +1,921 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="凌冬">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="GMS测试项目1、测试环境1.1 Ubuntu端配置（示例） 系统版本：Ubuntu 18.04.6 LTS JDK版本： 11.0.20 SDK中build-tools版本：33.0.2 ADB版本：1.0.41 cpu：i5-12400 内存：16G（这个很重要，在8G的情况下极其容易中断测试） 硬盘：512G固态  ​	 ​	除了Ubuntu之外还需要一台 windows 系统的PC，用于烧">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GMS测试步骤">
+<meta property="og:url" content="https://hukaichao.me/2023/11/24/GMS%E6%B5%8B%E8%AF%95%E6%AD%A5%E9%AA%A4/index.html">
+<meta property="og:site_name" content="凌冬的个人博客">
+<meta property="og:description" content="GMS测试项目1、测试环境1.1 Ubuntu端配置（示例） 系统版本：Ubuntu 18.04.6 LTS JDK版本： 11.0.20 SDK中build-tools版本：33.0.2 ADB版本：1.0.41 cpu：i5-12400 内存：16G（这个很重要，在8G的情况下极其容易中断测试） 硬盘：512G固态  ​	 ​	除了Ubuntu之外还需要一台 windows 系统的PC，用于烧">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hukaichao.me/upload/image-20231012111920117.png">
+<meta property="og:image" content="https://hukaichao.me/upload/image-20231017153331058.png">
+<meta property="og:image" content="https://hukaichao.me/upload/image-20231017164620806.png">
+<meta property="article:published_time" content="2023-11-24T07:01:48.000Z">
+<meta property="article:modified_time" content="2024-02-02T07:27:40.247Z">
+<meta property="article:author" content="凌冬">
+<meta property="article:tag" content="android">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://hukaichao.me/upload/image-20231012111920117.png">
+  
+  
+  
+  <title>GMS测试步骤 - 凌冬的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="GMS测试步骤"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-11-24 15:01" pubdate>
+          2023年11月24日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          37 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">GMS测试步骤</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="GMS测试项目"><a href="#GMS测试项目" class="headerlink" title="GMS测试项目"></a>GMS测试项目</h1><h2 id="1、测试环境"><a href="#1、测试环境" class="headerlink" title="1、测试环境"></a>1、测试环境</h2><h3 id="1-1-Ubuntu端配置（示例）"><a href="#1-1-Ubuntu端配置（示例）" class="headerlink" title="1.1 Ubuntu端配置（示例）"></a>1.1 Ubuntu端配置（示例）</h3><ul>
+<li>系统版本：Ubuntu 18.04.6 LTS</li>
+<li>JDK版本： 11.0.20</li>
+<li>SDK中build-tools版本：33.0.2</li>
+<li>ADB版本：1.0.41</li>
+<li>cpu：i5-12400</li>
+<li>内存：16G（这个很重要，在8G的情况下极其容易中断测试）</li>
+<li>硬盘：512G固态</li>
+</ul>
+<p>​	</p>
+<p>​	除了Ubuntu之外还需要一台 windows 系统的PC，用于烧录固件、SN码还需要装 platform-tools （需要用fastboot：34.0.4）</p>
+<p>​	此外需要一个能连接外网的路由，Ubuntu和待测设备均需连接外网。</p>
+<h3 id="1-2-Android端配置"><a href="#1-2-Android端配置" class="headerlink" title="1.2 Android端配置"></a>1.2 Android端配置</h3><ul>
+<li><p>将设备恢复出厂设置：<strong>设置 &gt; 备份和重置 &gt; 恢复出厂数据</strong>。</p>
+</li>
+<li><p>将设备的语言设置为英语（<strong>美国</strong>）：<strong>设置 &gt; 语言和输入法 &gt; 语言</strong>。</p>
+</li>
+<li><p>如果设备上有 GPS 或 Wi-Fi&#x2F;蜂窝网络功能，请打开位置设置：<strong>设置 &gt; 位置 &gt; 开</strong>。</p>
+</li>
+<li><p>将屏幕亮度设置为最低，为了省电</p>
+</li>
+<li><p>打开蓝牙</p>
+</li>
+<li><p>连接到支持 IPv6 的 Wi-Fi 网络，可以将 DUT 视为<em>独立客户端</em>（请参阅上面的<a target="_blank" rel="noopener" href="https://source.android.com/docs/compatibility/cts/setup?hl=zh-cn#physical_environment">物理环境</a>），并且具有 Internet 连接：<strong>设置 &gt; Wi-Fi</strong> 。</p>
+</li>
+<li><p>确保设备上未设置锁定图案或密码：<strong>设置 &gt; 安全 &gt; 屏幕锁定 &gt; 无</strong>。</p>
+</li>
+<li><p>将时间设置为 12 小时格式：<strong>设置 &gt; 日期和时间 &gt; 使用 24 小时格式 &gt; 关闭</strong>。</p>
+</li>
+<li><p>在设备上启用<strong>USB 调试</strong>：<strong>设置 &gt; 开发者选项 &gt; USB 调试</strong>。</p>
+</li>
+<li><p>将设备设置为保持唤醒：<strong>设置 &gt; 开发者选项 &gt; 保持唤醒 &gt; 开启</strong>。</p>
+</li>
+<li><p><del>在<strong>Android 4.2 或更高版本</strong>中，关闭 USB 应用程序验证：<strong>设置 &gt; 开发者选项 &gt; 通过 USB 验证应用程序 &gt; 关闭</strong>。</del></p>
+</li>
+<li><p><del>在<strong>Android 13 或更高版本</strong>中，将设备设置为允许模拟调制解调器：<strong>设置 &gt; 开发者选项 &gt; 允许模拟调制解调器 &gt; 开</strong>。</del></p>
+</li>
+<li><p><del><strong>仅在 Android 5.x 和 4.4.x</strong>中，将设备设置为允许模拟位置：<strong>设置 &gt; 开发人员选项 &gt; 允许模拟位置 &gt; 开</strong>。</del></p>
+</li>
+<li><p><del>设置手机连接外网（单测某些模块可不设置）</del></p>
+</li>
+<li><p><del>插入 SIM 卡，打开移动数据 （单测某些模块可不设置）</del></p>
+</li>
+<li><p><del>启动浏览器并关闭任何启动&#x2F;设置屏幕。</del></p>
+</li>
+<li><p><del>如果设备支持自定义默认字体，请将默认<code>sans-serif</code>字体系列设置为<code>Roboto</code> （AOSP 版本中使用的默认<code>sans-serif</code>字体系列）。</del></p>
+</li>
+<li><p>连接待测设备和 PC，在 PC 端执行 <code>adb devices</code>，确保连接成功</p>
+<p>这里在Ubuntu22上是可以直接执行的，但是在Ubuntu18上出现异常：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(gms_3.7.10) hu@gms-server-01:~$ adb devices</span><br><span class="line">List of devices attached</span><br><span class="line">6645    no permissions (missing udev rules? user is in the plugdev group); see [http://developer.android.com/tools/device.html]</span><br></pre></td></tr></table></figure>
+
+<p>这里是因为缺少设备权限或者udev规则配置不正确</p>
+<p>解决方法如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 加入plugdev组</span><br><span class="line">sudo usermod -aG plugdev $USER</span><br><span class="line"># 配置udev规则</span><br><span class="line">sudo vim /etc/udev/rules.d/51-android.rules</span><br></pre></td></tr></table></figure>
+
+<p>在51-android.rules中加上，没有的话就新建并写入：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SUBSYSTEM==&quot;usb&quot;, ATTR&#123;idVendor&#125;==&quot;0e8d&quot;, ATTR&#123;idProduct&#125;==&quot;201c&quot;,MODE=&quot;0666&quot;, GROUP=&quot;plugdev&quot;</span><br></pre></td></tr></table></figure>
+
+<p>其中的 idVendor 和 idProduct 是所连接的设备的，可以通过 lsusb查看到。编辑完后然后执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 重新加载udev规则：</span><br><span class="line">sudo udevadm control --reload-rules</span><br><span class="line"># 重启ADB服务器：</span><br><span class="line">adb kill-server</span><br><span class="line">adb start-server</span><br></pre></td></tr></table></figure>
+
+<p>然后拔掉usb设备再插上即可</p>
+</li>
+</ul>
+<h2 id="2、测试指令"><a href="#2、测试指令" class="headerlink" title="2、测试指令"></a>2、测试指令</h2><p>CTS、GTS、VTS、GSI、STS测试所执行的指令基本一致，因此放在一起，便于查阅</p>
+<h4 id="启动测试"><a href="#启动测试" class="headerlink" title="启动测试"></a>启动测试</h4><ul>
+<li>手机连接到电脑</li>
+<li>打开 <strong>Ubuntu</strong>，切换到 <strong>需要测试项目对应</strong> 路径</li>
+<li>进入 <strong>测试项目</strong> 控制台： <code>./tools/cts-tradefed</code></li>
+<li>运行 <strong>对应项目</strong> 的测试命令 ： <code>run cts</code>、 <code>run gts</code>、 <code>run vts </code>、 <code>run cts-on-gsi</code>、 <code>run sts-dynamic-incremental</code><ul>
+<li>如果是多台设备，需要携带参数<code>--shard-count number_of_shards</code> （Android9及以上）</li>
+<li>如果是指定设备，需要采用<code>-s deviceID</code> 指定，多个设备需要多次 -s</li>
+<li>重新执行之前失败和未执行的测试指令：<code>run retry -r sessionID</code>，其中的sessionID可以通过指令<code>l r</code>拿到。测试基本都是多轮，一般需要执行到连续3次结果一致，此时再查看结果。在进行的差不多的时候可以将所有设备恢复出厂设置，再继续测。</li>
+<li>在拿到结果后，分析其中产生的原因，再进行单独测试，此时可以使用 <code>--exclude-filter test_module_name</code> 来进行过滤一些费时的测试，将其从运行中排除，例如CTS中的location和network方面测试。具体指令示例:<code>run retry -r 66 --shard-count 6 -s TVE8313M0001 -s TVE8313M0002 -s TVE8313M0003 -s TVE8313M0004 -s TVE8313M0005 -s TVE8313M0006 --exclude-filter CtsHostsideNetworkTests --exclude-filter CtsLibcoreTestCases --exclude-filter CtsMediaCodecTestCases --exclude-filter CtsMediaPlayerTestCases</code></li>
+</ul>
+</li>
+</ul>
+<h4 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h4><ul>
+<li>列出所有测试结果： <code>l r</code></li>
+<li>流出所有检测到或已知的设备： <code>l d</code></li>
+<li>查看正在运行的设备状态： <code>l i</code></li>
+<li>查看所运行的指令：<code>l c</code></li>
+<li>单跑某一个模块：<code>run cts -m &lt;模块名&gt;</code></li>
+<li>单跑某个测试项：<code>run cts -m &lt;模块名&gt; -t &lt;测试项名&gt;</code></li>
+<li>单跑某个测试项里具体的一项：<code>run cts -m &lt;模块名&gt; -t &lt;测试项名&gt;#&lt;测试项中的某功能测试项&gt;</code></li>
+<li>复测指令：<code>run retry -r &lt;序列号session&gt;</code></li>
+</ul>
+<h4 id="测试结果"><a href="#测试结果" class="headerlink" title="测试结果"></a>测试结果</h4><p>测试的结果文件在 <code>results</code> 目录下，找到对应日期时间的文件夹，该文件夹就是所需要的结果文件，要交付时将这个文件夹打包成压缩包交付。这里面有test_result_failures_suite.html和test_result_html，主要看的是前者，里面全是失败项的详情。</p>
+<p>如果要详细知道某一项为什么不通过，可以进行单测这一项然后查看日志，日志在<code>logs</code>文件夹中。</p>
+<h2 id="3、CTS"><a href="#3、CTS" class="headerlink" title="3、CTS"></a>3、CTS</h2><h3 id="3-1-CTS介绍"><a href="#3-1-CTS介绍" class="headerlink" title="3.1 CTS介绍"></a>3.1 CTS介绍</h3><p>Compatibility Test Suite 意为兼容性测试套件，是 Google 推出的 Android 平台兼容性测试机制。CTS 测试主要是测试 OEM 厂商设计的 Android 平台是不是符合 Android 的 API 接口定义。通过 CTS 测试不仅可以保证 Android 设备上正常运行，同时，也能够让所有的开发者放心地制作高质量的应用程序，因此只有通过 CTS 认证的设备才能合法的安装使用 Google market 等 Google 应用。</p>
+<h3 id="3-2-CTS测试流程"><a href="#3-2-CTS测试流程" class="headerlink" title="3.2 CTS测试流程"></a>3.2 CTS测试流程</h3><h4 id="设置CTS"><a href="#设置CTS" class="headerlink" title="设置CTS"></a>设置CTS</h4><p>（文档：<code>https://source.android.com/docs/compatibility/cts/setup?hl=zh-cn</code>）</p>
+<ul>
+<li><p><code>cd</code>到 android-cts-media 解压后的路径</p>
+</li>
+<li><p>更改文件权限： <code>chmod u+x copy_media.sh</code>  （似乎默认就有权限，可以不用更改）</p>
+</li>
+<li><p>复制必要的文件：</p>
+<ul>
+<li><p>要将剪辑复制到分辨率为 720x480，请运行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./copy_media.sh 720x480</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果您不确定视频播放最大分辨率，<del>选择最大分辨率 1920x1080</del> 直接运行脚本，不带参数，会全部拷贝进去：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./copy_media.sh</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果 adb 下有多个设备，请将特定设备的串行选项（ <code>-s</code> ）添加到末尾。例如，要将高达 720x480 的分辨率复制到序列号为 1234567 的设备，请运行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./copy_media.sh 720x480 -s 1234567</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>当多台设备都需要拷贝时，可以采用 <code>;</code>进行间隔，来依次执行，具体指令为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./copy_media.sh -s 1234567;./copy_media.sh -s 1234568;./copy_media.sh -s 1234569</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>除了media之外，还需要复制images，直接运行脚本即可，指定多台设备和上述是一样的方法：</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>​				<code>chmod 544 copy_images.sh</code></p>
+<p>​				<code>./copy_images.sh</code></p>
+<ul>
+<li><p>在设置完即可<strong>执行指令开始测试</strong></p>
+<p>（CTS 文档：<code>https://source.android.com/docs/compatibility/cts/run?hl=zh-cn</code>）</p>
+</li>
+</ul>
+<p><strong>单独运行CTS媒体测试(此部分转载自官方文档，但实际测试未用到，先不要管下面的内容)</strong></p>
+<p>(文档：<code>https://source.android.com/docs/compatibility/cts/run-locally?hl=zh-cn</code>)</p>
+<ul>
+<li><p>将 android-cts-media-1.5.zip 的下载内容解压缩到 android-cts-media-1.5 文件夹。</p>
+</li>
+<li><p>将 CtsMediaTestCases.zip 媒体文件的下载内容解压缩到 CtsMediaTestCases 文件夹。</p>
+</li>
+<li><p>将CtsMediaTestCases 文件复制到设备的 SD 卡，然后使用以下命令运行模块。</p>
+</li>
+</ul>
+<p>​		<code>$adb push CtsMediaTestCases-1.4/ /sdcard/</code></p>
+<ul>
+<li><p>将 android-cts-media-1.5 文件夹移动到宿主机的 &#x2F;tmp&#x2F; 文件夹中。</p>
+<p><code>$adb push android-cts-media-1.5/ /tmp/</code></p>
+</li>
+<li><p>执行 <code>$run cts --module-arg CtsMediaTestCases:config-url:https://storage.googleapis.com/cts_media/DynamicConfig_local.json --module-arg CtsMediaTestCases:local-media-path:/tmp/android-cts-media-1.5 --shard-count 6</code></p>
+</li>
+</ul>
+<h2 id="4、CTS-Verifier"><a href="#4、CTS-Verifier" class="headerlink" title="4、CTS Verifier"></a>4、CTS Verifier</h2><h3 id="4-1-CTS-Verifier介绍"><a href="#4-1-CTS-Verifier介绍" class="headerlink" title="4.1 CTS Verifier介绍"></a>4.1 CTS Verifier介绍</h3><p>CTS Verifier 算是CTS的一部分，需要手动进行，主要用于测试那些自动测试系统无法测试的功能，比如相机、传感器等。由于硬件配置或其他原因，不同手机上部分测试项目被隐藏，也就是说CTS Verifier中case的总数，取决于测试机支持哪些功能。</p>
+<h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><ul>
+<li><p>PC 端执行如下指令：<code>adb shell settings put global hidden_api_policy 1</code></p>
+</li>
+<li><p>安装 CtsVerifier.apk : <code>adb install -r -g CtsVerifier.apk</code></p>
+</li>
+<li><p>CtsVerifier的权限全部授予，语言也要切成英文</p>
+</li>
+<li><p>看CtsVerifier测试文档，进行具体操作</p>
+</li>
+<li><p>最后要输入日志需要如下指令</p>
+<ul>
+<li><code>adb shell appops set com.android.cts.verifier android:read_device_identifiers allow</code></li>
+<li><code>adb shell appops set com.android.cts.verifier MANAGE_EXTERNAL_STORAGE 0</code></li>
+</ul>
+</li>
+<li><p>查看cpu架构指令：<code>adb shell getprop ro.product.cpu.abi</code></p>
+</li>
+</ul>
+<p>tip：如果电脑连接了多台设备，在执行adb时可以在adb后通过 <code>-s SerialNumber</code> 进行指定设备执行，例如<code>adb -s TVE1070M001 -s TVE1070M002 install -r -g CtsVerifier.apk</code></p>
+<h4 id="Camera-FOV测试"><a href="#Camera-FOV测试" class="headerlink" title="Camera FOV测试"></a>Camera FOV测试</h4><ul>
+<li><p>使用 A3 打印纸，无缩放打印 <code>calibration-pattern.pdf</code> 文件。</p>
+</li>
+<li><p>将打印的目标图样挂在墙上，将待测设备 Camera 与目标图样按<code>calibrationProcedure.pdf</code>进行放置。</p>
+<p>上面设计到的两个pdf文件在 old 中</p>
+</li>
+</ul>
+<h4 id="ITS测试"><a href="#ITS测试" class="headerlink" title="ITS测试"></a>ITS测试</h4><ol>
+<li>进入CameraITS&#x2F;目录，执行下面配置环境指令</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ source build/envsetup.sh</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>Mobly 框架下，可以在 config.yml (YAML)文件中配置 Mobly 测试平台。（具体配置参照下图）</li>
+</ol>
+<p><img src="/upload/image-20231012111920117.png" srcset="/img/loading.gif" lazyload alt="image-20231012111920117"></p>
+<p>​    3. 测试所有摄像头和所有场景 <code>$ python tools/run_all_tests.py</code></p>
+<p>​	4. 后摄场景一全部测试 <code>$ python tools/run_all_tests.py camera=0 scenes=scene0</code></p>
+<pre><code>5. 单独模块测试 `$ python tests/scene1/test_ev_compensation_basic.py camera=0 scenes=scene1`
+</code></pre>
+<h2 id="4、-GTS"><a href="#4、-GTS" class="headerlink" title="4、 GTS"></a>4、 GTS</h2><h3 id="4-1-GTS介绍"><a href="#4-1-GTS介绍" class="headerlink" title="4.1 GTS介绍"></a>4.1 GTS介绍</h3><p>Google Mobile Services Test Suite 意为谷歌移动服务测试套件，谷歌移动服务提供了**Search、 Search by Voice、Gmail、Contact Sync、 Calendar Sync、Talk、 Maps、 Steet View、 YouTube、 Android Market (Play store)**等服务，当用户使用谷歌时，谷歌可以把各种广告嵌入到谷歌的服务中。</p>
+<h3 id="4-2-GTS测试"><a href="#4-2-GTS测试" class="headerlink" title="4.2 GTS测试"></a>4.2 GTS测试</h3><p>需注意，测试时需要在环境变量中指定一个json文件，下载该文件并放在本地文件夹后，需要在环境变量中添加如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Android13</span><br><span class="line">export APE_API_KEY=/home/hu/gms/gts/gts-windriver-public.json</span><br><span class="line">Android12</span><br><span class="line">export APE_API_KEY=/home/hu/gms/gts/gts-fih-public.json</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="4-3-GTS-Verifier测试"><a href="#4-3-GTS-Verifier测试" class="headerlink" title="4.3 GTS Verifier测试"></a>4.3 GTS Verifier测试</h3><p>这一项只有在Android13及以上版本才有，和CTS Verifier测试类似，需要登陆专门的谷歌测试账号</p>
+<p>账号：<a href="mailto:&#x74;&#101;&#115;&#116;&#x30;&#x30;&#53;&#51;&#x34;&#x34;&#x40;&#116;&#104;&#46;&#100;&#x6f;&#x2d;&#97;&#x66;&#x77;&#x2e;&#99;&#111;&#x6d;">&#x74;&#101;&#115;&#116;&#x30;&#x30;&#53;&#51;&#x34;&#x34;&#x40;&#116;&#104;&#46;&#100;&#x6f;&#x2d;&#97;&#x66;&#x77;&#x2e;&#99;&#111;&#x6d;</a></p>
+<p>密码：rec5rbie</p>
+<p>GTS Verifier的相关工具存放在GTS的文件夹中</p>
+<p>安装 GtsVerifier.apk : <code>adb install -r -g GtsVerifier.apk</code></p>
+<p>保存测试结果：<code>adb shell appops set com.google.android.gts.ve rifier android:read_device_identifiers allow</code></p>
+<p><code>adb shell appops set com.google.android.gts.verifier MANAGE_EXTERNAL_STORAGE 0</code></p>
+<h2 id="5、VTS"><a href="#5、VTS" class="headerlink" title="5、VTS"></a>5、VTS</h2><h3 id="5-1-VTS介绍"><a href="#5-1-VTS介绍" class="headerlink" title="5.1 VTS介绍"></a>5.1 VTS介绍</h3><p>Vendor Test Suite 意为供应商测试套件。以前Android的系统升级是很麻烦的，为了能更快的将设备升级到新的Android版本，Android O 开始新引入了 Project Treble，Project Treble 适用于搭载 Android O 及后续版本的所有新设备。Android 7.x 及更早版本中没有正式的Vendor层接口，因此每次更新系统都相对耗时和困难。Android O 之后，Treble 提供了稳定的Vendor层接口，供设备制造商访问 Android 代码中特定于硬件的部分，这样就可以只更新框架层，减少升级系统带来的成本和困难。为了确保Vendor层实现的前向兼容性，新的Vendor层接口会由供应商测试套件 (VTS) 进行验证，该套件类似于兼容性测试套件 (CTS)。</p>
+<h3 id="5-2-VTS测试"><a href="#5-2-VTS测试" class="headerlink" title="5.2 VTS测试"></a>5.2 VTS测试</h3><h4 id="替换谷歌system-img"><a href="#替换谷歌system-img" class="headerlink" title="替换谷歌system.img"></a>替换谷歌system.img</h4><p><strong>VTS</strong> 测试要求刷入谷歌提供 <strong>AOSP</strong> 的 <strong>system.img (GSI)</strong> 。在 <strong>user</strong> 版本中，如果直接使用 <strong>flash tool</strong> 单独烧录<strong>GSI</strong>时，会导致无法开机。之所以会出现这种问题，是由于在 <strong>user&#x2F;userdebug</strong> 版本中， <strong>dm-verity</strong> 是使能的，替换 <strong>GSI</strong> 后导致 <strong>dm-verity</strong> 不能通过。 如果要解决这个问题，就需要进行 <strong>unlock</strong> 操作，并且要用 <strong>fastboot</strong> 来刷入谷歌提供的 <strong>system.img</strong> 。</p>
+<p><strong>烧录具体操作如下：</strong></p>
+<p>烧录时推荐采用windows，如果烧录在<code>fastboot reboot fastboot</code>这一步卡住，windows的问题是<strong>驱动未更新</strong>，需要<strong>手动到设置-更新和安全-查看可选更新，更新对应平台和安卓的驱动</strong>。如果是Ubuntu卡住，则可能是 fastboot 版本问题。</p>
+<ul>
+<li><p>在设置中打开System -&gt; Developer options -&gt; <strong>OEM unlocking</strong> 选项</p>
+</li>
+<li><p>在设置中打开 <strong>USB debugging</strong> 选项</p>
+</li>
+<li><p>手机连接到电脑上，输入 <strong>adb devices</strong> 命令确认 <strong>adb</strong> 可以正常使用</p>
+</li>
+<li><p>进入 <strong>fastboot</strong> 模式。方法一： <code>adb reboot bootloader</code>；方法二：长按音量 + 和电源键</p>
+</li>
+<li><p>执行命令 <code>fastboot flashing unlock</code> ，执行命令后需要选择音量 <strong>+</strong> ，确认设备已经 <strong>unlock</strong> </p>
+</li>
+<li><p>执行命令<code>fastboot getvar unlocked</code> 确定设备 unlock 成功</p>
+</li>
+<li><p><del>擦除数据分区： <code>fastboot -w</code></del></p>
+</li>
+<li><p><del>擦除<strong>system.img</strong> 分区： <code>fastboot erase system</code></del></p>
+</li>
+<li><p>刷入user固件中的 vendor_boot 和 preloader_a  <strong>（如果是刷 GSI 则不需要这步）</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Android13：</span><br><span class="line">fastboot flash vendor_boot vendor_boot-debug.img </span><br><span class="line"># 如果固件中没有 vendor_boot-debug.img，则将上面的指令替换成下面这条指令</span><br><span class="line">fastboot flash boot boot-debug.img </span><br><span class="line"></span><br><span class="line">fastboot flash preloader_a preloader_tb8781p1_64_wifi.bin</span><br><span class="line">Android12：</span><br><span class="line">fastboot flash boot boot-debug.img</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将 Android 设备重新启动到 Fastboot 模式<code>fastboot reboot fastboot</code></p>
+</li>
+<li><p>执行 <strong>fastboot</strong> 命令刷入对应的 **system.img (在GSI文件夹下)**： </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Android13：</span><br><span class="line">fastboot flash system system.img</span><br><span class="line">Android12：</span><br><span class="line">fastboot flash system_a system.img</span><br><span class="line">fastboot flash system_b system.img</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启： <code>fastboot reboot</code></p>
+</li>
+</ul>
+<h2 id="6、GSI"><a href="#6、GSI" class="headerlink" title="6、GSI"></a>6、GSI</h2><h3 id="6-1-GSI介绍"><a href="#6-1-GSI介绍" class="headerlink" title="6.1 GSI介绍"></a>6.1 GSI介绍</h3><p>（Generic system image）— Reference AOSP system image通用系统映像上的兼容性测试套件<br> 这个文件包也是签约获取授权后才能获取，Google也会定期更新GSI包。Android O要求测试VTS和CTS on GSI，此时对应版本必须是GSI版本，测试包都为VTS。</p>
+<h3 id="6-2-GSI测试"><a href="#6-2-GSI测试" class="headerlink" title="6.2 GSI测试"></a>6.2 GSI测试</h3><p><strong>烧录具体操作如下：</strong></p>
+<p>烧录时推荐采用windows，如果烧录在<code>fastboot reboot fastboot</code>这一步卡住，windows的问题是驱动未更新，需要手动到设置-更新和安全-查看可选更新，更新对应平台和安卓的驱动。如果是Ubuntu卡住，则可能是 fastboot 版本问题。</p>
+<ul>
+<li><p>在设置中打开System -&gt; Developer options -&gt; <strong>OEM unlocking</strong> 选项</p>
+</li>
+<li><p>在设置中打开 <strong>USB debugging</strong> 选项</p>
+</li>
+<li><p>手机连接到电脑上，输入 <strong>adb devices</strong> 命令确认 <strong>adb</strong> 可以正常使用</p>
+</li>
+<li><p>进入 <strong>fastboot</strong> 模式。方法一： <code>adb reboot bootloader</code>；方法二：长按音量 + 和电源键</p>
+</li>
+<li><p>执行命令 <code>fastboot flashing unlock</code> ，执行命令后需要选择音量 <strong>+</strong> ，确认设备已经 <strong>unlock</strong> </p>
+</li>
+<li><p>执行命令<code>fastboot getvar unlocked</code> 确定设备 unlock 成功</p>
+</li>
+<li><p>将 Android 设备重新启动到 Fastboot 模式<code>fastboot reboot fastboot</code></p>
+</li>
+<li><p>执行 <strong>fastboot</strong> 命令刷入对应的 **system.img (GSI)**： </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Android13：</span><br><span class="line">fastboot flash system system.img</span><br><span class="line">Android12：</span><br><span class="line">fastboot flash system_a system.img</span><br><span class="line">fastboot flash system_b system.img</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启： <code>fastboot reboot</code></p>
+</li>
+</ul>
+<h2 id="7、STS"><a href="#7、STS" class="headerlink" title="7、STS"></a>7、STS</h2><h3 id="7-1-STS介绍"><a href="#7-1-STS介绍" class="headerlink" title="7.1 STS介绍"></a>7.1 STS介绍</h3><p>Android Security Test Suite (STS). 是谷歌关于android安全补丁安装情况的一个测试套件STS和security patch相关的，是CTS测试新增加一项安全测试套件。STS是201808才开始测试的。Security patch日期在3个月内是GTS的一个case，如果不通过无法获得google认证。在18年5月之前谷歌对于security patch这个属性都是在build库下面跟着aosp更新的。现在需要通过STS之后由vendor来更新。STS需要通过userdebug版本的targetfile来生成一个user版本的结果。</p>
+<h3 id="7-2-STS测试流程"><a href="#7-2-STS测试流程" class="headerlink" title="7.2 STS测试流程"></a>7.2 STS测试流程</h3><p><strong>STS测试需要将待测设备烧录debug固件</strong>，debug固件一般存放在user固件旁边的文件夹中</p>
+<h2 id="8、CheckList"><a href="#8、CheckList" class="headerlink" title="8、CheckList"></a>8、CheckList</h2><p>CheckList测试根据CheckList的excel表，找到对应的页面，按照上面的介绍进行测试。</p>
+<p>其中有不少是在首次开机的引导界面要求登录谷歌账号等操作。</p>
+<p>如果首次开机会跳过引导界面，需要重新烧录SN码</p>
+<h2 id="9、机器烧录"><a href="#9、机器烧录" class="headerlink" title="9、机器烧录"></a>9、机器烧录</h2><p>系统：windows</p>
+<p>在初次使用时需要安装驱动，文件为<code>安装文件/烧录工具/DriverInstall.exe</code></p>
+<h3 id="9-1-固件烧录"><a href="#9-1-固件烧录" class="headerlink" title="9.1 固件烧录"></a>9.1 固件烧录</h3><p>工厂直接发过来的机器固件和SN码都不是最新的，一般拿到手时需要自己刷上最新的固件和SN码</p>
+<p>拿到固件后，通过固件烧录工具进行烧录，这里固件烧录工具是Smart Phone Flash Tool，kernel版本为4.19及以下工具为V5，4.19以上工具为V6。查看kernel的方式：<code>adb shell</code> <code>cat /proc/version</code></p>
+<p><img src="/upload/image-20231017153331058.png" srcset="/img/loading.gif" lazyload alt="image-20231017153331058"></p>
+<p>该工具如上图，左上角有一个Auto Reboot 可以选上，用途是烧录完成自动重启设备。</p>
+<p>右上角的Download-XML 需要选中固件文件夹中的 <code>images/download_agent/flash.xml</code> ，选中后下方的Downlad会出现许多项目，将升级方式选为 <code>Firmware Upgrade</code>，该升级方式是升级，效果为保留SN码，将其他内容格式化，然后进行升级。其他还有两个选项为全部格式化，和仅下载文件。</p>
+<p>在选完上述内容后点击Download，再将<strong>关机状态</strong>下的设备用数据线连接上电脑，即可自动开始烧录固件。</p>
+<p>版本V5稍微有些不同，选取文件时不是选取的 Download-xml，而是Scatter-loading File，这里是选取一个txt文件，在固件的image目录下会有一个XXXXXX_Android_scatter.txt文件。</p>
+<h3 id="9-2-SN码烧录"><a href="#9-2-SN码烧录" class="headerlink" title="9.2 SN码烧录"></a>9.2 SN码烧录</h3><p>SN码烧录工具为SN Writer V1.2152.0.0，界面如下，这个工具每一个项目对应的版本都不一样。在打开时可能会遇到下面问题：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">由于找不到 MSVCR120.dll，无法继续执行代码。重新安装程序可能会解决此问题。</span><br></pre></td></tr></table></figure>
+
+<p>这个问题是电脑未安装32位的vc++程序包导致的，安装一下就好了，文件为<code>vcredist_x86.exe</code></p>
+<p><img src="/upload/image-20231017164620806.png" srcset="/img/loading.gif" lazyload alt="image-20231017164620806.png"></p>
+<p>烧录时先点击上面的Key Files，选中对应版本的<code>MTK HDCP/DRM KEY</code>，这个是要选择文件夹，一般是drmkey文件夹，这里的文件夹是每个项目对应的，不在固件中，我使用时是别人直接发我的。</p>
+<p>然后选择<code>attestation Key</code>，这个是选择一个googlekey的bin文件，一般是在drmkey文件夹外面的bin文件，而不是drmkey里面的。</p>
+<p>设置完这两个后再点击上面图片中的<code>System Config</code>，选中第一个 Barcode，就是烧录sn码了，其他的选项大部分是通讯设备用的，WiFi和蓝牙一般也不需要。System Config 界面的最下方需要选一个<code>AP_DB</code>文件，该文件是取自固件中的 images文件夹下的 <code>APDB_CPU型号_固件版本号</code> 文件，有多个话选择版本号数字最大的那个。设置完成点击SAVE，就可以点击START，此时要求输入SN码，SN只能字母(无论大小写)+数字；比如1070的项目，可以写：TVE1070M00001；sn的长度最好控制在8-15个字符。</p>
+<p>SN码输入完成后将关机状态的设备连接数据线插上电脑，会自动开始烧录，烧录完不会自动开机，需要手动开机，然后连接adb验证是否烧录成功。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/android/" class="category-chain-item">android</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/android/" class="print-no-link">#android</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>GMS测试步骤</div>
+      <div>https://hukaichao.me/2023/11/24/GMS测试步骤/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>凌冬</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年11月24日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/11/24/GMS%E6%B5%8B%E8%AF%95%E7%BB%93%E6%9E%9C%E5%88%86%E6%9E%90/" title="GMS测试结果分析">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">GMS测试结果分析</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/11/24/GMS%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" title="GMS测试环境搭建">
+                        <span class="hidden-mobile">GMS测试环境搭建</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,749 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="凌冬">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="60服务器部署的web服务主要有2个，分别是论坛和补丁仓库 论坛采用的开源项目“巡云轻论坛”中的pro版本，所用技术为 SpringBoot+Mysql，前端代码应该有修改，我没拿到源码，只从服务器上找到了打包后的disk文件夹，这个开源项目有很多版本，但文档比较紊乱。 补丁仓库采用的开源项目“RuoYi”后台管理系统，所用技术同样为SpringBoot+Mysql，前端是另外写的一套，不清楚使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论坛备份">
+<meta property="og:url" content="https://hukaichao.me/2023/11/28/%E8%AE%BA%E5%9D%9B%E5%A4%87%E4%BB%BD/index.html">
+<meta property="og:site_name" content="凌冬的个人博客">
+<meta property="og:description" content="60服务器部署的web服务主要有2个，分别是论坛和补丁仓库 论坛采用的开源项目“巡云轻论坛”中的pro版本，所用技术为 SpringBoot+Mysql，前端代码应该有修改，我没拿到源码，只从服务器上找到了打包后的disk文件夹，这个开源项目有很多版本，但文档比较紊乱。 补丁仓库采用的开源项目“RuoYi”后台管理系统，所用技术同样为SpringBoot+Mysql，前端是另外写的一套，不清楚使用">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-11-28T03:35:55.000Z">
+<meta property="article:modified_time" content="2024-02-02T07:27:40.342Z">
+<meta property="article:author" content="凌冬">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>论坛备份 - 凌冬的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="论坛备份"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-11-28 11:35" pubdate>
+          2023年11月28日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          36 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">论坛备份</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>60服务器部署的web服务主要有2个，分别是论坛和补丁仓库</p>
+<p>论坛采用的开源项目“巡云轻论坛”中的pro版本，所用技术为 SpringBoot+Mysql，前端代码应该有修改，我没拿到源码，只从服务器上找到了打包后的disk文件夹，这个开源项目有很多版本，但文档比较紊乱。</p>
+<p>补丁仓库采用的开源项目“RuoYi”后台管理系统，所用技术同样为SpringBoot+Mysql，前端是另外写的一套，不清楚使用技术，但部署是采用Apache tomcat。这个开源项目的维护比较好，文档比较清晰。</p>
+<p>这篇文章只讲解论坛的备份，关于补丁仓库的备份后面再说，因为补丁仓库我有重构一个版本，修改为docker部署，备份方式会有变动。</p>
+<h2 id="Mysql"><a href="#Mysql" class="headerlink" title="Mysql"></a>Mysql</h2><p>两个web服务共用一个数据库，采用两个不同的用户和database。</p>
+<ul>
+<li><p>数据库的root用户密码为 TVI8@techvision</p>
+</li>
+<li><p>论坛的用户为tech，密码为TVI1@techvision，所用的database名字也为tech</p>
+</li>
+<li><p>补丁仓库的用户为techvision，密码为Techvision8888，所用的database的名字也为techvision</p>
+</li>
+</ul>
+<p>所以备份的时候直接把这一整个MySQL数据库备份就好了</p>
+<p>所备份的内容仅为数据，MySQL数据库并没有进行额外的配置，采用默认配置就行了，数据库的版本我使用8.0.35 可以正常使用。</p>
+<h3 id="备份方式"><a href="#备份方式" class="headerlink" title="备份方式"></a>备份方式</h3><p>全量备份：采用 mysqldump 工具将mysql中的所有数据库、表导出到一个sql中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">备份命令：</span><br><span class="line">mysqldump -u root -p --all-databases --events --routines &gt; backup.sql</span><br><span class="line">还原命令：</span><br><span class="line">mysql -u root -p &lt; backup.sql</span><br></pre></td></tr></table></figure>
+
+<p>MySQL还有一种备份方法是保存其binlog文件，但感觉不如输出sql文件备份方便</p>
+<h2 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h2><p>在60服务器上只有补丁仓库有用到，在60服务器上的redis并未设置密码。这里跳过。</p>
+<h2 id="Apache2"><a href="#Apache2" class="headerlink" title="Apache2"></a>Apache2</h2><p>在60服务器上只有补丁仓库的前端有用到，这里跳过。</p>
+<h2 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h2><p>在60服务器上只有论坛有用到，需要备份。</p>
+<p>主要的配置文件：</p>
+<p>nginx.conf</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line">user root;</span><br><span class="line">worker_processes auto;</span><br><span class="line">pid /run/nginx.pid;</span><br><span class="line">include /etc/nginx/modules-enabled/*.conf;</span><br><span class="line"></span><br><span class="line">events &#123;</span><br><span class="line">	worker_connections 768;</span><br><span class="line">	# multi_accept on;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">http &#123;</span><br><span class="line"></span><br><span class="line">	##</span><br><span class="line">	# Basic Settings</span><br><span class="line">	##</span><br><span class="line"></span><br><span class="line">	sendfile on;</span><br><span class="line">	tcp_nopush on;</span><br><span class="line">	#tcp_nodelay on;</span><br><span class="line">	keepalive_timeout 65;</span><br><span class="line">	types_hash_max_size 2048;</span><br><span class="line">	# server_tokens off;</span><br><span class="line"></span><br><span class="line">	# server_names_hash_bucket_size 64;</span><br><span class="line">	# server_name_in_redirect off;</span><br><span class="line"></span><br><span class="line">	include /etc/nginx/mime.types;</span><br><span class="line">	default_type application/octet-stream;</span><br><span class="line"></span><br><span class="line">	##</span><br><span class="line">	# SSL Settings</span><br><span class="line">	##</span><br><span class="line"></span><br><span class="line">	ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3; # Dropping SSLv3, ref: POODLE</span><br><span class="line">	ssl_prefer_server_ciphers on;</span><br><span class="line"></span><br><span class="line">	##</span><br><span class="line">	# Logging Settings</span><br><span class="line">	##</span><br><span class="line"></span><br><span class="line">	access_log /var/log/nginx/access.log;</span><br><span class="line">	error_log /var/log/nginx/error.log;</span><br><span class="line"></span><br><span class="line">	##</span><br><span class="line">	# Gzip Settings</span><br><span class="line">	##</span><br><span class="line"></span><br><span class="line">	gzip on;</span><br><span class="line"></span><br><span class="line">	# gzip_vary on;</span><br><span class="line">	# gzip_proxied any;</span><br><span class="line">	# gzip_comp_level 6;</span><br><span class="line">	# gzip_buffers 16 8k;</span><br><span class="line">	# gzip_http_version 1.1;</span><br><span class="line">	# gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;</span><br><span class="line"></span><br><span class="line">	##</span><br><span class="line">	# Virtual Host Configs</span><br><span class="line">	##</span><br><span class="line"></span><br><span class="line">	include /etc/nginx/conf.d/*.conf;</span><br><span class="line">	#include /etc/nginx/sites-enabled/*;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#mail &#123;</span><br><span class="line">#	# See sample authentication script at:</span><br><span class="line">#	# http://wiki.nginx.org/ImapAuthenticateWithApachePhpScript</span><br><span class="line"># </span><br><span class="line">#	# auth_http localhost/auth.php;</span><br><span class="line">#	# pop3_capabilities &quot;TOP&quot; &quot;USER&quot;;</span><br><span class="line">#	# imap_capabilities &quot;IMAP4rev1&quot; &quot;UIDPLUS&quot;;</span><br><span class="line"># </span><br><span class="line">#	server &#123;</span><br><span class="line">#		listen     localhost:110;</span><br><span class="line">#		protocol   pop3;</span><br><span class="line">#		proxy      on;</span><br><span class="line">#	&#125;</span><br><span class="line"># </span><br><span class="line">#	server &#123;</span><br><span class="line">#		listen     localhost:143;</span><br><span class="line">#		protocol   imap;</span><br><span class="line">#		proxy      on;</span><br><span class="line">#	&#125;</span><br><span class="line">#&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>bbs.conf</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">## api请求端口服务块</span><br><span class="line">server&#123;</span><br><span class="line">	listen  8082;</span><br><span class="line">	server_name localhost 192.168.120.60;</span><br><span class="line">	location /&#123;</span><br><span class="line">		#请填写具体域名  解决服务端返回401等错误时浏览器报跨域错误。nginx 转发 server 响应的过程中，add_header 只有在 200,201,204,206,301,302,303,304,307 状态码时会添加，而 401、500，都没有添加。解决：在 add_header 最后加上 always，可以让 nginx 在非默认状态码下 add_header 也可以生效。</span><br><span class="line"></span><br><span class="line">		add_header &quot;Access-Control-Allow-Origin&quot;  &quot;http://192.168.120.60&quot; always;</span><br><span class="line">		add_header &quot;Access-Control-Allow-Credentials&quot; &quot;true&quot; always;</span><br><span class="line">		add_header &quot;Access-Control-Allow-Methods&quot; &quot;GET, POST, PUT, OPTIONS, HEAD&quot; always;</span><br><span class="line">		add_header &quot;Access-Control-Allow-Headers&quot; &quot;Origin,X-Requested-With,Content-Type,Cache-Control,Accept,Authorization,BBS-XSRF-TOKEN,Set-Cookie&quot; always;</span><br><span class="line">		#预检命令的缓存，如果不缓存每次会发送两次请求</span><br><span class="line">		add_header Access-Control-Max-Age 3600 always;</span><br><span class="line"></span><br><span class="line">		if ($request_method = &#x27;OPTIONS&#x27;) &#123;</span><br><span class="line">			return 204;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">		client_max_body_size 100M; #允许上传文件大小,默认是1M</span><br><span class="line"></span><br><span class="line">        	proxy_set_header Host $host;</span><br><span class="line">	       	proxy_set_header X-Real-Ip $remote_addr;</span><br><span class="line">        	proxy_set_header X-Forwarded-For $remote_addr;</span><br><span class="line">	        proxy_pass $scheme://192.168.120.60:8081;</span><br><span class="line">		</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">## 前端静态资源模块</span><br><span class="line">server&#123;</span><br><span class="line">	listen  80;</span><br><span class="line">	server_name 192.168.120.60;</span><br><span class="line">	set $mobile_rewrite do_not_perform;</span><br><span class="line"></span><br><span class="line">	if ($http_user_agent ~* &quot;(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|com.cnpal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino&quot;) &#123;</span><br><span class="line">		set $mobile_rewrite perform;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	if ($http_user_agent ~* &quot;^(1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-)&quot;) &#123;</span><br><span class="line">		set $mobile_rewrite perform;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	location /&#123;</span><br><span class="line">		root /home/v2/resources/tomcat/5.8/pc/dist;</span><br><span class="line"></span><br><span class="line">		# 配置默认的主页显示</span><br><span class="line">		location / &#123;</span><br><span class="line">			try_files $uri $uri/ /index.html;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>除了这两个配置文件外还需要对应的前端静态文件，在60服务器上为：<code>/home/v2/resources/tomcat/5.8/pc/dist</code></p>
+<p>这里还需要将一些静态文件中的ip地址进行替换，在60服务器上是192.168.120.60，根据新服务器的ip替换对应的ip，详情见附录。</p>
+<h2 id="后端服务"><a href="#后端服务" class="headerlink" title="后端服务"></a>后端服务</h2><p>论坛和补丁仓库的后端服务都是启动一个jar包即可。</p>
+<p>论坛中的jar包为：<code>/home/v2/resources/tomcat/5.8/bbs-pro-5.8.jar</code></p>
+<p>除了这个jar包，同级目录下的其他文件也需要备份，因为里面涉及到论坛上传的文件等资源，十分重要。</p>
+<p><code>/home/v2/resources/tomcat/5.8/</code>这个目录下的所有文件均需要拷贝出来。</p>
+<p>最后将服务写成一个service，添加开机启动即可。</p>
+<p>有尝试将后端服务也用docker进行，但是失败了，在拿不到源码的情况下只能将网络采用container模式，但这个模式下不知道为什么有一个请求无法获得后端响应，还是请求的配置有问题。</p>
+<p>bbs.service:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=bbs</span><br><span class="line">After=syslog.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">User=root</span><br><span class="line">Group=root</span><br><span class="line">WorkingDirectory=/home/v2/resources/tomcat/5.8</span><br><span class="line">ExecStart=/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xms1024M -Xmx1024M -Dserver.port=8081 -jar /home/v2/resources/tomcat/5.8/bbs-pro-5.8.jar </span><br><span class="line">SuccessExitStatus=143</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target </span><br></pre></td></tr></table></figure>
+
+<p>service服务要移动到<code>/etc/systemd/system/</code>目录才能直接启动</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo cp bbs.service /etc/systemd/system/</span><br><span class="line">sudo systemctl start bbs.service</span><br></pre></td></tr></table></figure>
+
+<p>其他关于服务指令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl stop bbs.service</span><br><span class="line">sudo systemctl restart bbs.service</span><br><span class="line"># 开机自启</span><br><span class="line">sudo systemctl enable bbs.service</span><br><span class="line"># 禁用开机自启</span><br><span class="line">sudo systemctl disable bbs.service</span><br></pre></td></tr></table></figure>
+
+<p>查看服务运行后的日志：<code>sudo journalctl -u bbs.service -f</code></p>
+<h2 id="备份定时任务"><a href="#备份定时任务" class="headerlink" title="备份定时任务"></a>备份定时任务</h2><h3 id="将文件静态备份到95服务器"><a href="#将文件静态备份到95服务器" class="headerlink" title="将文件静态备份到95服务器"></a>将文件静态备份到95服务器</h3><p>最开始的备份是将相关文件拷贝一份出去，并且能过通过拷贝的这份文件还原数据库即可，所以采用静态备份，直接将相关文件拷贝出去，具体备份如下：</p>
+<p>备份采用的方式为：rsync，rsync 的最大特点就是它可以完成增量备份，也就是默认只复制有变动的文件。</p>
+<p><code>crontab -e</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 每日备份MySQL （MySQL 密码存储在文件中）</span><br><span class="line">0 2 * * * mysqldump -uroot -p$(cat /home/v2/backup/mysql-password) --all-databases --events --routines &gt; /home/v2/backup/daily_backup.sql &amp;&amp; rsync -a /home/v2/backup/daily_backup.sql a58sw01@192.168.120.95:/home/a58sw01/data/learn/backup/</span><br><span class="line"></span><br><span class="line"># 存档备份MySQL，每月一次</span><br><span class="line">0 2 1 * * mysqldump -uroot -p$(cat /home/v2/backup/mysql-password) --all-databases --events --routines &gt; /home/v2/backup/$(date +\%Y\%m)_monthly_backup.sql &amp;&amp; rsync -a /home/v2/backup/$(date +\%Y\%m)_monthly_backup.sql a58sw01@192.168.120.95:/home/a58sw01/data/learn/backup/</span><br><span class="line"></span><br><span class="line"># 每日备份bbs的文件</span><br><span class="line">0 3 * * * rsync -a /home/v2/resources/tomcat/5.8/ a58sw01@192.168.120.95:/home/a58sw01/data/learn/backup/bbs_tomcat_backup/</span><br><span class="line"></span><br><span class="line"># 存档备份bbs，每月一次</span><br><span class="line">0 3 1 * * rsync -a /home/v2/resources/tomcat/5.8/ a58sw01@192.168.120.95:/home/a58sw01/data/learn/backup/tomcat_backup_$(date +\%Y\%m\%d)/</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这里的定时任务有两个问题：</p>
+<p><strong>1、sudo操作需要输入密码</strong></p>
+<p>在执行指令的时候需要sudo操作，此时可以使用 <code>visudo</code> 命令，然后添加一行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username ALL=(ALL:ALL) NOPASSWD: /path/to/your/script.sh</span><br></pre></td></tr></table></figure>
+
+<p>那么这个脚本执行sudo的时候就不需要输入密码了。</p>
+<p><strong>2、采用rsync远程传输文件到其他服务器上需要其他服务器的密钥</strong></p>
+<p>此时可以使用SSH密钥对身份进行验证。流程如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 生成 SSH 密钥对</span><br><span class="line">ssh-keygen -t rsa -b 2048</span><br><span class="line"># 将公钥复制到远程服务器,替换 username 和 remote_host 为你的远程服务器的用户名和主机地址。</span><br><span class="line">ssh-copy-id username@remote_host</span><br><span class="line"># 验证 SSH 配置,如果可以不需要密码直接登录则说明配置成功</span><br><span class="line">ssh username@remote_host</span><br><span class="line"># 在rsync指令中指定ssh key</span><br><span class="line">sudo rsync -avrHp -e &quot;ssh -i /home/v2/.ssh/id_rsa&quot; /var/lib/mysql/ xsr@192.168.50.124:/media/xsr/f/service-60/mysql/</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="将文件备份到50-124服务器-实现同步更新"><a href="#将文件备份到50-124服务器-实现同步更新" class="headerlink" title="将文件备份到50.124服务器 实现同步更新"></a>将文件备份到50.124服务器 实现同步更新</h3><p>后续更新了一下备份方式，现在是拷贝到另一台服务器中，并且实现自动备份同步更新。即除了拷贝相关文件之外，还需要部署起服务，并且在120.60服务器挂掉的时候能通过50.124服务器正常访问服务，访问的内容和60服务器的内容的数据相差在一天内。</p>
+<p>这里我有尝试按照之前欧阳晓晴的文档来进行备份还原，即通过完整的拷贝&#x2F;var&#x2F;lib&#x2F;mysql目录下的文件来进行备份MySQL数据库。但最后效果并不理想，第一次根据这个数据来还原数据库成功了，但是当我第二天备份的时候，第二天的&#x2F;var&#x2F;lib&#x2F;mysql覆盖掉第一天的数据库了，数据却没有更新，依然还是第一天的数据，我在尝试重建MySQL容器的时候发送了问题，因为mysql的sock的问题导致容器创建失败，手动删除锁后又报错缺少一个文件导致容器无法创建。</p>
+<p>该备份方式慎用，可能是因为MySQL版本或者MySQL配置或者rsync传输数据存在着问题，我后面又改成了mysqldump进行备份。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"># 暂停所有服务</span><br><span class="line">sudo systemctl stop nginx</span><br><span class="line">sudo systemctl stop tomcat9</span><br><span class="line">sudo systemctl stop mysql</span><br><span class="line"></span><br><span class="line"># 备份MySQL数据库(旧 未使用)</span><br><span class="line">sudo -E rsync -avrHp -e &quot;ssh -i /home/v2/.ssh/id_rsa&quot; /var/lib/mysql/ xsr@192.168.50.124:/media/xsr/f/service-60/mysql/</span><br><span class="line"></span><br><span class="line"># 备份MySQL数据库</span><br><span class="line">sudo rsync -avrHp -e &quot;ssh -i /home/v2/.ssh/id_rsa&quot; /home/v2/backup/daily_backup.sql xsr@192.168.50.124:/media/xsr/f/service-60/docker/mysql/</span><br><span class="line"></span><br><span class="line"># 备份resources目录（存放着bbs的jar包和资源文件）</span><br><span class="line">sudo -E rsync -avrHp -e &quot;ssh -i /home/v2/.ssh/id_rsa&quot; /home/v2/resources/ xsr@192.168.50.124:/media/xsr/f/service-60/resources/</span><br><span class="line"></span><br><span class="line"># 备份补丁仓库文件（补丁仓库相关 这个也未使用）</span><br><span class="line">sudo -E rsync -avrHp -e &quot;ssh -i /home/v2/.ssh/id_rsa&quot; /home/v2/patch/ xsr@192.168.50.124:/media/xsr/f/service-60/patch/</span><br><span class="line"></span><br><span class="line">#备份tomcat9配置（补丁仓库相关 这个其实也未使用 但还是将数据拷贝一份出去作备份）</span><br><span class="line">sudo -E rsync -avrHp -e &quot;ssh -i /home/v2/.ssh/id_rsa&quot; /etc/tomcat9/ xsr@192.168.50.124:/media/xsr/f/service-60/tomcat9/</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 启动所有服务</span><br><span class="line">sudo systemctl start mysql</span><br><span class="line">sudo systemctl start nginx</span><br><span class="line">sudo systemctl start tomcat9</span><br></pre></td></tr></table></figure>
+
+
+
+<p>上面的操作将最新的sql拷贝到50.124服务器上之后，需要在该服务器上写一个定时任务脚本来实现容器的重新启动，脚本内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 删除已存在的容器</span><br><span class="line">sudo docker rm -f bbs-mysql</span><br><span class="line"></span><br><span class="line"># 切换到 Docker Compose 文件所在目录</span><br><span class="line">cd /media/xsr/f/service-60/docker</span><br><span class="line"></span><br><span class="line"># 重新启动容器</span><br><span class="line">sudo docker-compose up -d bbs-mysql</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="附"><a href="#附" class="headerlink" title="附"></a>附</h2><h3 id="欧阳晓晴所给的备份文档："><a href="#欧阳晓晴所给的备份文档：" class="headerlink" title="欧阳晓晴所给的备份文档："></a>欧阳晓晴所给的备份文档：</h3><p>我安装该文档尝试的时候，首先是rsync拷贝文件有遇到权限的问题，先停止MySQL服务，再输入指令就可以拷贝了，另外也有尝试使用其策略，完整的拷贝MySQL相关文件进行部署，是可以实现的，不过感觉不如使用mysqldump来备份</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line">nginx 1.18.0-0ubuntu1.4 </span><br><span class="line">apche2 2.4.41-4ubuntu3.14</span><br><span class="line">mysql 8.0.33-0ubuntu0.20.04.4</span><br><span class="line">redis 5:5.0.7-2ubuntu0.1</span><br><span class="line"></span><br><span class="line">/var/lib/mysql             mysql数据库位置</span><br><span class="line">/etc/mysql                              mysql配置文件位置</span><br><span class="line"></span><br><span class="line">/var/lib/redis             redis数据库位置</span><br><span class="line">/etc/redis               redis数据库位置</span><br><span class="line"></span><br><span class="line">/home/v2/resources           bbs和path服务器位置</span><br><span class="line">/home/v2/patch             path补丁摆放位置</span><br><span class="line"></span><br><span class="line">/et/apache2/              apache2 服务器配置位置</span><br><span class="line">/var/www/html              apache2 网页数据</span><br><span class="line"></span><br><span class="line">/etc/nginx               nginx服务器配置路径</span><br><span class="line"></span><br><span class="line">/lib/systemd/system/bbs.service     bbs 服务脚本位置</span><br><span class="line">/etc/systemd/system/techvision.service patch服务脚本位置</span><br><span class="line"></span><br><span class="line">请在部署时。将原机器的配置文件删除后再进行替换</span><br><span class="line"></span><br><span class="line">如果更换了服务器ip。请按照下面的例子。进行ip地址替换。下面是从192.168.120.60替换到192.168.50.210</span><br><span class="line">sed -i &#x27;s/192.168.120.60/192.168.50.210/g&#x27; tomcat/5.8/pc/dist/index.html</span><br><span class="line">sed -i &#x27;s/192.168.120.60/192.168.50.210/g&#x27; tomcat/5.8/pc/dist/assets/index.3cef83e2.js</span><br><span class="line">sed -i &#x27;s/192.168.120.60/192.168.50.210/g&#x27; tomcat/5.8/pc/dist/assets/index-legacy.f694b063.js</span><br><span class="line">sed -i &#x27;s/192.168.120.60/192.168.50.210/g&#x27; tomcat/5.8/bbs/WEB-INF/data/topicIndex/_8e.fdt</span><br><span class="line">sed -i &#x27;s/192.168.120.60/192.168.50.210/g&#x27;  tomcat/5.8/onlyoffice/DocumentServer/db/14/main/pg_wal/000000010000000000000001</span><br><span class="line">sed -i &#x27;s/192.168.120.60/192.168.50.210/g&#x27;  tomcat/5.8/onlyoffice/DocumentServer/db/14/main/base/16384/16411</span><br><span class="line">sed -i &#x27;s/192.168.120.60/129.168.120.98/g&#x27; /var/www/html/main.dart.js</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mysql:</span><br><span class="line"></span><br><span class="line">apt install mysql </span><br><span class="line">systemctl stop mysql</span><br><span class="line">sudo rm -r /var/lib/mysql/*</span><br><span class="line">rsync -avrHp hw@192.168.120.39:/media/hw/f/system-backup/etc/mysql/* /etc/mysql/</span><br><span class="line">rsync -avrHp hw@192.168.120.39:/media/hw/f/system-backup/var/lib/mysql/* /var/lib/mysql/</span><br><span class="line">systemctl start mysql</span><br><span class="line"></span><br><span class="line">user:</span><br><span class="line"> useradd -m -s /bin/bash -G sudo,sambashare,lxd,lpadmin v2</span><br><span class="line"> passwd v2</span><br><span class="line"></span><br><span class="line">bbs.jar and patch.jar:</span><br><span class="line">rsync -avrHp hw@192.168.120.39:/media/hw/f/system-backup/home/v2/resources /home/v2/</span><br><span class="line"></span><br><span class="line">redis:</span><br><span class="line">apt install redis</span><br><span class="line">systemctl stop redis</span><br><span class="line">rm -rf /etc/redis/*</span><br><span class="line">rsync -avrHp hw@192.168.120.39:/media/hw/f/system-backup/etc/redis/* /etc/redis/</span><br><span class="line">rsync -avrHp hw@192.168.120.39:/media/hw/f/system-backup/var/lib/redis/* /var/lib/redis</span><br><span class="line">systemctl start redis</span><br><span class="line"></span><br><span class="line">systemd service:</span><br><span class="line">rsync -avrHp hw@192.168.120.39:/media/hw/f/system-backup/lib/systemd/system/bbs.service /lib/systemd/system/</span><br><span class="line">rsync -avrHp hw@192.168.120.39:/media/hw/f/system-backup//etc/systemd/system/techvision.service /lib/systemd/system/</span><br><span class="line">systemctl start techvision</span><br><span class="line">systemctl start bbs</span><br><span class="line"></span><br><span class="line">nginx:</span><br><span class="line">apt install nginx</span><br><span class="line">systemctl stop nginx</span><br><span class="line">rm -rf /etc/nginx/*</span><br><span class="line">rsync -avrHp hw@192.168.120.39:/media/hw/f/system-backup//etc/nginx/* /etc/nginx/</span><br><span class="line">systemctl start nginx</span><br><span class="line"></span><br><span class="line">apache2:</span><br><span class="line">apt install apache2</span><br><span class="line">systemctl stop apache2</span><br><span class="line">rm -rf /etc/apache2/*</span><br><span class="line">rsync -avrHp hw@192.168.120.39:/media/hw/f/system-backup//etc/apache2/* /etc/apache2/</span><br><span class="line">rm -rf /var/www/html/index.*</span><br><span class="line">rsync -avrHp hw@192.168.120.39:/media/hw/f/system-backup/var/www/html/* /var/www/html/</span><br><span class="line">systemctl start apache2</span><br><span class="line"></span><br><span class="line">sed -i &#x27;s/192.168.120.60/192.168.50.210/g&#x27; tomcat/5.8/pc/dist/index.html</span><br><span class="line">sed -i &#x27;s/192.168.120.60/192.168.50.210/g&#x27; tomcat/5.8/pc/dist/assets/index.3cef83e2.js</span><br><span class="line">sed -i &#x27;s/192.168.120.60/192.168.50.210/g&#x27; tomcat/5.8/pc/dist/assets/index-legacy.f694b063.js</span><br><span class="line">sed -i &#x27;s/192.168.120.60/192.168.50.210/g&#x27; tomcat/5.8/bbs/WEB-INF/data/topicIndex/_8e.fdt </span><br><span class="line">sed -i &#x27;s/192.168.120.60/192.168.50.210/g&#x27;  tomcat/5.8/onlyoffice/DocumentServer/db/14/main/pg_wal/000000010000000000000001 </span><br><span class="line">sed -i &#x27;s/192.168.120.60/192.168.50.210/g&#x27;  tomcat/5.8/onlyoffice/DocumentServer/db/14/main/base/16384/16411</span><br><span class="line">sed -i &#x27;s/192.168.120.60/192.168.50.210/g&#x27;  /etc/nginx</span><br><span class="line">sed -i &#x27;s/192.168.120.60/192.168.50.210/g&#x27;  /etc/nginx/conf.d/bbs.conf</span><br><span class="line">sed -i &#x27;s/192.168.120.60/192.168.50.210/g&#x27; /var/www/html/main.dart.js</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="部署服务时采用docker的配置文件"><a href="#部署服务时采用docker的配置文件" class="headerlink" title="部署服务时采用docker的配置文件"></a>部署服务时采用docker的配置文件</h3><p>我部署服务，例如MySQL、nginx等都是通过docker来实现，这样方便些，隔离性也好点</p>
+<p>docker-compose.yml文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">version : &#x27;3&#x27;</span><br><span class="line">name: bbs</span><br><span class="line">services:</span><br><span class="line">  bbs-mysql:</span><br><span class="line">    container_name: bbs-mysql</span><br><span class="line">    image: mysql:8.0.35</span><br><span class="line">    restart: always</span><br><span class="line">    build:</span><br><span class="line">      context: .</span><br><span class="line">      dockerfile: mysql-dockerfile</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;3306:3306&quot;</span><br><span class="line">    volumes:</span><br><span class="line">      - ./mysql/logs:/var/log/</span><br><span class="line">      - ./mysql/data:/var/lib/mysql</span><br><span class="line">    command: [</span><br><span class="line">          &#x27;mysqld&#x27;,</span><br><span class="line">          &#x27;--lower-case-table-names=0&#x27;</span><br><span class="line">        ]</span><br><span class="line">    environment:</span><br><span class="line">      MYSQL_ROOT_PASSWORD: TVI8@techvision</span><br><span class="line">  bbs-nginx:</span><br><span class="line">    restart: always</span><br><span class="line">    container_name: bbs-nginx</span><br><span class="line">    build:</span><br><span class="line">      context: .</span><br><span class="line">      dockerfile: nginx-dockerfile</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;80:80&quot;</span><br><span class="line">      - &quot;8082:8082&quot;</span><br><span class="line">    volumes:</span><br><span class="line">      - ./nginx/dist:/home/v2/resources/tomcat/5.8/pc/dist</span><br><span class="line">      - ./nginx/conf/bbs.conf:/etc/nginx/conf.d/default.conf</span><br><span class="line">      - ./nginx/logs:/var/log/nginx</span><br></pre></td></tr></table></figure>
+
+
+
+<p>nginx-dockerfile</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 基础镜像</span><br><span class="line">FROM nginx:1.25.3</span><br><span class="line"># author</span><br><span class="line">MAINTAINER hukaichao</span><br></pre></td></tr></table></figure>
+
+<p>nginx需要将dist文件和bbs.conf文件中原先的ip地址为192.168.120.60全部替换掉。这里写了个脚本来完成这些事（根据上面欧阳晓晴的文档）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sed -i &#x27;s/192.168.120.60/192.168.50.124/g&#x27; /media/xsr/f/service-60/resources/tomcat/5.8/pc/dist/index.html</span><br><span class="line">sed -i &#x27;s/192.168.120.60/192.168.50.124/g&#x27; /media/xsr/f/service-60/resources/tomcat/5.8/pc/dist/assets/index.3cef83e2.js</span><br><span class="line">sed -i &#x27;s/192.168.120.60/192.168.50.124/g&#x27; /media/xsr/f/service-60/resources/tomcat/5.8/pc/dist/assets/index-legacy.f694b063.js</span><br><span class="line">sed -i &#x27;s/192.168.120.60/192.168.50.124/g&#x27;  /media/xsr/f/service-60/nginx/conf.d/bbs.conf</span><br></pre></td></tr></table></figure>
+
+<p>替换完成后也可能会出现浏览器缓存问题，无法显示内容，这个时候换浏览器换设备查看</p>
+<p>在容器中重新加载nginx配置指令：<code>nginx -s reload</code></p>
+<p>mysql-dockerfile</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 基础镜像</span><br><span class="line">FROM mysql:8.0.35</span><br><span class="line"># author</span><br><span class="line">MAINTAINER hukaichao</span><br><span class="line"></span><br><span class="line"># 执行sql脚本</span><br><span class="line">ADD ./mysql/sql/backup.sql /docker-entrypoint-initdb.d/</span><br></pre></td></tr></table></figure>
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/linux/" class="category-chain-item">linux</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/linux/" class="print-no-link">#linux</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>论坛备份</div>
+      <div>https://hukaichao.me/2023/11/28/论坛备份/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>凌冬</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年11月28日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/12/19/%E5%AF%86%E7%A0%81%E5%AD%A6%E5%AD%A6%E4%B9%A0/" title="密码学学习">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">密码学学习</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/11/28/Java%E6%95%B4%E5%90%88Lucene%E4%BD%9C%E5%85%A8%E6%96%87%E7%B4%A2%E5%BC%95/" title="Java整合Lucene作全文索引">
+                        <span class="hidden-mobile">Java整合Lucene作全文索引</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

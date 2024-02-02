@@ -1,0 +1,661 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="凌冬">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1 修改系统安装器以达到静默安装的效果解决方案：并没有采用自动点击，而是将确认弹窗的函数跳过，直接执行安装相关函数，同样将安装完成后的确认弹窗相关代码删除 补丁： &#x72;&#107;&#x37;&#x31;&#x2d;&#x70;&#97;&#99;&#104;&#97;&#103;&#101;&#115;&#x2d;&#97;&#112;&#112;&#115;&#x2d;&#x70;&amp;#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 定制Installer学习">
+<meta property="og:url" content="https://hukaichao.me/2023/08/21/Android%20%E5%AE%9A%E5%88%B6Installer%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="凌冬的个人博客">
+<meta property="og:description" content="1 修改系统安装器以达到静默安装的效果解决方案：并没有采用自动点击，而是将确认弹窗的函数跳过，直接执行安装相关函数，同样将安装完成后的确认弹窗相关代码删除 补丁： &#x72;&#107;&#x37;&#x31;&#x2d;&#x70;&#97;&#99;&#104;&#97;&#103;&#101;&#115;&#x2d;&#97;&#112;&#112;&#115;&#x2d;&#x70;&amp;#">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-08-21T14:48:37.000Z">
+<meta property="article:modified_time" content="2024-02-02T07:27:40.238Z">
+<meta property="article:author" content="凌冬">
+<meta property="article:tag" content="android">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Android 定制Installer学习 - 凌冬的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Android 定制Installer学习"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-08-21 22:48" pubdate>
+          2023年8月21日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          15 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Android 定制Installer学习</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="1-修改系统安装器以达到静默安装的效果"><a href="#1-修改系统安装器以达到静默安装的效果" class="headerlink" title="1 修改系统安装器以达到静默安装的效果"></a>1 修改系统安装器以达到静默安装的效果</h2><p>解决方案：并没有采用自动点击，而是将确认弹窗的函数跳过，直接执行安装相关函数，同样将安装完成后的确认弹窗相关代码删除</p>
+<p>补丁： <a href="mailto:&#x72;&#107;&#x37;&#x31;&#x2d;&#x70;&#97;&#99;&#104;&#97;&#103;&#101;&#115;&#x2d;&#97;&#112;&#112;&#115;&#x2d;&#x70;&#97;&#99;&#x6b;&#97;&#103;&#x65;&#x69;&#110;&#115;&#x74;&#97;&#x6c;&#x6c;&#101;&#x72;&#64;&#x6d;&#x6f;&#x64;&#x69;&#102;&#121;&#95;&#105;&#x6e;&#115;&#116;&#x61;&#x6c;&#108;&#x65;&#114;&#x5f;&#116;&#111;&#x5f;&#x73;&#x69;&#x6c;&#101;&#110;&#116;&#x5f;&#105;&#x6e;&#115;&#x74;&#97;&#108;&#x6c;&#97;&#116;&#x69;&#x6f;&#110;&#x2e;&#x70;&#97;&#x74;&#99;&#104;">&#x72;&#107;&#x37;&#x31;&#x2d;&#x70;&#97;&#99;&#104;&#97;&#103;&#101;&#115;&#x2d;&#97;&#112;&#112;&#115;&#x2d;&#x70;&#97;&#99;&#x6b;&#97;&#103;&#x65;&#x69;&#110;&#115;&#x74;&#97;&#x6c;&#x6c;&#101;&#x72;&#64;&#x6d;&#x6f;&#x64;&#x69;&#102;&#121;&#95;&#105;&#x6e;&#115;&#116;&#x61;&#x6c;&#108;&#x65;&#114;&#x5f;&#116;&#111;&#x5f;&#x73;&#x69;&#x6c;&#101;&#110;&#116;&#x5f;&#105;&#x6e;&#115;&#x74;&#97;&#108;&#x6c;&#97;&#116;&#x69;&#x6f;&#110;&#x2e;&#x70;&#97;&#x74;&#99;&#104;</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">diff --git a/src/com/android/packageinstaller/InstallAppProgress.java b/src/com/android/packageinstaller/InstallAppProgress.java</span><br><span class="line">index 49d91cf1..dc928ce7 100755</span><br><span class="line">--- a/src/com/android/packageinstaller/InstallAppProgress.java</span><br><span class="line">+++ b/src/com/android/packageinstaller/InstallAppProgress.java</span><br><span class="line">@@ -107,26 +107,29 @@ public class InstallAppProgress extends Activity implements View.OnClickListener</span><br><span class="line">                     int centerTextLabel;</span><br><span class="line">                     int centerExplanationLabel = -1;</span><br><span class="line">                     if (msg.arg1 == PackageInstaller.STATUS_SUCCESS) &#123;</span><br><span class="line">-                        mLaunchButton.setVisibility(View.VISIBLE);</span><br><span class="line">-                        ((ImageView)findViewById(R.id.center_icon))</span><br><span class="line">-                                .setImageDrawable(getDrawable(R.drawable.ic_done_92));</span><br><span class="line">-                        centerTextLabel = R.string.install_done;</span><br><span class="line">-                        // Enable or disable launch button</span><br><span class="line">-                        mLaunchIntent = getPackageManager().getLaunchIntentForPackage(</span><br><span class="line">-                                mAppInfo.packageName);</span><br><span class="line">-                        boolean enabled = false;</span><br><span class="line">-                        if(mLaunchIntent != null) &#123;</span><br><span class="line">-                            List&lt;ResolveInfo&gt; list = getPackageManager().</span><br><span class="line">-                                    queryIntentActivities(mLaunchIntent, 0);</span><br><span class="line">-                            if (list != null &amp;&amp; list.size() &gt; 0) &#123;</span><br><span class="line">-                                enabled = true;</span><br><span class="line">-                            &#125;</span><br><span class="line">-                        &#125;</span><br><span class="line">-                        if (enabled) &#123;</span><br><span class="line">-                            mLaunchButton.setOnClickListener(InstallAppProgress.this);</span><br><span class="line">-                        &#125; else &#123;</span><br><span class="line">-                            mLaunchButton.setEnabled(false);</span><br><span class="line">-                        &#125;</span><br><span class="line">+                        Log.d(TAG, &quot;Install succeeded!&quot;);</span><br><span class="line">+                        clearCachedApkIfNeededAndFinish();</span><br><span class="line">+                        return;</span><br><span class="line">                     &#125; else if (msg.arg1 == PackageInstaller.STATUS_FAILURE_STORAGE)&#123;</span><br><span class="line">                         showDialogInner(DLG_OUT_OF_SPACE);</span><br><span class="line">                         return;</span><br><span class="line">diff --git a/src/com/android/packageinstaller/PackageInstallerActivity.java b/src/com/android/packageinstaller/PackageInstallerActivity.java</span><br><span class="line">index de685825..cf4d20f8 100644</span><br><span class="line">--- a/src/com/android/packageinstaller/PackageInstallerActivity.java</span><br><span class="line">+++ b/src/com/android/packageinstaller/PackageInstallerActivity.java</span><br><span class="line">@@ -391,8 +391,8 @@ public class PackageInstallerActivity extends Activity implements OnCancelListen</span><br><span class="line">         &#125; catch (NameNotFoundException e) &#123;</span><br><span class="line">             mAppInfo = null;</span><br><span class="line">         &#125;</span><br><span class="line">-</span><br><span class="line">-        startInstallConfirm();</span><br><span class="line">+        startInstall();</span><br><span class="line">     &#125;</span><br><span class="line"> </span><br><span class="line">     void setPmResult(int pmResult) &#123;</span><br><span class="line">@@ -474,6 +474,7 @@ public class PackageInstallerActivity extends Activity implements OnCancelListen</span><br><span class="line">      */</span><br><span class="line">     private void checkIfAllowedAndInitiateInstall(boolean ignoreUnknownSourcesSettings) &#123;</span><br><span class="line">         // Block the install attempt on the Unknown Sources setting if necessary.</span><br><span class="line">+        ignoreUnknownSourcesSettings = true;</span><br><span class="line">         final boolean requestFromUnknownSource = isInstallRequestFromUnknownSource(getIntent());</span><br><span class="line">         if (!requestFromUnknownSource) &#123;</span><br><span class="line">             initiateInstall();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-定制化后台静默安装器"><a href="#2-定制化后台静默安装器" class="headerlink" title="2 定制化后台静默安装器"></a>2 定制化后台静默安装器</h2><p>需求：从系统安装器里提取安装流程的相关代码，并创建一个后台Service，将所有流程集成其中，从而实现一个定制化的后台静默安装器。</p>
+<p>补丁：<a href="mailto:&#x72;&#107;&#55;&#49;&#x2d;&#x70;&#97;&#x63;&#x6b;&#x61;&#x67;&#101;&#115;&#45;&#97;&#x70;&#x70;&#115;&#45;&#x50;&#x61;&#x63;&#x6b;&#97;&#103;&#101;&#73;&#x6e;&#115;&#x74;&#97;&#108;&#108;&#x65;&#x72;&#x40;&#67;&#x72;&#x65;&#97;&#116;&#101;&#95;&#x73;&#101;&#114;&#x76;&#101;&#x72;&#95;&#102;&#111;&#x72;&#x5f;&#x73;&#x69;&#108;&#x65;&#110;&#116;&#95;&#105;&#x6e;&#115;&#116;&#x61;&#x6c;&#x6c;&#97;&#105;&#x6f;&#110;&#46;&#x70;&#x61;&#116;&#99;&#104;">&#x72;&#107;&#55;&#49;&#x2d;&#x70;&#97;&#x63;&#x6b;&#x61;&#x67;&#101;&#115;&#45;&#97;&#x70;&#x70;&#115;&#45;&#x50;&#x61;&#x63;&#x6b;&#97;&#103;&#101;&#73;&#x6e;&#115;&#x74;&#97;&#108;&#108;&#x65;&#x72;&#x40;&#67;&#x72;&#x65;&#97;&#116;&#101;&#95;&#x73;&#101;&#114;&#x76;&#101;&#x72;&#95;&#102;&#111;&#x72;&#x5f;&#x73;&#x69;&#108;&#x65;&#110;&#116;&#95;&#105;&#x6e;&#115;&#116;&#x61;&#x6c;&#x6c;&#97;&#105;&#x6f;&#110;&#46;&#x70;&#x61;&#116;&#99;&#104;</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br></pre></td><td class="code"><pre><span class="line">diff --git a/src/com/android/packageinstaller/SilenceInstallService.java b/src/com/android/packageinstaller/SilenceInstallService.java</span><br><span class="line">new file mode 100644</span><br><span class="line">index 00000000..cdabde7c</span><br><span class="line">--- /dev/null</span><br><span class="line">+++ b/src/com/android/packageinstaller/SilenceInstallService.java</span><br><span class="line">@@ -0,0 +1,262 @@</span><br><span class="line">+package com.android.packageinstaller;</span><br><span class="line">+</span><br><span class="line">+import java.io.File;</span><br><span class="line">+</span><br><span class="line">+import android.content.BroadcastReceiver;</span><br><span class="line">+import android.content.Context;</span><br><span class="line">+import android.content.Intent;</span><br><span class="line">+import android.app.PendingIntent;</span><br><span class="line">+import android.content.IntentFilter;</span><br><span class="line">+import android.content.ContentResolver;</span><br><span class="line">+import android.content.pm.PackageInfo;</span><br><span class="line">+import android.content.pm.PackageInstaller;</span><br><span class="line">+import android.content.pm.PackageManager;</span><br><span class="line">+import android.content.pm.PackageParser;</span><br><span class="line">+import android.content.pm.PackageParser.PackageLite;</span><br><span class="line">+import android.net.Uri;</span><br><span class="line">+import android.util.Log;</span><br><span class="line">+import android.os.Handler;</span><br><span class="line">+import android.os.HandlerThread;</span><br><span class="line">+import android.os.Message;</span><br><span class="line">+</span><br><span class="line">+import android.app.IntentService;</span><br><span class="line">+import android.widget.Toast;</span><br><span class="line">+</span><br><span class="line">+import com.android.internal.content.PackageHelper;</span><br><span class="line">+</span><br><span class="line">+import java.io.FileOutputStream;</span><br><span class="line">+import java.io.FileInputStream;</span><br><span class="line">+import java.io.IOException;</span><br><span class="line">+import java.io.InputStream;</span><br><span class="line">+import java.io.OutputStream;</span><br><span class="line">+</span><br><span class="line">+public class SilenceInstallService extends IntentService &#123;</span><br><span class="line">+    private static final String JINNYTAG = &quot;jinny&quot;+SilenceInstallService.class.getSimpleName();</span><br><span class="line">+</span><br><span class="line">+    private static final String BROADCAST_ACTION =&quot;com.android.packageinstaller.ACTION_INSTALL_COMMIT&quot;;</span><br><span class="line">+    private static final String BROADCAST_SENDER_PERMISSION =&quot;android.permission.INSTALL_PACKAGES&quot;;</span><br><span class="line">+</span><br><span class="line">+    private final String[] whiteOpenPackageName = &#123;&quot;com.example.launcherlearn2&quot;&#125;;</span><br><span class="line">+</span><br><span class="line">+    private final Object lock = new Object();</span><br><span class="line">+    private final int INSTALL_COMPLETE = 1;</span><br><span class="line">+    private Uri mPackageURI;</span><br><span class="line">+    private String packageName;</span><br><span class="line">+</span><br><span class="line">+    private Handler mHandler = new Handler() &#123;</span><br><span class="line">+        public void handleMessage(Message msg) &#123;</span><br><span class="line">+            Log.d(JINNYTAG, &quot;msg.what = &quot;+msg.what+&quot;, msg.arg1 = &quot;+msg.arg1);</span><br><span class="line">+            switch (msg.what) &#123;</span><br><span class="line">+                case INSTALL_COMPLETE:</span><br><span class="line">+                    if (msg.arg1 == PackageInstaller.STATUS_SUCCESS) &#123;</span><br><span class="line">+                        if(null != packageName &amp;&amp; java.util.Arrays.asList(whiteOpenPackageName).contains(packageName))&#123;</span><br><span class="line">+                            // openInstallApp(packageName);</span><br><span class="line">+                            Log.d(JINNYTAG, &quot;success install apk: &quot;+packageName);</span><br><span class="line">+                       &#125;</span><br><span class="line">+                        Toast.makeText(getApplicationContext(), R.string.install_done, Toast.LENGTH_SHORT).show();</span><br><span class="line">+                    &#125; else if (msg.arg1 == PackageInstaller.STATUS_FAILURE_STORAGE) &#123;</span><br><span class="line">+                        Toast.makeText(getApplicationContext(), R.string.out_of_space_dlg_title, Toast.LENGTH_SHORT).show();</span><br><span class="line">+                    &#125; else &#123;</span><br><span class="line">+                        Toast.makeText(getApplicationContext(), R.string.install_failed, Toast.LENGTH_SHORT).show();</span><br><span class="line">+                    &#125;</span><br><span class="line">+                    break;</span><br><span class="line">+                default:</span><br><span class="line">+                    break;</span><br><span class="line">+            &#125;</span><br><span class="line">+        &#125;</span><br><span class="line">+    &#125;;</span><br><span class="line">+</span><br><span class="line">+    private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() &#123;</span><br><span class="line">+        @Override</span><br><span class="line">+        public void onReceive(Context context, Intent intent) &#123;</span><br><span class="line">+            Log.d(JINNYTAG, &quot;INSTALL_COMPLETE mBroadcastReceiver&quot;);</span><br><span class="line">+            final int statusCode = intent.getIntExtra(PackageInstaller.EXTRA_STATUS, PackageInstaller.STATUS_FAILURE);</span><br><span class="line">+            if (statusCode == PackageInstaller.STATUS_PENDING_USER_ACTION) &#123;</span><br><span class="line">+		        onPackageInstalled(statusCode);</span><br><span class="line">+                //context.startActivity((Intent)intent.getParcelableExtra(Intent.EXTRA_INTENT));</span><br><span class="line">+            &#125; else &#123;</span><br><span class="line">+                onPackageInstalled(statusCode);</span><br><span class="line">+            &#125;</span><br><span class="line">+            synchronized (lock) &#123;</span><br><span class="line">+               lock.notify();</span><br><span class="line">+            &#125;</span><br><span class="line">+        &#125;</span><br><span class="line">+    &#125;;</span><br><span class="line">+</span><br><span class="line">+    private void onPackageInstalled(int statusCode) &#123;</span><br><span class="line">+        Message msg = mHandler.obtainMessage(INSTALL_COMPLETE);</span><br><span class="line">+        msg.arg1 = statusCode;</span><br><span class="line">+        mHandler.sendMessage(msg);</span><br><span class="line">+    &#125;</span><br><span class="line">+</span><br><span class="line">+    // private void openInstallApp(String packageName)&#123;</span><br><span class="line">+    //     Log.e(JINNYTAG,  &quot;openInstallApp packageName = &quot;+packageName);</span><br><span class="line">+    //     boolean enabled = false;</span><br><span class="line">+    //    Intent mLaunchIntent;</span><br><span class="line">+    //     mLaunchIntent = getPackageManager().getLaunchIntentForPackage(packageName);</span><br><span class="line">+    //     if(mLaunchIntent != null) &#123;</span><br><span class="line">+    //         java.util.List&lt;android.content.pm.ResolveInfo&gt; list = getPackageManager().</span><br><span class="line">+    //                 queryIntentActivities(mLaunchIntent, 0);</span><br><span class="line">+    //         if (list != null &amp;&amp; list.size() &gt; 0) &#123;</span><br><span class="line">+    //             enabled = true;</span><br><span class="line">+    //         &#125;</span><br><span class="line">+    //     &#125;</span><br><span class="line">+    //     if (enabled) &#123;</span><br><span class="line">+    //         try &#123;</span><br><span class="line">+    //             startActivity(mLaunchIntent);</span><br><span class="line">+    //         &#125; catch (Exception e) &#123;</span><br><span class="line">+    //             Log.e(&quot;SilenceInstallService&quot;, &quot;Could not start activity&quot;, e);</span><br><span class="line">+    //         &#125;</span><br><span class="line">+    //     &#125;</span><br><span class="line">+    // &#125;</span><br><span class="line">+</span><br><span class="line">+   public SilenceInstallService() &#123;</span><br><span class="line">+        super(&quot;SilenceInstallService&quot;);</span><br><span class="line">+    &#125;</span><br><span class="line">+</span><br><span class="line">+    @Override</span><br><span class="line">+    protected void onHandleIntent(Intent intent) &#123;</span><br><span class="line">+	    IntentFilter intentFilter = new IntentFilter();</span><br><span class="line">+        intentFilter.addAction(BROADCAST_ACTION);</span><br><span class="line">+        registerReceiver(mBroadcastReceiver, intentFilter, BROADCAST_SENDER_PERMISSION, null);</span><br><span class="line">+        synchronized (lock) &#123;</span><br><span class="line">+            handleIntent(intent);</span><br><span class="line">+            try &#123;</span><br><span class="line">+                lock.wait();</span><br><span class="line">+            &#125; catch (InterruptedException e) &#123;</span><br><span class="line">+                Log.d(&quot;jinny SilenceInstallService 0&quot;,e.toString());</span><br><span class="line">+            &#125;</span><br><span class="line">+       &#125;</span><br><span class="line">+    &#125;</span><br><span class="line">+</span><br><span class="line">+    @Override</span><br><span class="line">+    public void onDestroy() &#123;</span><br><span class="line">+        super.onDestroy();</span><br><span class="line">+        Log.d(JINNYTAG, &quot;onDestroy&quot;);</span><br><span class="line">+        unregisterReceiver(mBroadcastReceiver);</span><br><span class="line">+    &#125;</span><br><span class="line">+</span><br><span class="line">+    private void handleIntent(Intent intent) &#123;</span><br><span class="line">+        File file = InBackground(intent.getData());</span><br><span class="line">+        mPackageURI = Uri.fromFile(file);</span><br><span class="line">+        Log.d(JINNYTAG, &quot;mPackageURI = &quot;+mPackageURI);</span><br><span class="line">+</span><br><span class="line">+		if (&quot;package&quot;.equals(mPackageURI.getScheme())) &#123;</span><br><span class="line">+			try &#123;</span><br><span class="line">+				PackageLite pkg = PackageParser.parsePackageLite(file, 0);</span><br><span class="line">+	    	    getPackageManager().installExistingPackage(pkg.packageName);</span><br><span class="line">+                packageName = pkg.packageName;</span><br><span class="line">+		    	onPackageInstalled(PackageInstaller.STATUS_SUCCESS);</span><br><span class="line">+			&#125; catch (Exception e) &#123;</span><br><span class="line">+				onPackageInstalled(PackageInstaller.STATUS_FAILURE_INVALID);</span><br><span class="line">+                Log.d(&quot;jinny SilenceInstallService Exception1&quot;,e.toString());</span><br><span class="line">+			&#125;</span><br><span class="line">+		&#125; else &#123;</span><br><span class="line">+           final PackageInstaller.SessionParams params = new PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL);</span><br><span class="line">+			try &#123;</span><br><span class="line">+	            PackageLite pkg = PackageParser.parsePackageLite(file, 0);</span><br><span class="line">+	            params.setAppPackageName(pkg.packageName);</span><br><span class="line">+	            params.setInstallLocation(pkg.installLocation);</span><br><span class="line">+	            params.setSize(PackageHelper.calculateInstalledSize(pkg, false, params.abiOverride));</span><br><span class="line">+                packageName = pkg.packageName;</span><br><span class="line">+	        &#125; catch (PackageParser.PackageParserException e) &#123;</span><br><span class="line">+	            params.setSize(file.length());</span><br><span class="line">+                Log.d(&quot;jinny SilenceInstallService Exception2&quot;,e.toString());</span><br><span class="line">+	        &#125; catch (IOException e) &#123;</span><br><span class="line">+	            params.setSize(file.length());</span><br><span class="line">+                Log.d(&quot;jinny SilenceInstallService Exception3&quot;,e.toString());</span><br><span class="line">+	        &#125;</span><br><span class="line">+            doPackageStage(getPackageManager(), params);</span><br><span class="line">+		&#125;</span><br><span class="line">+</span><br><span class="line">+    &#125;</span><br><span class="line">+</span><br><span class="line">+    private File InBackground(Uri uri) &#123;</span><br><span class="line">+        if (uri == null || uri.toString().length() &lt;= 0) &#123;</span><br><span class="line">+            Log.d(JINNYTAG, &quot;uri == null&quot;);</span><br><span class="line">+           return null;</span><br><span class="line">+        &#125;</span><br><span class="line">+        Uri packageUri = uri;</span><br><span class="line">+        File sourceFile = null;</span><br><span class="line">+        try &#123;</span><br><span class="line">+            if (packageUri.getScheme().equals(ContentResolver.SCHEME_FILE)) &#123;</span><br><span class="line">+                sourceFile = new File(packageUri.getPath());</span><br><span class="line">+            &#125; else if (packageUri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) &#123;</span><br><span class="line">+                sourceFile = File.createTempFile(&quot;package&quot;, &quot;.apk&quot;, getNoBackupFilesDir());</span><br><span class="line">+                try (</span><br><span class="line">+                    InputStream in = getContentResolver().openInputStream(packageUri);</span><br><span class="line">+                    OutputStream out = (in != null) ? new FileOutputStream(sourceFile) : null;</span><br><span class="line">+                ) &#123;</span><br><span class="line">+                    if (in == null) &#123;</span><br><span class="line">+                        return null;</span><br><span class="line">+                    &#125;</span><br><span class="line">+                    byte[] buffer = new byte[4096];</span><br><span class="line">+                    int bytesRead;</span><br><span class="line">+                   while ((bytesRead = in.read(buffer)) &gt;= 0) &#123;</span><br><span class="line">+                        out.write(buffer, 0, bytesRead);</span><br><span class="line">+                    &#125;</span><br><span class="line">+                &#125;catch (Exception e) &#123;</span><br><span class="line">+                    Log.d(&quot;jinny SilenceInstallService Exception4&quot;,e.toString());</span><br><span class="line">+                &#125;</span><br><span class="line">+            &#125;</span><br><span class="line">+        &#125; catch (IOException ioe) &#123;</span><br><span class="line">+            if (sourceFile != null) &#123;</span><br><span class="line">+                sourceFile.delete();</span><br><span class="line">+                return null;</span><br><span class="line">+            &#125;</span><br><span class="line">+            Log.d(&quot;jinny SilenceInstallService Exception5&quot;,ioe.toString());</span><br><span class="line">+        &#125;</span><br><span class="line">+        return sourceFile;</span><br><span class="line">+    &#125;</span><br><span class="line">+</span><br><span class="line">+    private void doPackageStage(PackageManager pm, PackageInstaller.SessionParams params) &#123;</span><br><span class="line">+        final PackageInstaller packageInstaller = pm.getPackageInstaller();</span><br><span class="line">+        PackageInstaller.Session session = null;</span><br><span class="line">+        try &#123;</span><br><span class="line">+            final String packageLocation = mPackageURI.getPath();</span><br><span class="line">+            final File file = new File(packageLocation);</span><br><span class="line">+	        Log.d(JINNYTAG, &quot;file_path = &quot;+file.getPath()+&quot;, exists = &quot;+file.exists()+ &quot;, canRead = &quot;+file.canRead());</span><br><span class="line">+</span><br><span class="line">+            final int sessionId = packageInstaller.createSession(params);</span><br><span class="line">+            final byte[] buffer = new byte[65536];</span><br><span class="line">+            final long sizeBytes = file.length();</span><br><span class="line">+           session = packageInstaller.openSession(sessionId);</span><br><span class="line">+            try (</span><br><span class="line">+                final InputStream in = new FileInputStream(file);</span><br><span class="line">+                final OutputStream out = session.openWrite(&quot;PackageInstaller&quot;, 0, sizeBytes);</span><br><span class="line">+            )&#123;</span><br><span class="line">+                int c;</span><br><span class="line">+                while ((c = in.read(buffer)) != -1) &#123;</span><br><span class="line">+                    out.write(buffer, 0, c);</span><br><span class="line">+                    if (sizeBytes &gt; 0) &#123;</span><br><span class="line">+                        final float fraction = ((float) c / (float) sizeBytes);</span><br><span class="line">+                       session.addProgress(fraction);</span><br><span class="line">+                    &#125;</span><br><span class="line">+                &#125;</span><br><span class="line">+            &#125;</span><br><span class="line">+	        Intent broadcastIntent = new Intent(BROADCAST_ACTION);</span><br><span class="line">+            PendingIntent pendingIntent = PendingIntent.getBroadcast(</span><br><span class="line">+                    SilenceInstallService.this /*context*/,</span><br><span class="line">+                    sessionId,</span><br><span class="line">+                    broadcastIntent,</span><br><span class="line">+                   PendingIntent.FLAG_UPDATE_CURRENT);</span><br><span class="line">+            session.commit(pendingIntent.getIntentSender());</span><br><span class="line">+        &#125; catch (IOException e) &#123;</span><br><span class="line">+	        onPackageInstalled(PackageInstaller.STATUS_FAILURE);</span><br><span class="line">+            Log.d(&quot;jinny SilenceInstallService Exception6&quot;,e.toString());</span><br><span class="line">+        &#125; finally &#123;</span><br><span class="line">+            if(session!=null)</span><br><span class="line">+                session.close();</span><br><span class="line">+            clearCachedApkIfNeededAndFinish();</span><br><span class="line">+        &#125;</span><br><span class="line">+    &#125;</span><br><span class="line">+</span><br><span class="line">+    private void clearCachedApkIfNeededAndFinish() &#123;</span><br><span class="line">+        if (&quot;file&quot;.equals(mPackageURI.getScheme()) &amp;&amp; mPackageURI.getPath() != null</span><br><span class="line">+                &amp;&amp; mPackageURI.getPath().startsWith(getNoBackupFilesDir().toString())) &#123;</span><br><span class="line">+            File file = new File(mPackageURI.getPath());</span><br><span class="line">+            boolean delete = file.delete();</span><br><span class="line">+            Log.d(JINNYTAG, &quot;clearCachedApkIfNeededAndFinish delete = &quot;+delete);</span><br><span class="line">+        &#125;</span><br><span class="line">+    &#125;</span><br><span class="line">+&#125;</span><br><span class="line">\ No newline at end of file</span><br><span class="line">diff --git a/AndroidManifest.xml b/AndroidManifest.xml</span><br><span class="line">index 654e5d1c..ab656fab 100644</span><br><span class="line">--- a/AndroidManifest.xml</span><br><span class="line">+++ b/AndroidManifest.xml</span><br><span class="line">@@ -131,6 +131,11 @@</span><br><span class="line">             &lt;/intent-filter&gt;</span><br><span class="line">         &lt;/service&gt;</span><br><span class="line"> </span><br><span class="line">+        &lt;service</span><br><span class="line">+            android:name=&quot;.SilenceInstallService&quot;</span><br><span class="line">+            android:exported=&quot;true&quot; &gt;</span><br><span class="line">+        &lt;/service&gt;</span><br><span class="line">+</span><br><span class="line">         &lt;provider android:name=&quot;.wear.WearPackageIconProvider&quot;</span><br><span class="line">                   android:authorities=&quot;com.google.android.packageinstaller.wear.provider&quot;</span><br><span class="line">                   android:grantUriPermissions=&quot;true&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="3-动态切换系统安装器和定制化的安装器"><a href="#3-动态切换系统安装器和定制化的安装器" class="headerlink" title="3 动态切换系统安装器和定制化的安装器"></a>3 动态切换系统安装器和定制化的安装器</h2><p>需求：用Hook、Intent、包名白名单的方式，去动态切换系统安装器和定制化的安装器。</p>
+<p>补丁：<a href="mailto:&#x72;&#x6b;&#x37;&#49;&#x2d;&#102;&#x72;&#x61;&#109;&#x65;&#x77;&#111;&#114;&#x6b;&#x73;&#45;&#x62;&#x61;&#x73;&#101;&#x2d;&#x63;&#111;&#114;&#x65;&#64;&#x61;&#x64;&#100;&#x5f;&#x68;&#x6f;&#x6f;&#107;&#x5f;&#105;&#110;&#x74;&#101;&#114;&#x63;&#x65;&#x70;&#116;&#x5f;&#x69;&#110;&#115;&#x74;&#97;&#108;&#108;&#97;&#116;&#105;&#111;&#110;&#x5f;&#105;&#x6e;&#x74;&#101;&#110;&#116;&#46;&#112;&#x61;&#116;&#99;&#104;">&#x72;&#x6b;&#x37;&#49;&#x2d;&#102;&#x72;&#x61;&#109;&#x65;&#x77;&#111;&#114;&#x6b;&#x73;&#45;&#x62;&#x61;&#x73;&#101;&#x2d;&#x63;&#111;&#114;&#x65;&#64;&#x61;&#x64;&#100;&#x5f;&#x68;&#x6f;&#x6f;&#107;&#x5f;&#105;&#110;&#x74;&#101;&#114;&#x63;&#x65;&#x70;&#116;&#x5f;&#x69;&#110;&#115;&#x74;&#97;&#108;&#108;&#97;&#116;&#105;&#111;&#110;&#x5f;&#105;&#x6e;&#x74;&#101;&#110;&#116;&#46;&#112;&#x61;&#116;&#99;&#104;</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">diff --git a/core/java/android/app/Instrumentation.java b/core/java/android/app/Instrumentation.java</span><br><span class="line">index 95ea2a561bb..e9a572bba81 100644</span><br><span class="line">--- a/core/java/android/app/Instrumentation.java</span><br><span class="line">+++ b/core/java/android/app/Instrumentation.java</span><br><span class="line">@@ -48,6 +48,8 @@ import android.view.MotionEvent;</span><br><span class="line"> import android.view.ViewConfiguration;</span><br><span class="line"> import android.view.Window;</span><br><span class="line"> import com.android.internal.content.ReferrerIntent;</span><br><span class="line">+import android.content.pm.PackageManager;</span><br><span class="line">+import android.content.pm.PackageInfo;</span><br><span class="line"> </span><br><span class="line"> import java.io.File;</span><br><span class="line"> import java.lang.annotation.Retention;</span><br><span class="line">@@ -82,6 +84,8 @@ public class Instrumentation &#123;</span><br><span class="line"> </span><br><span class="line">     private static final String TAG = &quot;Instrumentation&quot;;</span><br><span class="line"> </span><br><span class="line">+    private static final String[] WHITE_LIST = &#123;&quot;com.example.launcherlearn2&quot;&#125;;</span><br><span class="line">+</span><br><span class="line">     /**</span><br><span class="line">      * @hide</span><br><span class="line">      */</span><br><span class="line">@@ -1492,6 +1496,36 @@ public class Instrumentation &#123;</span><br><span class="line">     public ActivityResult execStartActivity(</span><br><span class="line">             Context who, IBinder contextThread, IBinder token, Activity target,</span><br><span class="line">             Intent intent, int requestCode, Bundle options) &#123;</span><br><span class="line">+</span><br><span class="line">+        Log.d(&quot;hukaichao intent: &quot;,intent.toString());</span><br><span class="line">+        Uri data = intent.getData();</span><br><span class="line">+        if (data != null) &#123;</span><br><span class="line">+            String filePath = data.getPath();</span><br><span class="line">+            if (filePath != null &amp;&amp; filePath.endsWith(&quot;.apk&quot;)) &#123;</span><br><span class="line">+                File file = new File(filePath);</span><br><span class="line">+                if (file.exists()) &#123;</span><br><span class="line">+                    PackageManager pm = who.getPackageManager();</span><br><span class="line">+                    PackageInfo info = pm.getPackageArchiveInfo(filePath, PackageManager.GET_ACTIVITIES);</span><br><span class="line">+                    if (info != null) &#123;</span><br><span class="line">+                        String packageName = info.packageName;</span><br><span class="line">+                        Log.d(&quot;hukaichao pacakage&quot;, packageName);</span><br><span class="line">+                        for (String whitePackageName : WHITE_LIST) &#123;</span><br><span class="line">+                            if (whitePackageName.equals(packageName)) &#123;</span><br><span class="line">+                                intent.setAction(&quot;android.intent.action.SILENCE_INSTALL_PACKAGE&quot;);</span><br><span class="line">+                                intent.setPackage(&quot;com.techvision.scanandinstallapk&quot;);</span><br><span class="line">+                                intent.putExtra(&quot;apk_path&quot;, filePath);</span><br><span class="line">+                                Log.d(&quot;hukaichao Instrumentation&quot;,&quot;action = &quot;+intent.getAction());</span><br><span class="line">+                            &#125;</span><br><span class="line">+                        &#125;</span><br><span class="line">+                    &#125;</span><br><span class="line">+                &#125; else &#123;</span><br><span class="line">+                    Log.d(&quot;hukaichao Instrumentation&quot;,&quot;file not exists&quot;);</span><br><span class="line">+                &#125;</span><br><span class="line">+            &#125; else &#123;</span><br><span class="line">+                Log.d(&quot;hukaichao Instrumentation&quot;,&quot;filePath is null or not end with .apk&quot;);</span><br><span class="line">+            &#125;</span><br><span class="line">+        &#125;</span><br><span class="line">+</span><br><span class="line">         IApplicationThread whoThread = (IApplicationThread) contextThread;</span><br><span class="line">         Uri referrer = target != null ? target.onProvideReferrer() : null;</span><br><span class="line">         if (referrer != null) &#123;</span><br></pre></td></tr></table></figure>
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/android/" class="category-chain-item">android</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/android/" class="print-no-link">#android</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Android 定制Installer学习</div>
+      <div>https://hukaichao.me/2023/08/21/Android 定制Installer学习/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>凌冬</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年8月21日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/08/21/Java%E8%B0%83%E7%94%A8python%E6%9C%8D%E5%8A%A1/" title="Java调用python服务">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Java调用python服务</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/08/21/git&amp;repo%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4/" title="git&amp;repo常用指令">
+                        <span class="hidden-mobile">git&amp;repo常用指令</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

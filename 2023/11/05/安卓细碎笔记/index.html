@@ -1,0 +1,685 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="凌冬">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="细碎的笔记 安卓中开发一般可以采用userdebug模式，但交付的时候一般是user模式。user模式可能会因为权限问题发生莫名其妙的错误。比如selinux会不给权限拒绝操作。另外还无法adb root 也就无法push apk到一些特殊的路径，比如data、system，还遇到了编译通过烧录无法开机的问题，没排查到原因，后面自己解决了，测试了多次，怀疑是注册system service的时候写">
+<meta property="og:type" content="article">
+<meta property="og:title" content="安卓细碎笔记">
+<meta property="og:url" content="https://hukaichao.me/2023/11/05/%E5%AE%89%E5%8D%93%E7%BB%86%E7%A2%8E%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="凌冬的个人博客">
+<meta property="og:description" content="细碎的笔记 安卓中开发一般可以采用userdebug模式，但交付的时候一般是user模式。user模式可能会因为权限问题发生莫名其妙的错误。比如selinux会不给权限拒绝操作。另外还无法adb root 也就无法push apk到一些特殊的路径，比如data、system，还遇到了编译通过烧录无法开机的问题，没排查到原因，后面自己解决了，测试了多次，怀疑是注册system service的时候写">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-11-05T14:16:40.000Z">
+<meta property="article:modified_time" content="2024-02-02T07:27:40.325Z">
+<meta property="article:author" content="凌冬">
+<meta property="article:tag" content="android">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>安卓细碎笔记 - 凌冬的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="安卓细碎笔记"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-11-05 22:16" pubdate>
+          2023年11月5日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          16 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">安卓细碎笔记</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="细碎的笔记"><a href="#细碎的笔记" class="headerlink" title="细碎的笔记"></a>细碎的笔记</h2><ul>
+<li><p>安卓中开发一般可以采用userdebug模式，但交付的时候一般是user模式。user模式可能会因为权限问题发生莫名其妙的错误。比如selinux会不给权限拒绝操作。另外还无法adb root 也就无法push apk到一些特殊的路径，比如data、system，还遇到了编译通过烧录无法开机的问题，没排查到原因，后面自己解决了，测试了多次，怀疑是注册system service的时候写在系统服务那里了，导致的系统无法启动，后面移到了很后面。 </p>
+</li>
+<li><p>安卓11之后修改framework源码会有强制lint检测，要求方法和参数都标注上是否可为空，还有异常的检查。这种原则上需要按照检查修改代码，不过也可以直接在frameworks&#x2F;base&#x2F;Android.bp中的 metalava_framework_docs_args 添加    “–api-lint-ignore-prefix android.app. “ + 来无视检查。 </p>
+</li>
+<li><p>安卓设置系统时间是需要权限的，如果是app的话保证app的uid为system ，此外还需要申请如下权限。不过我直接在源码中添加了一个system服务，以system_service用户执行，该接口可以直接修改系统时间，要用的话还是要jar包（后面就别在system里面加服务了，都是直接写一个系统权限apk来完成）。 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;uses-permission android:name=&quot;android.permission.CHANGE_CONFIGURATION&quot; /&gt;    </span><br><span class="line">&lt;uses-permission android:name=&quot;android.permission.SET_TIME_ZONE&quot; /&gt; </span><br></pre></td></tr></table></figure>
+</li>
+<li><p>system_service 没有读写 sdcard 的权限.在 Android11 之前，可以通过修改用户组来获得权限<code>system/core/include/private/android_filesystem_config.h</code><br>可查看权限对应的用户组, <code>frameworks/base/core/java/com/android/internal/os/ZygoteInit.java</code>	<code>--setgroups</code>设置用户组<br>。但Android11 之后就不行了</p>
+</li>
+<li><p>对外提供需要特殊权限接口，最佳做法是提供一个系统权限的APK，而不是在system_service中新增一个服务。在提供静默安装接口时尝试使用system_service用户执行，但该用户是没有读取sd卡内容的权限的，这一点很奇怪，而且不好修改权限组给它权限，尝试了一下失败了，这个和Android11的一些改变有关，sdcard的权限组发生了变化。最初方案是通过在settings中加了一个广播接收器来进行静默安装，在广播的转发过程中发现同步返回安装结果是一个大问题。<br>最后通过apk和aidl顺利解决了这个问题。在安卓源码中添加一个apk，编写好Android.mk和AndroidMainfest.xml文件，在AndroidMainfest文件中可以给应用权限，Android.mk文件可以给apk系统签名。在apk中创建一个aidl，实现它，写一个service将aidl的实现注册到ServerManager中，此时该服务就在系统中了，还需要apk接受开机广播进行自启动才能启动服务。另外apk放在packages&#x2F;apps目录下，需要在device&#x2F;rockchip&#x2F;rk356x&#x2F;device.mk中的PRODUCT_PACKAGES加上自己的应用的包名，这样烧录后会预装到system&#x2F;app目录下，可以接受开机广播，如果预装到data目录下可能无法收到开机广播也就无法自启动。在调用该服务的时候，需要将aidl文件拷贝一份，放到调用的地方下，因为客户端和服务端要保证所调用的aidl接口一致，所以客户端也需要一个完全一样aidl文件，如果不需要aidl文件，那么可以在服务端再写一个manager类，将service内置到manager中，再将manager注册到系统服务里面。自此就可以顺利通过aidl和客户端来创建接口了。</p>
+</li>
+<li><p>系统应用发送的广播需要加上 protected-broadcast ，不然会被阻止。 </p>
+</li>
+<li><p>应用A发送一个广播到应用B，发送后中断当前方法，应用B收到广播后执行相应的操作，等到操作结束后再发送广播反馈给应用A执行结果，应用A拿到执行结果后再被唤醒，继续之前的方法。这里有一个同步操作，采用synchronized 或者 CountDownLatch 中断同步方法 都会收不到A的广播，一直阻塞下去。这个问题没解决，记录一下，可能和service是单独一个子线程有关，如果有中断的同步就会出问题。</p>
+</li>
+<li><p>在打补丁前，为了代码和其他人员一致，便于补丁能顺利打上，一般需要先pull代码。但是在做安卓定制的时候，是基于底层给的一个补丁脚本来还原代码环境的。执行脚本前要先执行根目录下的 revert.sh，此时会将未提交的代码还原，但是代码中已经commit 是无法还原的，所以这里需要到提交的目录下使用 git reset –hard commitID 来还原代码，不然脚本会执行失败。 使用 git reset –hard 之后想要将代码还原，可以使用git reflog 查看提交日志，这里会看到git log中看不到的回滚信息。找到想要恢复的版本号之后使用 git reset –hard “id” 就可以顺利恢复文件了</p>
+</li>
+<li><p>串口调试路径 -&gt; TVI3356A_android12&#x2F;kernel-5.10&#x2F;arch&#x2F;arm64&#x2F;boot&#x2F;dts&#x2F;rockchip&#x2F;rk3588-android.dtsi，打开此文件，搜索 debugger 可以看到 baudrate，这个就是查看窗口的波特率。此路径下还有大量dtsi文件，首次编译时如要选电压，也是在该路径下的dtsi文件中查看， 具体是哪个 dtsi文件 可以看 kernel.sh</p>
+</li>
+<li><p>adb里面写入和查看framework中Setting里面Global的值的方式：</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">settings get global 属性名</span><br><span class="line">settings put global 属性名</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<ul>
+<li><p>打包OTA升级包的方式： 在 .&#x2F;debug.sh脚本中 将make installclean和.&#x2F;mkimage.sh换成下面的 make dist .&#x2F;mkimage.sh ota</p>
+</li>
+<li><p>在进行OTA包升级操作时，代码需要加上包验证，不加的话如果用其他提供商的固件来升级自己的板子，会卡在recovery无法复位，没法回到Android系统进行二次ota，就需要人工去现场复位。增加验证补丁如下：</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">diff --git a/packages/SystemUI/src/com/android/systemui/SystemUIService.java b/packages/SystemUI/src/com/android/systemui/SystemUIService.java</span><br><span class="line">index 41528187c4d5..b8ce1c47e271 100644</span><br><span class="line">--- a/packages/SystemUI/src/com/android/systemui/SystemUIService.java</span><br><span class="line">+++ b/packages/SystemUI/src/com/android/systemui/SystemUIService.java</span><br><span class="line">@@ -47,6 +47,7 @@ import android.util.Log;</span><br><span class="line"> import android.os.RKRecoverySystem;</span><br><span class="line"> import android.os.SystemProperties;</span><br><span class="line"> import java.io.RandomAccessFile;</span><br><span class="line">+import java.security.GeneralSecurityException;</span><br><span class="line"> </span><br><span class="line"> public class SystemUIService extends Service &#123;</span><br><span class="line"> </span><br><span class="line">@@ -166,6 +167,16 @@ public class SystemUIService extends Service &#123;</span><br><span class="line">                 if (!packageFile.exists()) &#123;</span><br><span class="line">                     return;</span><br><span class="line">                 &#125;</span><br><span class="line">+                Log.d(TAG, &quot;doesImageMatchProduct(): start verify package&quot;);</span><br><span class="line">+                try&#123;</span><br><span class="line">+                    RKRecoverySystem.verifyPackage(packageFile, null, null);</span><br><span class="line">+                &#125;catch(GeneralSecurityException e)&#123;</span><br><span class="line">+                    Log.d(TAG, &quot;doesImageMatchProduct(): verifaPackage faild!\n&quot; + e.toString());</span><br><span class="line">+                    return;	</span><br><span class="line">+                &#125;catch(Exception e) &#123;</span><br><span class="line">+                    Log.d(TAG, &quot;doesImageMatchProduct(): verifaPackage faild!\n&quot; + e.toString());</span><br><span class="line">+                    return;</span><br><span class="line">+                &#125;</span><br><span class="line">                 try &#123;</span><br><span class="line">                     RKRecoverySystem.installPackage(mContext, packageFile);</span><br><span class="line">                 &#125; catch (Exception e) &#123;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>小技巧-编写windows批处理脚本：在排查问题的时候，经常需要反复烧录固件查看日志来推断是哪里的问题，这里会有一系列流程和adb指令要执行，每次都重复执行很费时，所以可以编写bat脚本来批处理执行。示例脚本如下：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">adb root</span><br><span class="line">adb remount</span><br><span class="line">scp a58sw01@192.168.120.99:/home/a58sw01/data/3001u/out/target/product/rk3288/system/app/Launcher3/Launcher3.apk .</span><br><span class="line">adb push Launcher3.apk /system/app/Launcher3/Launcher3.apk</span><br><span class="line">adb shell pm clear com.android.launcher3</span><br><span class="line">adb reboot </span><br><span class="line"></span><br><span class="line">adb root</span><br><span class="line">adb remount</span><br><span class="line">scp a58sw01@192.168.120.99:/home/a58sw01/data/3001u/out/target/product/rk3288/system/priv-app/PackageInstaller/PackageInstaller.apk .</span><br><span class="line">adb push PackageInstaller.apk /system/priv-app/PackageInstaller/PackageInstaller.apk</span><br><span class="line">adb shell pm clear com.android.PackageInstaller</span><br><span class="line">del PackageInstaller.apk</span><br><span class="line">adb reboot</span><br><span class="line"></span><br><span class="line">adb root</span><br><span class="line">adb remount</span><br><span class="line">scp a58sw01@192.168.120.95:/home/a58sw01/data/pie_rk3288_android9.0/out/target/product/rk3288/system/priv-app/Settings/Settings.apk .</span><br><span class="line">adb push Settings.apk /system/priv-app/Settings/Settings.apk</span><br><span class="line">del Settings.apk</span><br><span class="line">adb reboot</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/android/" class="category-chain-item">android</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/android/" class="print-no-link">#android</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>安卓细碎笔记</div>
+      <div>https://hukaichao.me/2023/11/05/安卓细碎笔记/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>凌冬</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年11月5日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/11/05/%E9%80%9A%E8%BF%87AIDL%E6%8F%90%E4%BE%9B%E6%9D%83%E9%99%90%E6%8E%A5%E5%8F%A3/" title="通过AIDL提供权限接口">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">通过AIDL提供权限接口</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/11/05/%E5%AE%89%E5%8D%93APK%E7%AD%BE%E5%90%8D%E6%A0%A1%E9%AA%8C/" title="安卓APK签名校验">
+                        <span class="hidden-mobile">安卓APK签名校验</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

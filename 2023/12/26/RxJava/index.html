@@ -1,0 +1,806 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="凌冬">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="介绍Reactive Extensions介绍微软给的定义是，Rx是一个函数库，让开发者可以利用可观察序列和LINQ风格查询操作符来编写异步和基于事件的程序，使用Rx，开发者可以用Observables表示异步数据流，用LINQ操作符查询异步数据流， 用Schedulers参数化异步数据流的并发处理，Rx可以这样定义：Rx &#x3D; Observables + LINQ + Scheduler">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RxJava">
+<meta property="og:url" content="https://hukaichao.me/2023/12/26/RxJava/index.html">
+<meta property="og:site_name" content="凌冬的个人博客">
+<meta property="og:description" content="介绍Reactive Extensions介绍微软给的定义是，Rx是一个函数库，让开发者可以利用可观察序列和LINQ风格查询操作符来编写异步和基于事件的程序，使用Rx，开发者可以用Observables表示异步数据流，用LINQ操作符查询异步数据流， 用Schedulers参数化异步数据流的并发处理，Rx可以这样定义：Rx &#x3D; Observables + LINQ + Scheduler">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-12-26T09:29:31.000Z">
+<meta property="article:modified_time" content="2024-02-02T07:27:40.276Z">
+<meta property="article:author" content="凌冬">
+<meta property="article:tag" content="java学习">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>RxJava - 凌冬的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="RxJava"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-12-26 17:29" pubdate>
+          2023年12月26日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          37 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">RxJava</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><h3 id="Reactive-Extensions介绍"><a href="#Reactive-Extensions介绍" class="headerlink" title="Reactive Extensions介绍"></a>Reactive Extensions介绍</h3><p>微软给的定义是，Rx是一个函数库，让开发者可以利用可观察序列和LINQ风格查询操作符来编写异步和基于事件的程序，使用Rx，开发者可以用Observables表示异步数据流，用LINQ操作符查询异步数据流， 用Schedulers参数化异步数据流的并发处理，Rx可以这样定义：Rx &#x3D; Observables + LINQ + Schedulers。</p>
+<p>ReactiveX.io给的定义是，Rx是一个使用可观察数据流进行异步编程的编程接口，ReactiveX结合了观察者模式、迭代器模式和函数式编程的精华。</p>
+<h3 id="RxJava介绍"><a href="#RxJava介绍" class="headerlink" title="RxJava介绍"></a>RxJava介绍</h3><p>RxJava是响应式编程(Reactive Extensions)的java实现，它基于观察者模式的实现了异步编程接口。</p>
+<p>当你单独创建线程去完成任务时，你通常需要管理线程的生命周期、处理线程间通信、避免内存泄漏等问题。这可能涉及到使用 Thread、Executor、Handler 等相关类，以确保任务在适当的线程上执行，同时避免一些常见的多线程编程问题。</p>
+<p>而 RxJava 提供了一种更高级的抽象，使得异步编程更加简洁和易于理解。以下是 RxJava 与单独创建线程的一些区别：</p>
+<ol>
+<li><strong>响应式编程模型：</strong> RxJava 使用观察者模式，通过 Observable 发射数据，然后通过 Observer 订阅并处理这些数据。这种模型更加声明式，你可以定义数据流的操作，而不必明确指定线程的使用。</li>
+<li><strong>链式操作符：</strong> RxJava 提供了丰富的操作符，可以方便地对数据进行变换、过滤、合并等操作。这些操作符可以形成链式调用，使得代码更加清晰和易于理解。</li>
+<li><strong>线程调度：</strong> RxJava 提供了调度器（Schedulers）的概念，可以很容易地切换操作符执行的线程。这使得在不同线程上执行任务变得更加灵活，而无需手动管理线程。</li>
+<li><strong>取消订阅和资源管理：</strong> RxJava 通过 Subscription 提供了取消订阅的机制，从而避免了一些与手动管理线程相关的问题，如内存泄漏。</li>
+<li><strong>错误处理：</strong> RxJava 提供了统一的错误处理机制，可以方便地处理错误，而不用像手动创建线程时那样需要额外的处理。</li>
+</ol>
+<h3 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h3><h4 id="字段含义"><a href="#字段含义" class="headerlink" title="字段含义"></a>字段含义</h4><p><strong>Observable（可观察对象）：</strong> 代表一个可被观察的数据源。它发射一系列的事件，可以是值、错误或者完成通知。</p>
+<p><strong>Observer（观察者）：</strong> 订阅 Observable，接收并处理从 Observable 发射的事件。Observer 的方法包括 <code>onNext</code>（处理发射的值）、<code>onError</code>（处理发射的错误）、<code>onComplete</code>（处理完成通知）。</p>
+<p><strong>Operator（操作符）：</strong> 用于对 Observable 发射的数据序列进行变换和操作。RxJava 提供了许多内置的操作符，如 <code>map</code>、<code>filter</code>、<code>merge</code>、<code>zip</code> 等。</p>
+<p><strong>Schedulers（调度器）：</strong> 用于控制 Observable 的运行在哪个线程上。RxJava 提供了多种调度器，例如 <code>io</code>、<code>computation</code>、<code>newThread</code> 等。</p>
+<p><strong>Subscription（订阅）：</strong> 表示 Observable 和 Observer 之间的订阅关系。当不再需要接收事件时，可以取消订阅以释放资源。</p>
+<p>Reactive 直译为反应性的，有活性的，根据上下文一般翻译为反应式、响应式</p>
+<p>Iterable 可迭代对象，支持以迭代器的形式遍历，许多语言中都存在这个概念</p>
+<p>emit 直译为发射，发布，发出，含义是Observable在数据产生或变化时发送通知给Observer，调用Observer对应的方法，文章里一律译为发射</p>
+<p>items 直译为项目，条目，在Rx里是指Observable发射的数据项，文章里一律译为数据，数据项。</p>
+<h4 id="上-下流"><a href="#上-下流" class="headerlink" title="上&#x2F;下流"></a>上&#x2F;下流</h4><p>在RxJava中，数据以流的方式组织：Rxjava包括一个源数据流，源数据流后跟着若干个用于消费数据流的步骤。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">source</span><br><span class="line">  .operator1()</span><br><span class="line">  .operator2()</span><br><span class="line">  .operator3()</span><br><span class="line">  .subscribe(consumer)</span><br></pre></td></tr></table></figure>
+
+<p>在代码中，对于operator2来说，在它前面叫做上流，在它后面的叫做下流。</p>
+<p>流对象</p>
+<p>在RxJava的文档中，emission, emits, item, event, signal, data and message都被认为在数据流中被传递的数据对象。</p>
+<h4 id="背压-Backpressure"><a href="#背压-Backpressure" class="headerlink" title="背压(Backpressure)"></a>背压(Backpressure)</h4><p>当上下游在不同的线程中，通过Observable发射，处理，响应数据流时，如果上游发射数据的速度快于下游接收处理数据的速度，这样对于那些没来得及处理的数据就会造成积压，这些数据既不会丢失，也不会被垃圾回收机制回收，而是存放在一个异步缓存池中，如果缓存池中的数据一直得不到处理，越积越多，最后就会造成内存溢出，这便是响应式编程中的背压（backpressure）问题。</p>
+<p>为此，RxJava带来了backpressure的概念。背压是一种流量的控制步骤，在不知道上流还有多少数据的情形下控制内存的使用，表示它们还能处理多少数据。<strong>背压是指在异步场景中，被观察者发送事件速度远快于观察者的处理速度的情况下，一种告诉上游的被观察者降低发送速度的策略。</strong></p>
+<p>在Rxjava1.0中，有的Observable支持背压，有的不支持，为了解决这种问题，2.0把支持背压和不支持背压的Observable区分开来：支持背压的有Flowable类，不支持背压的有Observable，Single, Maybe and Completable类。</p>
+<ol>
+<li>在订阅的时候如果使用FlowableSubscriber，那么需要通过s.request(Long.MAX_VALUE)去主动请求上游的数据项。如果遇到背压报错的时候，FlowableSubscriber默认已经将错误try-catch，并通过onError()进行回调，程序并不会崩溃；</li>
+<li>在订阅的时候如果使用Consumer，那么不需要主动去请求上游数据，默认已经调用了s.request(Long.MAX_VALUE)。如果遇到背压报错、且对Throwable的Consumer没有new出来，则程序直接崩溃；</li>
+<li>背压策略的上游的默认缓存池是128。</li>
+</ol>
+<p>背压策略：</p>
+<ol>
+<li>error， 缓冲区大概在128</li>
+<li>buffer， 缓冲区在1000左右</li>
+<li>drop， 把存不下的事件丢弃</li>
+<li>latest， 只保留最新的</li>
+<li>missing, 缺省设置，不做任何操作</li>
+</ol>
+<h4 id="线程调度器（Schedulers）"><a href="#线程调度器（Schedulers）" class="headerlink" title="线程调度器（Schedulers）"></a>线程调度器（Schedulers）</h4><p>对于Android开发者而言，RxJava最简单的是通过调度器来方便地切换线程。在不同平台还有不同的调度器，例如我们Android的主线程：AndroidSchedulers.mainThread()。</p>
+<table>
+<thead>
+<tr>
+<th>调度器</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>AndroidSchedulers.mainThread()</td>
+<td>需要引用rxandroid, 切换到UI线程</td>
+</tr>
+<tr>
+<td>Schedulers.computation()</td>
+<td>用于计算任务，如事件循环和回调处理，默认线程数等于处理器数量</td>
+</tr>
+<tr>
+<td>Schedulers.io()</td>
+<td>用于IO密集型任务，如异步阻塞IO操作，这个调度器的线程池会根据需求，它默认是一个CacheThreadScheduler</td>
+</tr>
+<tr>
+<td>Schedulers.newThread()</td>
+<td>为每一个任务创建一个新线程</td>
+</tr>
+<tr>
+<td>Schedulers.trampoline()</td>
+<td>在当前线程中立刻执行，如当前线程中有任务在执行则将其暂停， 等插入进来的任务执行完成之后，在将未完成的任务继续完成。</td>
+</tr>
+<tr>
+<td>Scheduler.from(executor)</td>
+<td>指定Executor作为调度器</td>
+</tr>
+</tbody></table>
+<h4 id="事件调度器"><a href="#事件调度器" class="headerlink" title="事件调度器"></a>事件调度器</h4><p>RxJava事件发出去并不是置之不顾，要有合理的管理者来管理它们，在合适的时机要进行释放事件，这样才不会导致内存泄漏，这里的管理者我们称为事件调度器(或事件管理者)CompositeDisposable。</p>
+<h4 id="基类"><a href="#基类" class="headerlink" title="基类"></a>基类</h4><p>RxJava 3 中的基类相比RxJava 2 没啥改变，主要有以下几个基类：</p>
+<ul>
+<li>io.reactivex.Flowable：发送0个N个的数据，支持Reactive-Streams和背压</li>
+<li>io.reactivex.Observable：发送0个N个的数据，不支持背压，</li>
+<li>io.reactivex.Single：只能发送单个数据或者一个错误</li>
+<li>io.reactivex.Completable：没有发送任何数据，但只处理 onComplete 和 onError 事件。</li>
+<li>io.reactivex.Maybe：能够发射0或者1个数据，要么成功，要么失败。</li>
+</ul>
+<h4 id="Observables的”热”和”冷”"><a href="#Observables的”热”和”冷”" class="headerlink" title="Observables的”热”和”冷”"></a>Observables的”热”和”冷”</h4><p>​    Observable什么时候开始发射数据序列？这取决于Observable的实现，一个”热”的Observable可能一创建完就开始发射数据，因此所有后续订阅它的观察者可能从序列中间的某个位置开始接受数据（有一些数据错过了）。一个”冷”的Observable会一直等待，直到有观察者订阅它才开始发射数据，因此这个观察者可以确保会收到整个数据序列。</p>
+<p>在一些ReactiveX实现里，还存在一种被称作Connectable的Observable，不管有没有观察者订阅它，这种Observable都不会开始发射数据，除非Connect方法被调用。</p>
+<h2 id="RxJava简单使用"><a href="#RxJava简单使用" class="headerlink" title="RxJava简单使用"></a>RxJava简单使用</h2><p>RxJava以观察者模式为骨架，有两种常见的观察者模式：</p>
+<ul>
+<li>Observable(被观察者)&#x2F;Observer（观察者）</li>
+<li>Flowable(被观察者)&#x2F;Subscriber(观察者)</li>
+</ul>
+<h3 id="Observable-Observer"><a href="#Observable-Observer" class="headerlink" title="Observable&#x2F;Observer"></a>Observable&#x2F;Observer</h3><p>Observable正常用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">Observable mObservable=Observable.create(new ObservableOnSubscribe&lt;Integer&gt;() &#123;</span><br><span class="line">       @Override</span><br><span class="line">       public void subscribe(ObservableEmitter&lt;Integer&gt; e) throws Exception &#123;</span><br><span class="line">           e.onNext(1);</span><br><span class="line">           e.onNext(2);</span><br><span class="line">           e.onComplete();</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;);</span><br><span class="line"></span><br><span class="line">   Observer mObserver=new Observer&lt;Integer&gt;() &#123;</span><br><span class="line">       //这是新加入的方法，在订阅后发送数据之前，</span><br><span class="line">       //回首先调用这个方法，而Disposable可用于取消订阅</span><br><span class="line">       @Override</span><br><span class="line">       public void onSubscribe(Disposable d) &#123;</span><br><span class="line"></span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       @Override</span><br><span class="line">       public void onNext(Integer value) &#123;</span><br><span class="line">           Log.e(&quot;lucas&quot;, &quot;onNext: &quot;+value );</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       @Override</span><br><span class="line">       public void onError(Throwable e) &#123;</span><br><span class="line"></span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       @Override</span><br><span class="line">       public void onComplete() &#123;</span><br><span class="line"></span><br><span class="line">       &#125;</span><br><span class="line">   &#125;;</span><br><span class="line"></span><br><span class="line">   mObservable.subscribe(mObserver);</span><br></pre></td></tr></table></figure>
+
+<p>这种观察者模型不支持背压：当被观察者快速发送大量数据时，下游不会做其他处理，即使数据大量堆积，调用链也不会报MissingBackpressureException,消耗内存过大只会OOM。所以，当我们使用Observable&#x2F;Observer的时候，我们需要考虑的是，数据量是不是很大(官方给出以1000个事件为分界线作为参考)。</p>
+<h3 id="Flowable-Subscriber"><a href="#Flowable-Subscriber" class="headerlink" title="Flowable&#x2F;Subscriber"></a>Flowable&#x2F;Subscriber</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">Flowable.range(<span class="number">0</span>,<span class="number">10</span>)</span><br><span class="line">        .subscribe(<span class="keyword">new</span> <span class="title class_">Subscriber</span>&lt;Integer&gt;() &#123;</span><br><span class="line">            Subscription sub;</span><br><span class="line">            <span class="comment">//当订阅后，会首先调用这个方法，其实就相当于onStart()，</span></span><br><span class="line">            <span class="comment">//传入的Subscription s参数可以用于请求数据或者取消订阅</span></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onSubscribe</span><span class="params">(Subscription s)</span> &#123;</span><br><span class="line">                Log.w(<span class="string">&quot;TAG&quot;</span>,<span class="string">&quot;onsubscribe start&quot;</span>);</span><br><span class="line">                sub=s;</span><br><span class="line">                sub.request(<span class="number">1</span>);</span><br><span class="line">                Log.w(<span class="string">&quot;TAG&quot;</span>,<span class="string">&quot;onsubscribe end&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line"> </span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNext</span><span class="params">(Integer o)</span> &#123;</span><br><span class="line">                Log.w(<span class="string">&quot;TAG&quot;</span>,<span class="string">&quot;onNext---&gt;&quot;</span>+o);</span><br><span class="line">                sub.request(<span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onError</span><span class="params">(Throwable t)</span> &#123;</span><br><span class="line">                t.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onComplete</span><span class="params">()</span> &#123;</span><br><span class="line">                Log.w(<span class="string">&quot;TAG&quot;</span>,<span class="string">&quot;onComplete&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);  </span><br></pre></td></tr></table></figure>
+
+<p>输出如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">onsubscribe <span class="keyword">start</span></span><br><span class="line">onsubscribe <span class="keyword">end</span></span><br><span class="line">onNext<span class="comment">---&gt;0</span></span><br><span class="line">onNext<span class="comment">---&gt;1</span></span><br><span class="line">onNext<span class="comment">---&gt;2</span></span><br><span class="line">...</span><br><span class="line">onNext<span class="comment">---&gt;9</span></span><br><span class="line">onComplete</span><br></pre></td></tr></table></figure>
+
+<p>Flowable是支持背压的，也就是说，一般而言，上游的被观察者会响应下游观察者的数据请求，下游调用request(n)来告诉上游发送多少个数据。这样避免了大量数据堆积在调用链上，使内存一直处于较低水平。</p>
+<p>当然，Flowable也可以通过creat()来创建：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Flowable.create(<span class="keyword">new</span> <span class="title class_">FlowableOnSubscribe</span>&lt;Integer&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">subscribe</span><span class="params">(FlowableEmitter&lt;Integer&gt; e)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        e.onNext(<span class="number">1</span>);</span><br><span class="line">        e.onNext(<span class="number">2</span>);</span><br><span class="line">        e.onNext(<span class="number">3</span>);</span><br><span class="line">        e.onNext(<span class="number">4</span>);</span><br><span class="line">        e.onComplete();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//需要指定背压策略</span></span><br><span class="line">, BackpressureStrategy.BUFFER);</span><br></pre></td></tr></table></figure>
+
+<p>Flowable虽然可以通过create()来创建，但是你必须指定背压的策略，以保证你创建的Flowable是支持背压的。</p>
+<h3 id="其他的观察者"><a href="#其他的观察者" class="headerlink" title="其他的观察者"></a>其他的观察者</h3><p>最常用的其实就是上面说的两种订阅观察者，但是一些情况下，我们也会用到一些其他的一类观察者比如</p>
+<ul>
+<li>Single&#x2F;SingleObserver</li>
+<li>Completable&#x2F;CompletableObserver</li>
+<li>Maybe&#x2F;MaybeObserver</li>
+</ul>
+<h4 id="Single-SingleObserver"><a href="#Single-SingleObserver" class="headerlink" title="Single&#x2F;SingleObserver"></a>Single&#x2F;SingleObserver</h4><p>Single类似于Observable，不同的是，它总是只发射一个值，或者一个错误通知，而不是发射一系列的值（当然就不存在背压问题），所以当你使用一个单一连续事件流，这样你可以使用Single。Single观察者只包含两个事件，一个是正常处理成功的onSuccess，另一个是处理失败的onError。因此，不同于Observable需要三个方法onNext, onError, onCompleted，订阅Single只需要两个方法：</p>
+<ul>
+<li>onSuccess - Single发射单个的值到这个方法</li>
+<li>onError - 如果无法发射需要的值，Single发射一个Throwable对象到这个方法</li>
+</ul>
+<p>Single只会调用这两个方法中的一个，而且只会调用一次，调用了任何一个方法之后，订阅关系终止。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">//被观察者</span><br><span class="line">    Single&lt;String&gt; single = Single.create(new SingleOnSubscribe&lt;String&gt;() &#123;</span><br><span class="line">        @Override</span><br><span class="line">        public void subscribe(SingleEmitter&lt;String&gt; e) throws Exception &#123;</span><br><span class="line">            e.onSuccess(&quot;test&quot;);</span><br><span class="line">            e.onSuccess(&quot;test2&quot;);//错误写法，重复调用也不会处理，因为只会调用一次</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line"> </span><br><span class="line">    //订阅观察者SingleObserver</span><br><span class="line">    single.subscribe(new SingleObserver&lt;String&gt;() &#123;</span><br><span class="line">        @Override</span><br><span class="line">        public void onSubscribe(Disposable d) &#123;</span><br><span class="line"> </span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        @Override</span><br><span class="line">        public void onSuccess(String s) &#123;</span><br><span class="line">            //相当于onNext和onComplete</span><br><span class="line">            Log.d(&quot;lucas&quot;,  s  );</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        @Override</span><br><span class="line">        public void onError(Throwable e) &#123;</span><br><span class="line"> </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">//运行结果</span><br><span class="line">2020-04-03 23:02:37.337 15462-15462/com.ysalliance.getfan.myapplication D/lucas: test</span><br></pre></td></tr></table></figure>
+
+<h4 id="Completable-CompletableObserver"><a href="#Completable-CompletableObserver" class="headerlink" title="Completable&#x2F;CompletableObserver"></a>Completable&#x2F;CompletableObserver</h4><p>如果你的观察者连onNext事件都不关心，可以使用Completable，它只有onComplete和onError两个事件：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">    Completable.create(<span class="keyword">new</span> <span class="title class_">CompletableOnSubscribe</span>() &#123;<span class="comment">//被观察者</span></span><br><span class="line"> </span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">subscribe</span><span class="params">(CompletableEmitter e)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">            e.onComplete();<span class="comment">//单一onComplete或者onError</span></span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">    &#125;).subscribe(<span class="keyword">new</span> <span class="title class_">CompletableObserver</span>() &#123;<span class="comment">//观察者</span></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onSubscribe</span><span class="params">(Disposable d)</span> &#123;</span><br><span class="line"> </span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onComplete</span><span class="params">()</span> &#123;</span><br><span class="line">            Log.e(<span class="string">&quot;lucas&quot;</span>, <span class="string">&quot;onComplete: &quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onError</span><span class="params">(Throwable e)</span> &#123;</span><br><span class="line"> </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//打印结果</span></span><br><span class="line"><span class="number">2020</span>-<span class="number">04</span>-<span class="number">03</span> <span class="number">23</span>:<span class="number">12</span>:<span class="number">08.099</span> <span class="number">16264</span>-<span class="number">16264</span>/com.ysalliance.getfan.myapplication E/lucas: onComplete: </span><br></pre></td></tr></table></figure>
+
+<p>要转换成其他类型的被观察者，也是可以使用toFlowable()、toObservable()等方法去转换。</p>
+<h4 id="Maybe-MaybeObserver"><a href="#Maybe-MaybeObserver" class="headerlink" title="Maybe&#x2F;MaybeObserver"></a>Maybe&#x2F;MaybeObserver</h4><p>如果你有一个需求是可能发送一个数据或者不会发送任何数据，这时候你就需要Maybe，它类似于Single和Completable的混合体。</p>
+<p>  Maybe可能会调用以下其中一种情况（也就是所谓的Maybe）：</p>
+<ul>
+<li><p>onSuccess或者onError</p>
+</li>
+<li><p>onComplete或者onError 可以看到onSuccess和onComplete是互斥的存在，例子代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">  <span class="comment">//被观察者</span></span><br><span class="line">  Maybe&lt;String&gt; maybe = Maybe.create(<span class="keyword">new</span> <span class="title class_">MaybeOnSubscribe</span>&lt;String&gt;() &#123;</span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">subscribe</span><span class="params">(MaybeEmitter&lt;String&gt; e)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">          e.onSuccess(<span class="string">&quot;test&quot;</span>);<span class="comment">//发送一个数据的情况，或者onError，不需要再调用onComplete(调用了也不会触发onComplete回调方法)</span></span><br><span class="line">          <span class="comment">//e.onComplete();//不需要发送数据的情况，或者onError</span></span><br><span class="line">      &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">   </span><br><span class="line">  <span class="comment">//订阅观察者</span></span><br><span class="line">  maybe.subscribe(<span class="keyword">new</span> <span class="title class_">MaybeObserver</span>&lt;String&gt;() &#123;</span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onSubscribe</span><span class="params">(Disposable d)</span> &#123;</span><br><span class="line">   </span><br><span class="line">      &#125;</span><br><span class="line">   </span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onSuccess</span><span class="params">(String s)</span> &#123;</span><br><span class="line">          <span class="comment">//发送一个数据时，相当于onNext和onComplete，但不会触发另一个方法onComplete</span></span><br><span class="line">          Log.i(<span class="string">&quot;lucas&quot;</span>, s);</span><br><span class="line">      &#125;</span><br><span class="line">   </span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onComplete</span><span class="params">()</span> &#123;</span><br><span class="line">          <span class="comment">//无数据发送时候的onComplete事件</span></span><br><span class="line">          Log.i(<span class="string">&quot;lucas&quot;</span>, <span class="string">&quot;onComplete&quot;</span>);</span><br><span class="line">      &#125;</span><br><span class="line">   </span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onError</span><span class="params">(Throwable e)</span> &#123;</span><br><span class="line">   </span><br><span class="line">      &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">//打印结果</span></span><br><span class="line"><span class="number">2020</span>-<span class="number">04</span>-<span class="number">03</span> <span class="number">23</span>:<span class="number">14</span>:<span class="number">40.266</span> <span class="number">16558</span>-<span class="number">16558</span>/com.ysalliance.getfan.myapplication I/lucas: test</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>要转换成其他类型的被观察者，也是可以使用toFlowable()、toObservable()等方法去转换。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//判断是否登陆</span></span><br><span class="line">Maybe.just(isLogin())</span><br><span class="line">    <span class="comment">//可能涉及到IO操作，放在子线程</span></span><br><span class="line">    .subscribeOn(Schedulers.newThread())</span><br><span class="line">    <span class="comment">//取回结果传到主线程</span></span><br><span class="line">    .observeOn(AndroidSchedulers.mainThread())</span><br><span class="line">    .subscribe(<span class="keyword">new</span> <span class="title class_">MaybeObserver</span>&lt;Boolean&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onSubscribe</span><span class="params">(Disposable d)</span> &#123;</span><br><span class="line"> </span><br><span class="line">            &#125;</span><br><span class="line"> </span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onSuccess</span><span class="params">(Boolean value)</span> &#123;</span><br><span class="line">                <span class="keyword">if</span>(value)&#123;</span><br><span class="line">                    ...</span><br><span class="line">                &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                    ...</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"> </span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onError</span><span class="params">(Throwable e)</span> &#123;</span><br><span class="line"> </span><br><span class="line">            &#125;</span><br><span class="line"> </span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onComplete</span><span class="params">()</span> &#123;</span><br><span class="line"> </span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);复制代码</span><br></pre></td></tr></table></figure>
+
+<p>上面就是Maybe&#x2F;MaybeObserver的普通用法，你可以看到，实际上，这种观察者模式并不用于发送大量数据，而是发送单个数据，也就是说，当你只想要某个事件的结果（true or false)的时候，你可以用这种观察者模式</p>
+<h2 id="Subject"><a href="#Subject" class="headerlink" title="Subject"></a>Subject</h2><p>在 RxJava 中，Subject 是一种特殊的 Observable，同时也实现了 Observer 接口，因此它可以充当观察者和可观察对象。Subject 可以用来在不同的线程中传递数据，充当事件总线，让多个观察者能够订阅和接收事件。</p>
+<p>以下是 RxJava 中主要的几种 Subject 类型：</p>
+<ol>
+<li><p><strong>PublishSubject：</strong> 在创建后，它只会将在订阅之后产生的事件发送给观察者。对于在订阅之前产生的事件，观察者无法接收到。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PublishSubject&lt;String&gt; publishSubject = PublishSubject.create();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>BehaviorSubject：</strong> 在创建后，它会发送最近的一个事件给观察者，然后正常发送在订阅之后产生的事件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">BehaviorSubject&lt;String&gt; behaviorSubject = BehaviorSubject.create();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>ReplaySubject：</strong> 在创建后，会将所有事件（或者仅限于最近的 N 个事件）发送给观察者，无论它们是在订阅之前还是之后产生的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ReplaySubject&lt;String&gt; replaySubject = ReplaySubject.create();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>AsyncSubject：</strong> 在创建后，只有在源 Observable 完成时，它才会将最后一个事件发送给观察者。如果源 Observable 没有发射任何数据，AsyncSubject 也不会发射任何数据。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AsyncSubject&lt;String&gt; asyncSubject = AsyncSubject.create();</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>Subject 具有 Observable 和 Observer 的双重角色，可以用来把事件转发给多个观察者，也可以订阅其他 Observable 发射的事件。需要注意的是，Subject 不是线程安全的，因此在多线程环境中使用时需要注意同步的问题。</p>
+<p>使用 Subject 时，要注意避免在不同线程中使用同一个 Subject 实例，因为它可能导致线程安全问题。通常情况下，可以使用 <code>observeOn</code> 和 <code>subscribeOn</code> 操作符来确保事件在正确的线程上被触发。</p>
+<h2 id="操作符"><a href="#操作符" class="headerlink" title="操作符"></a>操作符</h2><p>RxJava操作符众多，后面再整理</p>
+<h2 id="实际使用"><a href="#实际使用" class="headerlink" title="实际使用"></a>实际使用</h2><p>下面的代码是在ai_album项目中异步处理图片缩略图生成任务，在图库检测到图片后发布订阅任务给观察者。</p>
+<p>初始化：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">private PublishSubject&lt;List&lt;Photo&gt;&gt; imageListSubject;</span><br><span class="line"></span><br><span class="line">   private PublishSubject&lt;Photo&gt; imageSubject;</span><br><span class="line"></span><br><span class="line">   @PostConstruct</span><br><span class="line">   public void init() &#123;</span><br><span class="line">       imageSubject = PublishSubject.create();</span><br><span class="line">       imageListSubject = PublishSubject.create();</span><br><span class="line"></span><br><span class="line">       Observer&lt;List&lt;Photo&gt;&gt; imageListObserver = new Observer&lt;List&lt;Photo&gt;&gt;() &#123;</span><br><span class="line">           @Override</span><br><span class="line">           public void onNext(List&lt;Photo&gt; photoList) &#123;</span><br><span class="line">               List&lt;Photo&gt; photoWithThumbnailList = ThumbnailUtils.generateThumbnail(photoList, constantDynamic.getThumbnailSaveFolder());</span><br><span class="line">               for (Photo photo : photoWithThumbnailList) &#123;</span><br><span class="line">                   photoRepository.updateThumbnailPath(photo.getMd5(),photo.getThumbnailPath());</span><br><span class="line">                   log.info(&quot;Generate image thumbnail completed. &quot; + photo.getFileName());</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">           @Override</span><br><span class="line">           public void onError(Throwable e) &#123;</span><br><span class="line">               log.error(&quot;Failed to generate image thumbnail: &quot;, e);</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">           @Override</span><br><span class="line">           public void onCompleted() &#123;</span><br><span class="line">               // 任务完成事件，暂时不需要</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;;</span><br><span class="line"></span><br><span class="line">       Observer&lt;Photo&gt; imageObserver = new Observer&lt;Photo&gt;() &#123;</span><br><span class="line">           @Override</span><br><span class="line">           public void onNext(Photo photo) &#123;</span><br><span class="line">               String path = ThumbnailUtils.generateThumbnail(photo.getPath(), constantDynamic.getThumbnailSaveFolder());</span><br><span class="line">               photo.setThumbnailPath(path);</span><br><span class="line">               photoRepository.updateThumbnailPath(photo.getMd5(),photo.getThumbnailPath());</span><br><span class="line">               log.info(&quot;Generate image thumbnail completed.&quot; + photo.getFileName());</span><br><span class="line">               // print打印当前时间</span><br><span class="line">               System.out.println(photo.getFileName() + &quot;thumbanil success  &quot; +LocalDateTime.now().format(DateTimeFormatter.ofPattern(&quot;yyyy-MM-dd HH:mm:ss&quot;)));</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">           @Override</span><br><span class="line">           public void onError(Throwable e) &#123;</span><br><span class="line">               log.error(&quot;Failed to generate image thumbnail:&quot;, e);</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">           @Override</span><br><span class="line">           public void onCompleted() &#123;</span><br><span class="line">               // 任务完成事件，暂时不需要</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;;</span><br><span class="line"></span><br><span class="line">       imageSubject.observeOn(Schedulers.io())</span><br><span class="line">               .subscribe(imageObserver);</span><br><span class="line"></span><br><span class="line">       imageListSubject.observeOn(Schedulers.io())</span><br><span class="line">               .subscribe(imageListObserver);</span><br><span class="line"></span><br><span class="line">       scanAllPath();</span><br><span class="line"></span><br><span class="line">       loadGeoJson();</span><br><span class="line"></span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>在实际调用的地方：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">   public void addPhoto(File file)&#123;</span><br><span class="line">       String md5 = MD5Utils.getFileChecksumMD5(file);</span><br><span class="line">       if (md5 == null) &#123;</span><br><span class="line">           return;</span><br><span class="line">       &#125;</span><br><span class="line">       Photo photo = photoRepository.findPhotoByMd5(md5);</span><br><span class="line">       if (photo != null) &#123;</span><br><span class="line">           if (photo.getPath().contains(file.getAbsolutePath()))&#123;</span><br><span class="line">               return;</span><br><span class="line">           &#125;</span><br><span class="line">           if (&quot;&quot;.equals(photo.getPath()))&#123;</span><br><span class="line">               photo.setPath(file.getAbsolutePath());</span><br><span class="line">               photo.setDeleted(false);</span><br><span class="line">           &#125; else &#123;</span><br><span class="line">               photo.setPath(photo.getPath() + &quot;;&quot; + file.getAbsolutePath());</span><br><span class="line">           &#125;</span><br><span class="line">       &#125; else &#123;</span><br><span class="line">           photo = createPhotoObjectFromImageFile(file);</span><br><span class="line">       &#125;</span><br><span class="line">       photoRepository.save(photo);</span><br><span class="line">       imageSubject.onNext(photo);</span><br><span class="line"></span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="category-chain-item">java学习笔记</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/java%E5%AD%A6%E4%B9%A0/" class="print-no-link">#java学习</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>RxJava</div>
+      <div>https://hukaichao.me/2023/12/26/RxJava/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>凌冬</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年12月26日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2024/01/11/Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E8%AF%A6%E8%A7%A3/" title="Redis分布式锁详解">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Redis分布式锁详解</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/12/21/XSS%E3%80%81%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%92%8CCSRF/" title="XSS、同源策略和CSRF">
+                        <span class="hidden-mobile">XSS、同源策略和CSRF</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

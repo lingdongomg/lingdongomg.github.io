@@ -1,0 +1,688 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="凌冬">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1，在Settings中添加导航栏控制器的UI界面。最开始有尝试在Settings的一级菜单中添加一栏——导航栏控制。但失败了，照着网上的教程操作就是不显示（猜测原因是没照着一级菜单主要的xml文件） 无奈下改为在二级菜单中添加，二级菜单中添加就简单多了。 在res&#x2F;xml&#x2F;display_settings.xml中添加一栏 NAVIGATION 然后创建对应的Navigati">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SystemUI学习">
+<meta property="og:url" content="https://hukaichao.me/2023/08/21/SystemUI%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="凌冬的个人博客">
+<meta property="og:description" content="1，在Settings中添加导航栏控制器的UI界面。最开始有尝试在Settings的一级菜单中添加一栏——导航栏控制。但失败了，照着网上的教程操作就是不显示（猜测原因是没照着一级菜单主要的xml文件） 无奈下改为在二级菜单中添加，二级菜单中添加就简单多了。 在res&#x2F;xml&#x2F;display_settings.xml中添加一栏 NAVIGATION 然后创建对应的Navigati">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-08-21T14:55:22.000Z">
+<meta property="article:modified_time" content="2024-02-02T07:27:40.287Z">
+<meta property="article:author" content="凌冬">
+<meta property="article:tag" content="android">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>SystemUI学习 - 凌冬的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="SystemUI学习"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-08-21 22:55" pubdate>
+          2023年8月21日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          30 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">SystemUI学习</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="1，在Settings中添加导航栏控制器的UI界面。"><a href="#1，在Settings中添加导航栏控制器的UI界面。" class="headerlink" title="1，在Settings中添加导航栏控制器的UI界面。"></a>1，在Settings中添加导航栏控制器的UI界面。</h2><p>最开始有尝试在Settings的一级菜单中添加一栏——导航栏控制。但失败了，照着网上的教程操作就是不显示（猜测原因是没照着一级菜单主要的xml文件）</p>
+<p>无奈下改为在二级菜单中添加，二级菜单中添加就简单多了。</p>
+<p>在res&#x2F;xml&#x2F;display_settings.xml中添加一栏 NAVIGATION 然后创建对应的NavigationBarSettings.java 和 navigation_settings.xml文件即可</p>
+<p>补丁：<a href="mailto:&#114;&#107;&#x37;&#x31;&#x2d;&#x70;&#97;&#99;&#x6b;&#97;&#103;&#101;&#x73;&#45;&#x61;&#x70;&#112;&#x73;&#45;&#115;&#x65;&#x74;&#116;&#x69;&#110;&#x67;&#x73;&#x40;&#97;&#x64;&#100;&#x5f;&#117;&#105;&#x5f;&#x66;&#x6f;&#114;&#x5f;&#x6e;&#97;&#118;&#x69;&#103;&#97;&#116;&#x69;&#111;&#x6e;&#x5f;&#98;&#97;&#114;&#46;&#x70;&#x61;&#x74;&#x63;&#x68;">&#114;&#107;&#x37;&#x31;&#x2d;&#x70;&#97;&#99;&#x6b;&#97;&#103;&#101;&#x73;&#45;&#x61;&#x70;&#112;&#x73;&#45;&#115;&#x65;&#x74;&#116;&#x69;&#110;&#x67;&#x73;&#x40;&#97;&#x64;&#100;&#x5f;&#117;&#105;&#x5f;&#x66;&#x6f;&#114;&#x5f;&#x6e;&#97;&#118;&#x69;&#103;&#97;&#116;&#x69;&#111;&#x6e;&#x5f;&#98;&#97;&#114;&#46;&#x70;&#x61;&#x74;&#x63;&#x68;</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br></pre></td><td class="code"><pre><span class="line">diff --git a/res/values/strings.xml b/res/values/strings.xml</span><br><span class="line">index 563ea0ed0d..a4cfcec2c6 100755</span><br><span class="line">--- a/res/values/strings.xml</span><br><span class="line">+++ b/res/values/strings.xml</span><br><span class="line">@@ -7983,4 +7983,7 @@</span><br><span class="line">     &lt;string name=&quot;color_temperature_mode_desc&quot;&gt;Color temperature mode&lt;/string&gt;</span><br><span class="line">     &lt;!-- temperature of the color for the display [CHAR LIMIT=60] --&gt;</span><br><span class="line">     &lt;string name=&quot;select_color_temperature_dialog_title&quot;&gt;Select Color temperature &lt;/string&gt;</span><br><span class="line">+</span><br><span class="line">+     &lt;string name=&quot;system_navigation_bar_settings_title&quot;&gt;Navigation&lt;/string&gt;</span><br><span class="line">+    </span><br><span class="line"> &lt;/resources&gt;</span><br><span class="line">diff --git a/res/xml/display_settings.xml b/res/xml/display_settings.xml</span><br><span class="line">index ad57326386..3fbe864844 100755</span><br><span class="line">--- a/res/xml/display_settings.xml</span><br><span class="line">+++ b/res/xml/display_settings.xml</span><br><span class="line">@@ -122,4 +122,9 @@</span><br><span class="line">                 android:summary=&quot;%s&quot;</span><br><span class="line">                 android:title=&quot;@string/display_vr_pref_title&quot; /&gt;</span><br><span class="line"> </span><br><span class="line">+        &lt;PreferenceScreen</span><br><span class="line">+                android:key=&quot;navigation_settings&quot;</span><br><span class="line">+                android:title=&quot;@string/system_navigation_bar_settings_title&quot;</span><br><span class="line">+                settings:keywords=&quot;@string/system_navigation_bar_settings_title&quot;</span><br><span class="line">+                android:fragment=&quot;com.android.settings.NavigationBarSettings&quot; /&gt;</span><br><span class="line"> &lt;/PreferenceScreen&gt;</span><br><span class="line">diff --git a/res/xml/navigation_settings.xml b/res/xml/navigation_settings.xml</span><br><span class="line">new file mode 100644</span><br><span class="line">index 0000000000..52c4e42590</span><br><span class="line">--- /dev/null</span><br><span class="line">+++ b/res/xml/navigation_settings.xml</span><br><span class="line">@@ -0,0 +1,54 @@</span><br><span class="line">+&lt;PreferenceScreen xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;&gt;</span><br><span class="line">+</span><br><span class="line">+    &lt;SwitchPreference</span><br><span class="line">+        android:key=&quot;navigation_settings&quot;</span><br><span class="line">+        android:title=&quot;Control Navigation Bar By Broadcast&quot;</span><br><span class="line">+        android:summary=&quot;Toggle this switch&quot;</span><br><span class="line">+        android:persistent=&quot;true&quot;</span><br><span class="line">+        android:defaultValue=&quot;false&quot; /&gt;</span><br><span class="line">+</span><br><span class="line">+    &lt;SwitchPreference</span><br><span class="line">+        android:key=&quot;statusbar_settings&quot;</span><br><span class="line">+        android:title=&quot;Control Status Bar By Broadcast&quot;</span><br><span class="line">+        android:summary=&quot;Toggle this switch&quot;</span><br><span class="line">+        android:defaultValue=&quot;false&quot;</span><br><span class="line">+        android:persistent=&quot;true&quot; /&gt;</span><br><span class="line">+</span><br><span class="line">+    &lt;SwitchPreference</span><br><span class="line">+        android:key=&quot;auto_hide_navigation&quot;</span><br><span class="line">+        android:title=&quot;Auto Hide Navigation Bar&quot;</span><br><span class="line">+        android:persistent=&quot;true&quot;</span><br><span class="line">+        android:summary=&quot;Toggle this switch&quot; /&gt;</span><br><span class="line">+</span><br><span class="line">+    &lt;SwitchPreference</span><br><span class="line">+        android:key=&quot;auto_hide_statusbar&quot;</span><br><span class="line">+        android:title=&quot;Auto Hide Status Bar&quot;</span><br><span class="line">+        android:persistent=&quot;true&quot;</span><br><span class="line">+        android:summary=&quot;Toggle this switch&quot; /&gt;</span><br><span class="line">+</span><br><span class="line">+</span><br><span class="line">+&lt;/PreferenceScreen&gt;</span><br><span class="line">diff --git a/src/com/android/settings/NavigationBarSettings.java b/src/com/android/settings/NavigationBarSettings.java</span><br><span class="line">new file mode 100644</span><br><span class="line">index 0000000000..990d4d0a9f</span><br><span class="line">--- /dev/null</span><br><span class="line">+++ b/src/com/android/settings/NavigationBarSettings.java</span><br><span class="line">@@ -0,0 +1,136 @@</span><br><span class="line">+package com.android.settings;</span><br><span class="line">+</span><br><span class="line">+import android.content.Context;</span><br><span class="line">+import android.os.Bundle;</span><br><span class="line">+import android.preference.SwitchPreference;</span><br><span class="line">+import android.preference.Preference;</span><br><span class="line">+import android.preference.PreferenceFragment;</span><br><span class="line">+import android.preference.PreferenceScreen;</span><br><span class="line">+import android.provider.Settings;</span><br><span class="line">+import android.util.Log;</span><br><span class="line">+import android.content.Intent;</span><br><span class="line">+import android.os.UserHandle;</span><br><span class="line">+</span><br><span class="line">+public class NavigationBarSettings extends PreferenceFragment implements Preference.OnPreferenceChangeListener &#123;</span><br><span class="line">+</span><br><span class="line">+    private static final String TAG = &quot;hukaichao NavigationBarSettings&quot;;</span><br><span class="line">+</span><br><span class="line">+    private static final String KEY_NAVIGATION_SWITCH = &quot;navigation_settings&quot;;</span><br><span class="line">+</span><br><span class="line">+    private static final String KEY_STATUSBAR_SWITCH = &quot;statusbar_settings&quot;;</span><br><span class="line">+</span><br><span class="line">+    private static final String KEY_NAVIGATION_OBSERVER_SWITCH = &quot;navigation_observer_settings&quot;;</span><br><span class="line">+</span><br><span class="line">+    private static final String KEY_STATUSBAR_OBSERVER_SWITCH = &quot;statusbar_observer_settings&quot;;</span><br><span class="line">+</span><br><span class="line">+</span><br><span class="line">+    private SwitchPreference navigationSwitch;</span><br><span class="line">+    private SwitchPreference statusbarSwitch;</span><br><span class="line">+    private SwitchPreference navigationObserverSwitch;</span><br><span class="line">+    private SwitchPreference statusbarObserverSwitch;</span><br><span class="line">+    private Context mContext;</span><br><span class="line">+</span><br><span class="line">+    @Override</span><br><span class="line">+    public void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">+        super.onCreate(savedInstanceState);</span><br><span class="line">+        addPreferencesFromResource(R.xml.navigation_settings);</span><br><span class="line">+</span><br><span class="line">+        mContext = getActivity();</span><br><span class="line">+        navigationSwitch = (SwitchPreference) findPreference(KEY_NAVIGATION_SWITCH);</span><br><span class="line">+        statusbarSwitch = (SwitchPreference) findPreference(KEY_STATUSBAR_SWITCH);</span><br><span class="line">+        navigationObserverSwitch = (SwitchPreference) findPreference(KEY_NAVIGATION_OBSERVER_SWITCH);</span><br><span class="line">+        statusbarObserverSwitch = (SwitchPreference) findPreference(KEY_STATUSBAR_OBSERVER_SWITCH);</span><br><span class="line">+</span><br><span class="line">+        navigationSwitch.setOnPreferenceChangeListener(this);</span><br><span class="line">+        statusbarSwitch.setOnPreferenceChangeListener(this);</span><br><span class="line">+        navigationObserverSwitch.setOnPreferenceChangeListener(this);</span><br><span class="line">+        statusbarObserverSwitch.setOnPreferenceChangeListener(this);</span><br><span class="line">+</span><br><span class="line">+        PreferenceScreen preferenceScreen = getPreferenceScreen();</span><br><span class="line">+        </span><br><span class="line">+    &#125;</span><br><span class="line">+</span><br><span class="line">+    @Override</span><br><span class="line">+    public boolean onPreferenceChange(Preference preference, Object newValue) &#123;</span><br><span class="line">+        if (preference == navigationSwitch) &#123;</span><br><span class="line">+            boolean isChecked = (boolean) newValue;</span><br><span class="line">+            if (isChecked) &#123;</span><br><span class="line">+                Intent i = new Intent(&quot;com.android.systemui.statusbar.shownavigation&quot;);</span><br><span class="line">+                mContext.sendBroadcast(i);</span><br><span class="line">+                Log.d(TAG,&quot;show navigation bar&quot;);</span><br><span class="line">+</span><br><span class="line">+            &#125; else &#123;</span><br><span class="line">+                Intent i = new Intent(&quot;com.android.systemui.statusbar.hidenavigation&quot;);</span><br><span class="line">+                mContext.sendBroadcast(i);</span><br><span class="line">+                Log.d(TAG,&quot;hide navigation bar&quot;);</span><br><span class="line">+            &#125;</span><br><span class="line">+        &#125;</span><br><span class="line">+        else if (preference == statusbarSwitch) &#123;</span><br><span class="line">+            boolean isChecked = (boolean) newValue;</span><br><span class="line">+            if (isChecked) &#123;</span><br><span class="line">+                Intent i = new Intent(&quot;com.android.systemui.statusbar.showstatusbar&quot;);</span><br><span class="line">+                mContext.sendBroadcast(i);</span><br><span class="line">+                Log.d(TAG,&quot;show status bar&quot;);</span><br><span class="line">+</span><br><span class="line">+            &#125; else &#123;</span><br><span class="line">+                Intent i = new Intent(&quot;com.android.systemui.statusbar.hidestatusbar&quot;);</span><br><span class="line">+                mContext.sendBroadcast(i);</span><br><span class="line">+                Log.d(TAG,&quot;hide status bar&quot;);</span><br><span class="line">+            &#125;</span><br><span class="line">+        &#125;</span><br><span class="line">+        else if (preference == autoHideNavigationbar) &#123;</span><br><span class="line">+            boolean isChecked = (boolean) newValue;</span><br><span class="line">+            Settings.System.putInt(mContext.getContentResolver(), Settings.System.AUTO_HIDE_NAVIGATION_BAR, isChecked ? 1 : 0);</span><br><span class="line">+            Log.d(TAG,&quot;change auto hide navigation bar&quot;);</span><br><span class="line">+        &#125;</span><br><span class="line">+        else if (preference == autoHideStatusbar) &#123;</span><br><span class="line">+            boolean isChecked = (boolean) newValue;</span><br><span class="line">+            Settings.System.putInt(mContext.getContentResolver(), Settings.System.AUTO_HIDE_STATUS_BAR, isChecked ? 1 : 0);</span><br><span class="line">+            Log.d(TAG,&quot;change auto hide status bar&quot;);</span><br><span class="line">+        &#125;</span><br><span class="line">+        else if (preference == navigationObserverSwitch) &#123;</span><br><span class="line">+            boolean isChecked = (boolean) newValue;</span><br><span class="line">+            Settings.System.putInt(mContext.getContentResolver(), Settings.System.NAVIGATION_BAR_SHOW, isChecked ? 1 : 0);</span><br><span class="line">+            Log.d(TAG,&quot;change navigation bar observer&quot;);</span><br><span class="line">+        &#125;</span><br><span class="line">+        </span><br><span class="line">+        return true;</span><br><span class="line">+    &#125;</span><br><span class="line">+&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="2，SystemUI接收广播以实现导航栏和状态栏的隐藏、自动隐藏和显示功能"><a href="#2，SystemUI接收广播以实现导航栏和状态栏的隐藏、自动隐藏和显示功能" class="headerlink" title="2，SystemUI接收广播以实现导航栏和状态栏的隐藏、自动隐藏和显示功能"></a>2，SystemUI接收广播以实现导航栏和状态栏的隐藏、自动隐藏和显示功能</h2><p>现象：</p>
+<blockquote>
+<p>该补丁创建好了广播接收器和执行相应的功能。<br>当收到广播为com.android.systemui.statusbar.shownavigation时，会展示导航栏<br>当收到广播为com.android.systemui.statusbar.hidenavigation时，会隐藏导航栏<br>当收到广播为com.android.systemui.statusbar.showstatusbar时，会展示状态栏<br>当收到广播为com.android.systemui.statusbar.hidestatusbar时，会隐藏状态栏<br>在开启自动隐藏导航栏&#x2F;自动隐藏状态栏按钮后，再点击开启导航栏、状态栏相关按钮，过3秒后会自动隐藏</p>
+</blockquote>
+<p>解决方案：</p>
+<blockquote>
+<p>在a&#x2F;packages&#x2F;SystemUI&#x2F;src&#x2F;com&#x2F;android&#x2F;systemui&#x2F;statusbar&#x2F;phone&#x2F;PhoneStatusBar.java文件中新创建了广播接收器，根据不同activity广播执行不同指令。<br>结合任务一提交补丁完成的UI界面的前两个按钮配合使用<br>这几个广播发送方是系统APP，所以需要在&#x2F;core&#x2F;res&#x2F;AndroidManifest.xml中声明，添加protected-broadcast，否则会报错Sending non-protected broadcast<br>这是为了提醒 系统应用开发者要将 broadcast 添加到protected-broadcast，因为非 protexted-broadcast 广播是可以被三方应用发送的。定义为 proected-broadcast 可以避免三方应用也发送这些广播来捣蛋。<br>在自动隐藏功能中，采用了观察者模式，在PhoneStatusBar.java类中添加了一个观察者，在system.Settings中定义了常量用来控制隐藏功能的开关。</p>
+</blockquote>
+<p>补丁<a href="mailto:&#114;&#107;&#55;&#x31;&#x2d;&#x66;&#x72;&#x61;&#x6d;&#101;&#x77;&#x6f;&#114;&#x6b;&#x73;&#x2d;&#x62;&#x61;&#115;&#x65;&#x40;&#99;&#111;&#x6e;&#116;&#x72;&#111;&#x6c;&#x5f;&#110;&#x61;&#118;&#x69;&#x67;&#97;&#x74;&#x69;&#x6f;&#110;&#x5f;&#97;&#110;&#x64;&#95;&#115;&#x74;&#x61;&#116;&#x75;&#115;&#95;&#98;&#x61;&#114;&#x5f;&#98;&#x79;&#95;&#98;&#114;&#x6f;&#x61;&#100;&#x63;&#x61;&#x73;&#116;&#115;&#46;&#x70;&#97;&#116;&#x63;&#104;">&#114;&#107;&#55;&#x31;&#x2d;&#x66;&#x72;&#x61;&#x6d;&#101;&#x77;&#x6f;&#114;&#x6b;&#x73;&#x2d;&#x62;&#x61;&#115;&#x65;&#x40;&#99;&#111;&#x6e;&#116;&#x72;&#111;&#x6c;&#x5f;&#110;&#x61;&#118;&#x69;&#x67;&#97;&#x74;&#x69;&#x6f;&#110;&#x5f;&#97;&#110;&#x64;&#95;&#115;&#x74;&#x61;&#116;&#x75;&#115;&#95;&#98;&#x61;&#114;&#x5f;&#98;&#x79;&#95;&#98;&#114;&#x6f;&#x61;&#100;&#x63;&#x61;&#x73;&#116;&#115;&#46;&#x70;&#97;&#116;&#x63;&#104;</a>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br></pre></td><td class="code"><pre><span class="line">diff --git a/core/java/android/provider/Settings.java b/core/java/android/provider/Settings.java</span><br><span class="line">index ba61dff29d2..a0a072c00e3 100755</span><br><span class="line">--- a/core/java/android/provider/Settings.java</span><br><span class="line">+++ b/core/java/android/provider/Settings.java</span><br><span class="line">@@ -3300,6 +3300,14 @@ public final class Settings &#123;</span><br><span class="line">          */</span><br><span class="line">         public static final String SCREENSHOT_BUTTON_SHOW = &quot;screenshot_button_show&quot;;</span><br><span class="line"> </span><br><span class="line">+        public static final String AUTO_HIDE_NAVIGATION_BAR = &quot;auto_hide_navigation_bar&quot;;</span><br><span class="line">+</span><br><span class="line">+        public static final String AUTO_HIDE_STATUS_BAR = &quot;auto_hide_status_bar&quot;;</span><br><span class="line">+</span><br><span class="line">         /**</span><br><span class="line">          * Whether the phone vibrates when it is ringing due to an incoming call. This will</span><br><span class="line">          * be used by Phone and Setting apps; it shouldn&#x27;t affect other apps.</span><br><span class="line">diff --git a/packages/SettingsProvider/res/values/defaults.xml b/packages/SettingsProvider/res/values/defaults.xml</span><br><span class="line">index 0b9465e2b67..00b9e9e52e9 100755</span><br><span class="line">--- a/packages/SettingsProvider/res/values/defaults.xml</span><br><span class="line">+++ b/packages/SettingsProvider/res/values/defaults.xml</span><br><span class="line">@@ -225,4 +225,12 @@</span><br><span class="line">     &lt;integer name=&quot;def_screenshot_button_show&quot;&gt;1&lt;/integer&gt;</span><br><span class="line">     &lt;!-- the store location of screen capture by default--&gt;</span><br><span class="line">     &lt;string name=&quot;def_screenshot_location&quot;&gt;internal_storage&lt;/string&gt;</span><br><span class="line">+</span><br><span class="line">+    &lt;integer name=&quot;def_auto_hide_navigation_bar&quot;&gt;0&lt;/integer&gt;</span><br><span class="line">+</span><br><span class="line">+     &lt;integer name=&quot;def_auto_hide_status_bar&quot;&gt;0&lt;/integer&gt;</span><br><span class="line"> &lt;/resources&gt;</span><br><span class="line">diff --git a/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java b/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java</span><br><span class="line">index 5e2114dcd73..842985f8b65 100644</span><br><span class="line">--- a/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java</span><br><span class="line">+++ b/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java</span><br><span class="line">@@ -2403,6 +2403,19 @@ class DatabaseHelper extends SQLiteOpenHelper &#123;</span><br><span class="line"> </span><br><span class="line">             loadIntegerSetting(stmt, Settings.System.SCREENSHOT_BUTTON_SHOW,</span><br><span class="line">                     R.integer.def_screenshot_button_show);</span><br><span class="line">+</span><br><span class="line">+            loadIntegerSetting(stmt, Settings.System.AUTO_HIDE_NAVIGATION_BAR,</span><br><span class="line">+                    R.integer.def_auto_hide_navigation_bar);</span><br><span class="line">+</span><br><span class="line">+            loadIntegerSetting(stmt, Settings.System.AUTO_HIDE_STATUS_BAR,</span><br><span class="line">+                    R.integer.def_auto_hide_status_bar);</span><br><span class="line">+</span><br><span class="line">             /*</span><br><span class="line">              * IMPORTANT: Do not add any more upgrade steps here as the global,</span><br><span class="line">              * secure, and system settings are no longer stored in a database</span><br><span class="line">diff --git a/core/res/AndroidManifest.xml b/core/res/AndroidManifest.xml</span><br><span class="line">index a1003b3fed0..6a34cab3b1a 100644</span><br><span class="line">--- a/core/res/AndroidManifest.xml</span><br><span class="line">+++ b/core/res/AndroidManifest.xml</span><br><span class="line">@@ -495,6 +495,11 @@</span><br><span class="line">     &lt;!--for cec--&gt;</span><br><span class="line">     &lt;protected-broadcast android:name=&quot;com.rockchip.hdmicec.power_status_changed&quot; /&gt;</span><br><span class="line"> </span><br><span class="line">+    &lt;protected-broadcast android:name=&quot;com.android.systemui.statusbar.shownavigation&quot; /&gt;</span><br><span class="line">+    &lt;protected-broadcast android:name=&quot;com.android.systemui.statusbar.hidenavigation&quot; /&gt;</span><br><span class="line">+    &lt;protected-broadcast android:name=&quot;com.android.systemui.statusbar.showstatusbar&quot; /&gt;</span><br><span class="line">+    &lt;protected-broadcast android:name=&quot;com.android.systemui.statusbar.hidestatusbar&quot; /&gt;</span><br><span class="line">+</span><br><span class="line">     &lt;!-- ====================================================================== --&gt;</span><br><span class="line">     &lt;!--                          RUNTIME PERMISSIONS                           --&gt;</span><br><span class="line">     &lt;!-- ====================================================================== --&gt;</span><br><span class="line">diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/phone/PhoneStatusBar.java b/packages/SystemUI/src/com/android/systemui/statusbar/phone/PhoneStatusBar.java</span><br><span class="line">index f55d1f7f831..30cc5c8edda 100755</span><br><span class="line">--- a/packages/SystemUI/src/com/android/systemui/statusbar/phone/PhoneStatusBar.java</span><br><span class="line">+++ b/packages/SystemUI/src/com/android/systemui/statusbar/phone/PhoneStatusBar.java</span><br><span class="line">@@ -293,6 +293,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,</span><br><span class="line">      */</span><br><span class="line">     private static final float SRC_MIN_ALPHA = 0.002f;</span><br><span class="line"> </span><br><span class="line">+    private static final String SHOW_NAVIGATION = &quot;com.android.systemui.statusbar.shownavigation&quot;;</span><br><span class="line">+    private static final String HIDE_NAVIGATION = &quot;com.android.systemui.statusbar.hidenavigation&quot;;</span><br><span class="line">+    private static final String SHOW_STATUSBAR = &quot;com.android.systemui.statusbar.showstatusbar&quot;;</span><br><span class="line">+    private static final String HIDE_STATUSBAR = &quot;com.android.systemui.statusbar.hidestatusbar&quot;;</span><br><span class="line">+</span><br><span class="line">+</span><br><span class="line">     static &#123;</span><br><span class="line">         boolean onlyCoreApps;</span><br><span class="line">         boolean freeformWindowManagement;</span><br><span class="line">@@ -483,6 +488,97 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;;</span><br><span class="line"> </span><br><span class="line">+    private Runnable autoHideNavigationRunnable = () -&gt; &#123;</span><br><span class="line">+        if (mNavigationBarView != null) &#123;</span><br><span class="line">+           mWindowManager.removeViewImmediate(mNavigationBarView);</span><br><span class="line">+           mNavigationBarView = null;</span><br><span class="line">+        &#125;</span><br><span class="line">+    &#125;;</span><br><span class="line">+</span><br><span class="line">+    private void autoHideNavigation() &#123;</span><br><span class="line">+        if (mHandler.hasCallbacks(autoHideNavigationRunnable)) &#123;</span><br><span class="line">+            mHandler.removeCallbacks(autoHideNavigationRunnable);</span><br><span class="line">+        &#125;</span><br><span class="line">+        mHandler.postDelayed(autoHideNavigationRunnable, 3000);</span><br><span class="line">+    &#125;</span><br><span class="line">+</span><br><span class="line">+    private Runnable autoHideStatusRunnable = () -&gt; &#123;</span><br><span class="line">+        mStatusBarWindow.setVisibility(View.GONE);</span><br><span class="line">+    &#125;;</span><br><span class="line">+</span><br><span class="line">+    private void autoHideStatus() &#123;</span><br><span class="line">+        if (mHandler.hasCallbacks(autoHideStatusRunnable)) &#123;</span><br><span class="line">+            mHandler.removeCallbacks(autoHideStatusRunnable);</span><br><span class="line">+        &#125;</span><br><span class="line">+        mHandler.postDelayed(autoHideStatusRunnable, 3000);</span><br><span class="line">+    &#125;</span><br><span class="line">+    final private ContentObserver autoHideNavigationbarObserver = new ContentObserver(mHandler) &#123;</span><br><span class="line">+        @Override</span><br><span class="line">+        public void onChange(boolean selfChange) &#123;</span><br><span class="line">+            boolean isAutoHide = Settings.System.getInt(mContext.getContentResolver(), Settings.System.AUTO_HIDE_NAVIGATION_BAR, 0) == 1;</span><br><span class="line">+            if (isAutoHide) &#123;</span><br><span class="line">+                if (mNavigationBarView != null) &#123;</span><br><span class="line">+                   autoHideNavigation();</span><br><span class="line">+                &#125;</span><br><span class="line">+            &#125; else &#123;</span><br><span class="line">+                if (mNavigationBarView == null) &#123;</span><br><span class="line">+                    if (mHandler.hasCallbacks(autoHideNavigationRunnable)) &#123;</span><br><span class="line">+                        mHandler.removeCallbacks(autoHideNavigationRunnable);</span><br><span class="line">+                    &#125;</span><br><span class="line">+                    createNavigationBarView(mContext);</span><br><span class="line">+                    addNavigationBar();</span><br><span class="line">+                &#125;</span><br><span class="line">+            &#125;</span><br><span class="line">+        &#125;</span><br><span class="line">+    &#125;;</span><br><span class="line">+</span><br><span class="line">+    final private ContentObserver autoHideStatusbarObserver = new ContentObserver(mHandler) &#123;</span><br><span class="line">+        @Override</span><br><span class="line">+        public void onChange(boolean selfChange) &#123;</span><br><span class="line">+            boolean isAutoHide = Settings.System.getInt(mContext.getContentResolver(), Settings.System.AUTO_HIDE_STATUS_BAR, 0) == 1;</span><br><span class="line">+            if (isAutoHide) &#123;</span><br><span class="line">+                autoHideStatus();</span><br><span class="line">+            &#125; else &#123;</span><br><span class="line">+                if (mHandler.hasCallbacks(autoHideStatusRunnable)) &#123;</span><br><span class="line">+                    mHandler.removeCallbacks(autoHideStatusRunnable);</span><br><span class="line">+                &#125;</span><br><span class="line">+                mStatusBarWindow.setVisibility(View.VISIBLE);</span><br><span class="line">+            &#125;</span><br><span class="line">+        &#125;</span><br><span class="line">+    &#125;;</span><br><span class="line">+</span><br><span class="line">+</span><br><span class="line">     private int mInteractingWindows;</span><br><span class="line">     private boolean mAutohideSuspended;</span><br><span class="line">     private int mStatusBarMode;</span><br><span class="line">@@ -737,6 +833,34 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,</span><br><span class="line">         mContext.getContentResolver().registerContentObserver(</span><br><span class="line">                 Settings.System.getUriFor(Settings.System.SCREENSHOT_BUTTON_SHOW), true,</span><br><span class="line">                 screenshotShowObserver);</span><br><span class="line">+        mContext.getContentResolver().registerContentObserver(</span><br><span class="line">+                Settings.System.getUriFor(Settings.System.AUTO_HIDE_NAVIGATION_BAR), true,</span><br><span class="line">+                autoHideNavigationbarObserver);</span><br><span class="line">+</span><br><span class="line">+        mContext.getContentResolver().registerContentObserver(</span><br><span class="line">+                Settings.System.getUriFor(Settings.System.AUTO_HIDE_STATUS_BAR), true,</span><br><span class="line">+                autoHideStatusbarObserver);</span><br><span class="line">     &#125;</span><br><span class="line"> </span><br><span class="line">     protected void createIconController() &#123;</span><br><span class="line">@@ -1023,6 +1072,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,</span><br><span class="line">         context.registerReceiverAsUser(mDemoReceiver, UserHandle.ALL, demoFilter,</span><br><span class="line">                 android.Manifest.permission.DUMP, null);</span><br><span class="line"> </span><br><span class="line">+        IntentFilter carfilter = new IntentFilter();</span><br><span class="line">+        carfilter.addAction(SHOW_NAVIGATION);</span><br><span class="line">+        carfilter.addAction(HIDE_NAVIGATION);</span><br><span class="line">+        carfilter.addAction(SHOW_STATUSBAR);</span><br><span class="line">+        carfilter.addAction(HIDE_STATUSBAR);</span><br><span class="line">+        context.registerReceiverAsUser(statusBroadcastReceiver, UserHandle.ALL, carfilter, null, null);</span><br><span class="line">+</span><br><span class="line">+</span><br><span class="line">         // listen for USER_SETUP_COMPLETE setting (per-user)</span><br><span class="line">         resetUserSetupObserver();</span><br><span class="line"> </span><br><span class="line">@@ -3637,6 +3694,28 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,</span><br><span class="line">         &#125;, cancelAction, afterKeyguardGone);</span><br><span class="line">     &#125;</span><br><span class="line"> </span><br><span class="line">+    private BroadcastReceiver statusBroadcastReceiver = new BroadcastReceiver() &#123;</span><br><span class="line">+        @Override</span><br><span class="line">+        public void onReceive(Context context, Intent intent) &#123;</span><br><span class="line">+            Log.e(TAG, &quot;Broadcast receive intent:&quot; + intent);</span><br><span class="line">+            String action = intent.getAction();</span><br><span class="line">+            if (HIDE_NAVIGATION.equals(action)) &#123;</span><br><span class="line">+                if (mNavigationBarView == null) return;</span><br><span class="line">+                mWindowManager.removeViewImmediate(mNavigationBarView);</span><br><span class="line">+                mNavigationBarView = null;</span><br><span class="line">+            &#125;else if (SHOW_NAVIGATION.equals(action)) &#123;</span><br><span class="line">+                if (mNavigationBarView != null) return;</span><br><span class="line">+                createNavigationBarView(mContext);</span><br><span class="line">+                addNavigationBar();</span><br><span class="line">+                if (Settings.System.getInt(mContext.getContentResolver(), Settings.System.AUTO_HIDE_NAVIGATION_BAR, 0) == 1) &#123;</span><br><span class="line">+                    autoHideNavigation();</span><br><span class="line">+                &#125;</span><br><span class="line">+            &#125;else if(HIDE_STATUSBAR.equals(action)) &#123;</span><br><span class="line">+                mStatusBarWindow.setVisibility(View.GONE);</span><br><span class="line">+            &#125;else if(SHOW_STATUSBAR.equals(action)) &#123;</span><br><span class="line">+                mStatusBarWindow.setVisibility(View.VISIBLE);</span><br><span class="line">+                if (Settings.System.getInt(mContext.getContentResolver(), Settings.System.AUTO_HIDE_STATUS_BAR, 0) == 1) &#123;</span><br><span class="line">+                    autoHideStatus();</span><br><span class="line">+                &#125;</span><br><span class="line">+            &#125;</span><br><span class="line">+        &#125;</span><br><span class="line">+    &#125;;</span><br><span class="line">+</span><br><span class="line">     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() &#123;</span><br><span class="line">         @Override</span><br><span class="line">         public void onReceive(Context context, Intent intent) &#123;</span><br><span class="line">@@ -4039,6 +4118,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,</span><br><span class="line">         &#125;</span><br><span class="line">         mContext.unregisterReceiver(mBroadcastReceiver);</span><br><span class="line">         mContext.unregisterReceiver(mDemoReceiver);</span><br><span class="line">+        mContext.unregisterReceiver(statusBroadcastReceiver);</span><br><span class="line">         mAssistManager.destroy();</span><br><span class="line"> </span><br><span class="line">         final SignalClusterView signalCluster =</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="3，通过注册观察者，实现对SystemUI的动态隐藏和显示"><a href="#3，通过注册观察者，实现对SystemUI的动态隐藏和显示" class="headerlink" title="3，通过注册观察者，实现对SystemUI的动态隐藏和显示"></a>3，通过注册观察者，实现对SystemUI的动态隐藏和显示</h2><p>这项任务是仿照SystemUI中的截图板块实现的，通过注册观察者来监听变更</p>
+<p>即在System.Settings里面定义一个值，然后在PhonStatusBar里面注册一个观察者用来监听这个值，当这个值发生变更则执行相应的隐藏和显示操作。<br>不再显示通知的具体实现是在addNotification方法中进行拦截，不让其显示在通知栏<br>隐藏快速设置板块内容是将 QSContainer类的qsContainer对象 设置可见性为View.GONE</p>
+<p>补丁<a href="mailto:&#x72;&#107;&#55;&#x31;&#x2d;&#102;&#114;&#97;&#109;&#101;&#x77;&#111;&#114;&#107;&#x73;&#45;&#x62;&#x61;&#x73;&#x65;&#x40;&#99;&#111;&#110;&#x74;&#x72;&#x6f;&#108;&#95;&#110;&#x61;&#118;&#x69;&#103;&#x61;&#116;&#x69;&#111;&#110;&#95;&#97;&#110;&#x64;&#95;&#115;&#x74;&#97;&#116;&#x75;&#x73;&#x5f;&#98;&#97;&#114;&#95;&#98;&#x79;&#x5f;&#x6f;&#98;&#x73;&#101;&#114;&#x76;&#101;&#114;&#x2e;&#112;&#97;&#x74;&#99;&#x68;">&#x72;&#107;&#55;&#x31;&#x2d;&#102;&#114;&#97;&#109;&#101;&#x77;&#111;&#114;&#107;&#x73;&#45;&#x62;&#x61;&#x73;&#x65;&#x40;&#99;&#111;&#110;&#x74;&#x72;&#x6f;&#108;&#95;&#110;&#x61;&#118;&#x69;&#103;&#x61;&#116;&#x69;&#111;&#110;&#95;&#97;&#110;&#x64;&#95;&#115;&#x74;&#97;&#116;&#x75;&#x73;&#x5f;&#98;&#97;&#114;&#95;&#98;&#x79;&#x5f;&#x6f;&#98;&#x73;&#101;&#114;&#x76;&#101;&#114;&#x2e;&#112;&#97;&#x74;&#99;&#x68;</a>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br></pre></td><td class="code"><pre><span class="line">diff --git a/core/java/android/provider/Settings.java b/core/java/android/provider/Settings.java</span><br><span class="line">index ba61dff29d2..80a924980de 100755</span><br><span class="line">--- a/core/java/android/provider/Settings.java</span><br><span class="line">+++ b/core/java/android/provider/Settings.java</span><br><span class="line">@@ -3300,6 +3300,10 @@ public final class Settings &#123;</span><br><span class="line">          */</span><br><span class="line">         public static final String SCREENSHOT_BUTTON_SHOW = &quot;screenshot_button_show&quot;;</span><br><span class="line"> </span><br><span class="line">+        public static final String NAVIGATION_BAR_SHOW = &quot;navigation_bar_show&quot;;</span><br><span class="line">+</span><br><span class="line">+        public static final String STATUS_BAR_SHOW = &quot;status_bar_show&quot;;</span><br><span class="line">+</span><br><span class="line">+        public static final String AUTO_HIDE_NAVIGATION_BAR = &quot;auto_hide_navigation_bar&quot;;</span><br><span class="line">+</span><br><span class="line">+        public static final String AUTO_HIDE_STATUS_BAR = &quot;auto_hide_status_bar&quot;;</span><br><span class="line">+</span><br><span class="line">+        public static final String NOTIFICATION_BAR_SHOW = &quot;notification_bar_show&quot;;</span><br><span class="line">+</span><br><span class="line">+        public static final String QS_CONTAINER_SHOW = &quot;qs_container_show&quot;;</span><br><span class="line">+</span><br><span class="line">         /**</span><br><span class="line">          * Whether the phone vibrates when it is ringing due to an incoming call. This will</span><br><span class="line">          * be used by Phone and Setting apps; it shouldn&#x27;t affect other apps.</span><br><span class="line">diff --git a/packages/SettingsProvider/res/values/defaults.xml b/packages/SettingsProvider/res/values/defaults.xml</span><br><span class="line">index 0b9465e2b67..e349544c1eb 100755</span><br><span class="line">--- a/packages/SettingsProvider/res/values/defaults.xml</span><br><span class="line">+++ b/packages/SettingsProvider/res/values/defaults.xml</span><br><span class="line">@@ -225,4 +225,8 @@</span><br><span class="line">     &lt;integer name=&quot;def_screenshot_button_show&quot;&gt;1&lt;/integer&gt;</span><br><span class="line">     &lt;!-- the store location of screen capture by default--&gt;</span><br><span class="line">     &lt;string name=&quot;def_screenshot_location&quot;&gt;internal_storage&lt;/string&gt;</span><br><span class="line">+</span><br><span class="line">+    &lt;integer name=&quot;def_navigation_bar_show&quot;&gt;0&lt;/integer&gt;</span><br><span class="line">+</span><br><span class="line">+    &lt;integer name=&quot;def_status_bar_show&quot;&gt;0&lt;/integer&gt;</span><br><span class="line">+</span><br><span class="line">+    &lt;integer name=&quot;def_auto_hide_navigation_bar&quot;&gt;0&lt;/integer&gt;</span><br><span class="line">+</span><br><span class="line">+    &lt;integer name=&quot;def_auto_hide_status_bar&quot;&gt;0&lt;/integer&gt;</span><br><span class="line">+</span><br><span class="line">+    &lt;integer name=&quot;def_notification_bar_show&quot;&gt;0&lt;/integer&gt;</span><br><span class="line">+</span><br><span class="line">+    &lt;integer name=&quot;def_qs_container_show&quot;&gt;1&lt;/integer&gt;</span><br><span class="line"> &lt;/resources&gt;</span><br><span class="line">diff --git a/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java b/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java</span><br><span class="line">index 5e2114dcd73..2f2d37f9630 100644</span><br><span class="line">--- a/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java</span><br><span class="line">+++ b/packages/SettingsProvider/src/com/android/providers/settings/DatabaseHelper.java</span><br><span class="line">@@ -2403,6 +2403,13 @@ class DatabaseHelper extends SQLiteOpenHelper &#123;</span><br><span class="line"> </span><br><span class="line">             loadIntegerSetting(stmt, Settings.System.SCREENSHOT_BUTTON_SHOW,</span><br><span class="line">                     R.integer.def_screenshot_button_show);</span><br><span class="line">+</span><br><span class="line">+            loadIntegerSetting(stmt, Settings.System.NAVIGATION_BAR_SHOW,</span><br><span class="line">+                    R.integer.def_navigation_bar_show);</span><br><span class="line">+</span><br><span class="line">+            loadIntegerSetting(stmt, Settings.System.STATUS_BAR_SHOW,</span><br><span class="line">+                    R.integer.def_status_bar_show);</span><br><span class="line">+</span><br><span class="line">+            loadIntegerSetting(stmt, Settings.System.AUTO_HIDE_NAVIGATION_BAR,</span><br><span class="line">+                    R.integer.def_auto_hide_navigation_bar);</span><br><span class="line">+</span><br><span class="line">+            loadIntegerSetting(stmt, Settings.System.AUTO_HIDE_STATUS_BAR,</span><br><span class="line">+                    R.integer.def_auto_hide_status_bar);</span><br><span class="line">+</span><br><span class="line">+            loadIntegerSetting(stmt, Settings.System.NOTIFICATION_BAR_SHOW,</span><br><span class="line">+                  R.integer.def_notification_bar_show);</span><br><span class="line">+</span><br><span class="line">+            loadIntegerSetting(stmt, Settings.System.QS_CONTAINER_SHOW,</span><br><span class="line">+                    R.integer.def_qs_container_show);</span><br><span class="line">             /*</span><br><span class="line">              * IMPORTANT: Do not add any more upgrade steps here as the global,</span><br><span class="line">              * secure, and system settings are no longer stored in a database  </span><br><span class="line">diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/phone/PhoneStatusBar.java b/packages/SystemUI/src/com/android/systemui/statusbar/phone/PhoneStatusBar.java</span><br><span class="line">index f55d1f7f831..30cc5c8edda 100755</span><br><span class="line">--- a/packages/SystemUI/src/com/android/systemui/statusbar/phone/PhoneStatusBar.java</span><br><span class="line">+++ b/packages/SystemUI/src/com/android/systemui/statusbar/phone/PhoneStatusBar.java</span><br><span class="line">@@ -298,6 +298,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,</span><br><span class="line">     private static final String SHOW_STATUSBAR = &quot;com.android.systemui.statusbar.showstatusbar&quot;;</span><br><span class="line">     private static final String HIDE_STATUSBAR = &quot;com.android.systemui.statusbar.hidestatusbar&quot;;</span><br><span class="line"> </span><br><span class="line">+    private QSContainer qsContainer; </span><br><span class="line">+</span><br><span class="line">     static &#123;</span><br><span class="line">         boolean onlyCoreApps;</span><br><span class="line">         boolean freeformWindowManagement;</span><br><span class="line">@@ -483,6 +489,29 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;;</span><br><span class="line"> </span><br><span class="line">+   private Runnable autoHideNavigationRunnable = () -&gt; &#123;</span><br><span class="line">+        if (mNavigationBarView != null) &#123;</span><br><span class="line">+          mWindowManager.removeViewImmediate(mNavigationBarView);</span><br><span class="line">+          mNavigationBarView = null;</span><br><span class="line">+        &#125;</span><br><span class="line">+    &#125;;</span><br><span class="line">+</span><br><span class="line">+    private void autoHideNavigation() &#123;</span><br><span class="line">+        if (mHandler.hasCallbacks(autoHideNavigationRunnable)) &#123;</span><br><span class="line">+            mHandler.removeCallbacks(autoHideNavigationRunnable);</span><br><span class="line">+        &#125;</span><br><span class="line">+        mHandler.postDelayed(autoHideNavigationRunnable, 3000);</span><br><span class="line">+    &#125;</span><br><span class="line">+</span><br><span class="line">+    private Runnable autoHideStatusRunnable = () -&gt; &#123;</span><br><span class="line">+        mStatusBarWindow.setVisibility(View.GONE);</span><br><span class="line">+    &#125;;</span><br><span class="line">+</span><br><span class="line">+    private void autoHideStatus() &#123;</span><br><span class="line">+        if (mHandler.hasCallbacks(autoHideStatusRunnable)) &#123;</span><br><span class="line">+            mHandler.removeCallbacks(autoHideStatusRunnable);</span><br><span class="line">+        &#125;</span><br><span class="line">+        mHandler.postDelayed(autoHideStatusRunnable, 3000);</span><br><span class="line">+    &#125;</span><br><span class="line">+</span><br><span class="line">+    final private ContentObserver navigationbarShowObserver = new ContentObserver(mHandler) &#123;</span><br><span class="line">+        @Override</span><br><span class="line">+        public void onChange(boolean selfChange) &#123;</span><br><span class="line">+            boolean isShow = Settings.System.getInt(mContext.getContentResolver(), Settings.System.NAVIGATION_BAR_SHOW, 1) == 1;</span><br><span class="line">+            if (mNavigationBarView != null &amp;&amp; isShow == false)&#123;</span><br><span class="line">+                mWindowManager.removeViewImmediate(mNavigationBarView);</span><br><span class="line">+                mNavigationBarView = null;</span><br><span class="line">+</span><br><span class="line">+            &#125; else if (mNavigationBarView == null &amp;&amp; isShow == true)&#123;</span><br><span class="line">+                createNavigationBarView(mContext);</span><br><span class="line">+                addNavigationBar();</span><br><span class="line">+                if (Settings.System.getInt(mContext.getContentResolver(), Settings.System.AUTO_HIDE_NAVIGATION_BAR, 0) == 1) &#123;</span><br><span class="line">+                    autoHideNavigation();</span><br><span class="line">+                &#125;</span><br><span class="line">+            &#125;</span><br><span class="line">+        &#125;</span><br><span class="line">+    &#125;;</span><br><span class="line">+</span><br><span class="line">+    final private ContentObserver statusbarShowObserver = new ContentObserver(mHandler) &#123;</span><br><span class="line">+        @Override</span><br><span class="line">+        public void onChange(boolean selfChange) &#123;</span><br><span class="line">+            boolean isShow = Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUS_BAR_SHOW, 1) == 1;</span><br><span class="line">+            mStatusBarWindow.setVisibility(isShow ? View.VISIBLE : View.GONE);</span><br><span class="line">+            if (Settings.System.getInt(mContext.getContentResolver(), Settings.System.AUTO_HIDE_STATUS_BAR, 0) == 1) &#123;</span><br><span class="line">+                autoHideStatus();</span><br><span class="line">+            &#125;</span><br><span class="line">+        &#125;</span><br><span class="line">+    &#125;;</span><br><span class="line">+</span><br><span class="line">+    final private ContentObserver autoHideNavigationbarObserver = new ContentObserver(mHandler) &#123;</span><br><span class="line">+        @Override</span><br><span class="line">+        public void onChange(boolean selfChange) &#123;</span><br><span class="line">+            boolean isAutoHide = Settings.System.getInt(mContext.getContentResolver(), Settings.System.AUTO_HIDE_NAVIGATION_BAR, 0) == 1;</span><br><span class="line">+            if (isAutoHide) &#123;</span><br><span class="line">+                if (mNavigationBarView != null) &#123;</span><br><span class="line">+                   autoHideNavigation();</span><br><span class="line">+                &#125;</span><br><span class="line">+            &#125; else &#123;</span><br><span class="line">+                if (mNavigationBarView == null) &#123;</span><br><span class="line">+                    if (mHandler.hasCallbacks(autoHideNavigationRunnable)) &#123;</span><br><span class="line">+                        mHandler.removeCallbacks(autoHideNavigationRunnable);</span><br><span class="line">+                    &#125;</span><br><span class="line">+                    createNavigationBarView(mContext);</span><br><span class="line">+                    addNavigationBar();</span><br><span class="line">+                &#125;</span><br><span class="line">+            &#125;</span><br><span class="line">+        &#125;</span><br><span class="line">+    &#125;;</span><br><span class="line">+</span><br><span class="line">+    final private ContentObserver autoHideStatusbarObserver = new ContentObserver(mHandler) &#123;</span><br><span class="line">+        @Override</span><br><span class="line">+        public void onChange(boolean selfChange) &#123;</span><br><span class="line">+            boolean isAutoHide = Settings.System.getInt(mContext.getContentResolver(), Settings.System.AUTO_HIDE_STATUS_BAR, 0) == 1;</span><br><span class="line">+            if (isAutoHide) &#123;</span><br><span class="line">+                autoHideStatus();</span><br><span class="line">+            &#125; else &#123;</span><br><span class="line">+                if (mHandler.hasCallbacks(autoHideStatusRunnable)) &#123;</span><br><span class="line">+                    mHandler.removeCallbacks(autoHideStatusRunnable);</span><br><span class="line">+                &#125;</span><br><span class="line">+                mStatusBarWindow.setVisibility(View.VISIBLE);</span><br><span class="line">+            &#125;</span><br><span class="line">+        &#125;</span><br><span class="line">+    &#125;;</span><br><span class="line">+</span><br><span class="line">+    final private ContentObserver qsContainerShowObserver = new ContentObserver(mHandler) &#123;</span><br><span class="line">+        @Override</span><br><span class="line">+        public void onChange(boolean selfChange) &#123;</span><br><span class="line">+            boolean isShow = Settings.System.getInt(mContext.getContentResolver(), Settings.System.QS_CONTAINER_SHOW, 1) == 1;</span><br><span class="line">+            qsContainer.setVisibility(isShow ? View.VISIBLE : View.GONE);</span><br><span class="line">+        &#125;</span><br><span class="line">+    &#125;;</span><br><span class="line">+</span><br><span class="line">     private int mInteractingWindows;</span><br><span class="line">     private boolean mAutohideSuspended;</span><br><span class="line">     private int mStatusBarMode;</span><br><span class="line">@@ -737,6 +766,26 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,</span><br><span class="line">         mContext.getContentResolver().registerContentObserver(</span><br><span class="line">                 Settings.System.getUriFor(Settings.System.SCREENSHOT_BUTTON_SHOW), true,</span><br><span class="line">                 screenshotShowObserver);</span><br><span class="line">+</span><br><span class="line">+        mContext.getContentResolver().registerContentObserver(</span><br><span class="line">+                Settings.System.getUriFor(Settings.System.NAVIGATION_BAR_SHOW), true,</span><br><span class="line">+                navigationbarShowObserver);</span><br><span class="line">+        </span><br><span class="line">+        mContext.getContentResolver().registerContentObserver(</span><br><span class="line">+                Settings.System.getUriFor(Settings.System.STATUS_BAR_SHOW), true,</span><br><span class="line">+                statusbarShowObserver);</span><br><span class="line">+</span><br><span class="line">+		 mContext.getContentResolver().registerContentObserver(</span><br><span class="line">+                Settings.System.getUriFor(Settings.System.AUTO_HIDE_NAVIGATION_BAR), true,</span><br><span class="line">+                autoHideNavigationbarObserver);</span><br><span class="line">+</span><br><span class="line">+        mContext.getContentResolver().registerContentObserver(</span><br><span class="line">+                Settings.System.getUriFor(Settings.System.AUTO_HIDE_STATUS_BAR), true,</span><br><span class="line">+                autoHideStatusbarObserver);</span><br><span class="line">+</span><br><span class="line">+        mContext.getContentResolver().registerContentObserver(</span><br><span class="line">+                Settings.System.getUriFor(Settings.System.QS_CONTAINER_SHOW), true,</span><br><span class="line">+                qsContainerShowObserver);</span><br><span class="line">+</span><br><span class="line">+</span><br><span class="line">     &#125;</span><br><span class="line"> </span><br><span class="line">     protected void createIconController() &#123;</span><br><span class="line">@@ -1072,7 +1084,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,</span><br><span class="line">             container.addInflateListener(new InflateListener() &#123;</span><br><span class="line">                 @Override</span><br><span class="line">                 public void onInflated(View v) &#123;</span><br><span class="line">-                    QSContainer qsContainer = (QSContainer) v.findViewById(</span><br><span class="line">+                    qsContainer = (QSContainer) v.findViewById(</span><br><span class="line">                             R.id.quick_settings_container);</span><br><span class="line">                     qsContainer.setHost(qsh);</span><br><span class="line">                     mQSPanel = qsContainer.getQsPanel();</span><br><span class="line">@@ -1700,6 +1712,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,</span><br><span class="line">     @Override</span><br><span class="line">     public void addNotification(StatusBarNotification notification, RankingMap ranking,</span><br><span class="line">             Entry oldEntry) &#123;</span><br><span class="line">+        if (Settings.System.getInt(mContext.getContentResolver(), Settings.System.NOTIFICATION_BAR_SHOW, 1) == 1) &#123;</span><br><span class="line">+            return;</span><br><span class="line">+        &#125;</span><br><span class="line">+</span><br><span class="line">         if (DEBUG) Log.d(TAG, &quot;addNotification key=&quot; + notification.getKey());</span><br><span class="line"> </span><br><span class="line">         mNotificationData.updateRanking(ranking);</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="4，在首次开机时添加config属性，用于对每项控制进行配置。"><a href="#4，在首次开机时添加config属性，用于对每项控制进行配置。" class="headerlink" title="4，在首次开机时添加config属性，用于对每项控制进行配置。"></a>4，在首次开机时添加config属性，用于对每项控制进行配置。</h2><p>按照上述方法注册的观察者模式仅有在值发生变化的时候才会执行，开机的时候虽然设置了默认值，但是并不会触发观察者模式，所以我在注册观察者的时候额外根据默认值执行一次配置操作即可在开机的时候进行配置。</p>
+<p>补丁<a href="mailto:&#x72;&#x6b;&#x37;&#49;&#45;&#x66;&#x72;&#x61;&#109;&#101;&#119;&#111;&#x72;&#x6b;&#x73;&#x2d;&#98;&#97;&#x73;&#101;&#x40;&#115;&#x65;&#116;&#95;&#x64;&#101;&#x66;&#x61;&#x75;&#108;&#116;&#95;&#118;&#x61;&#x6c;&#x75;&#101;&#x5f;&#x66;&#111;&#x72;&#x5f;&#110;&#97;&#x76;&#x69;&#103;&#97;&#116;&#105;&#x6f;&#110;&#x5f;&#98;&#97;&#114;&#x2e;&#112;&#x61;&#x74;&#99;&#x68;">&#x72;&#x6b;&#x37;&#49;&#45;&#x66;&#x72;&#x61;&#109;&#101;&#119;&#111;&#x72;&#x6b;&#x73;&#x2d;&#98;&#97;&#x73;&#101;&#x40;&#115;&#x65;&#116;&#95;&#x64;&#101;&#x66;&#x61;&#x75;&#108;&#116;&#95;&#118;&#x61;&#x6c;&#x75;&#101;&#x5f;&#x66;&#111;&#x72;&#x5f;&#110;&#97;&#x76;&#x69;&#103;&#97;&#116;&#105;&#x6f;&#110;&#x5f;&#98;&#97;&#114;&#x2e;&#112;&#x61;&#x74;&#99;&#x68;</a>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/phone/PhoneStatusBar.java b/packages/SystemUI/src/com/android/systemui/statusbar/phone/PhoneStatusBar.java</span><br><span class="line">index f55d1f7f831..30cc5c8edda 100755</span><br><span class="line">--- a/packages/SystemUI/src/com/android/systemui/statusbar/phone/PhoneStatusBar.java</span><br><span class="line">+++ b/packages/SystemUI/src/com/android/systemui/statusbar/phone/PhoneStatusBar.java</span><br><span class="line">@@ -737,6 +766,26 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,</span><br><span class="line">         mContext.getContentResolver().registerContentObserver(</span><br><span class="line">                 Settings.System.getUriFor(Settings.System.SCREENSHOT_BUTTON_SHOW), true,</span><br><span class="line">                 screenshotShowObserver);</span><br><span class="line"></span><br><span class="line">        mContext.getContentResolver().registerContentObserver(</span><br><span class="line">                Settings.System.getUriFor(Settings.System.NAVIGATION_BAR_SHOW), true,</span><br><span class="line">                navigationbarShowObserver);</span><br><span class="line">        </span><br><span class="line">        mContext.getContentResolver().registerContentObserver(</span><br><span class="line">                Settings.System.getUriFor(Settings.System.STATUS_BAR_SHOW), true,</span><br><span class="line">                statusbarShowObserver);</span><br><span class="line">+</span><br><span class="line">+        boolean isShowNavigation = Settings.System.getInt(mContext.getContentResolver(), Settings.System.NAVIGATION_BAR_SHOW, 1) == 1;</span><br><span class="line">+        if (mNavigationBarView != null &amp;&amp; isShowNavigation == false)&#123;</span><br><span class="line">+            mWindowManager.removeViewImmediate(mNavigationBarView);</span><br><span class="line">+            mNavigationBarView = null;</span><br><span class="line">+        &#125; else if (mNavigationBarView == null &amp;&amp; isShowNavigation == true)&#123;</span><br><span class="line">+            createNavigationBarView(mContext);</span><br><span class="line">+            addNavigationBar();</span><br><span class="line">+        &#125;</span><br><span class="line">+        boolean isShowStatus = Settings.System.getInt(mContext.getContentResolver(), Settings.System.STATUS_BAR_SHOW, 1) == 1;</span><br><span class="line">+            mStatusBarWindow.setVisibility(isShowStatus ? View.VISIBLE : View.GONE);</span><br><span class="line">+</span><br><span class="line">     &#125;</span><br><span class="line"> </span><br><span class="line">     protected void createIconController() &#123;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="5-问题"><a href="#5-问题" class="headerlink" title="5 问题"></a>5 问题</h2><p>在实现的过程中是有问题没有解决的</p>
+<p>在UI界面，设置的按钮并不会持久化，每次退出然后重进发现所有按钮状态又变成了关闭，在xml文件中有持久化的操作，但是并没有生效，也没有排查到问题。</p>
+<p>同样是在UI界面，没有做回调来修改按钮状态。也就是当两个按钮同时控制状态栏的时候，一个按钮的操作不会响应到另一个按钮，会导致UI界面的值和系统中的值对不上，明明系统中已经开启，但是开关仍是关闭状态</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/android/" class="category-chain-item">android</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/android/" class="print-no-link">#android</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>SystemUI学习</div>
+      <div>https://hukaichao.me/2023/08/21/SystemUI学习/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>凌冬</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年8月21日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/08/21/AIDL%E9%80%9A%E4%BF%A1%E5%AD%A6%E4%B9%A0/" title="AIDL通信学习">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">AIDL通信学习</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/08/21/Java%E4%BB%A3%E7%A0%81%E4%B8%AD%E6%97%A0%E6%B3%95%E9%80%9A%E8%BF%87pm%20install%E5%AE%89%E8%A3%85%E5%BA%94%E7%94%A8/" title="Java代码中无法通过pm install安装应用">
+                        <span class="hidden-mobile">Java代码中无法通过pm install安装应用</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

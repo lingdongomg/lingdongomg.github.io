@@ -1,0 +1,837 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="凌冬">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言：买了一台服务器，装上了Ubuntu server22.04的系统，想折腾一下这台服务器，让它同时承当软路由的作用，所以还额外买了一个网卡。最开始的网络设置计划如下： 总路由器 -&gt; 服务器 -&gt; openwrt软路由 -&gt; 自己的路由器 -&gt; 其他终端 两个网卡如下： 123456789101112131415enp5s0: flags&#x3D;4099&lt;UP,BROA">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ubuntu网络配置笔记">
+<meta property="og:url" content="https://hukaichao.me/2023/11/05/Ubuntu%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="凌冬的个人博客">
+<meta property="og:description" content="前言：买了一台服务器，装上了Ubuntu server22.04的系统，想折腾一下这台服务器，让它同时承当软路由的作用，所以还额外买了一个网卡。最开始的网络设置计划如下： 总路由器 -&gt; 服务器 -&gt; openwrt软路由 -&gt; 自己的路由器 -&gt; 其他终端 两个网卡如下： 123456789101112131415enp5s0: flags&#x3D;4099&lt;UP,BROA">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-11-05T14:03:06.000Z">
+<meta property="article:modified_time" content="2024-02-02T07:27:40.289Z">
+<meta property="article:author" content="凌冬">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Ubuntu网络配置笔记 - 凌冬的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Ubuntu网络配置笔记"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-11-05 22:03" pubdate>
+          2023年11月5日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          44 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Ubuntu网络配置笔记</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h2><p>买了一台服务器，装上了Ubuntu server22.04的系统，想折腾一下这台服务器，让它同时承当软路由的作用，所以还额外买了一个网卡。最开始的网络设置计划如下：</p>
+<p>总路由器 -&gt; 服务器 -&gt; openwrt软路由 -&gt; 自己的路由器 -&gt; 其他终端</p>
+<p>两个网卡如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">enp5s0: flags=4099&lt;UP,BROADCAST,MULTICAST&gt;  mtu 1500</span><br><span class="line">        ether 1c:86:0b:21:b6:d9  txqueuelen 1000  (Ethernet)</span><br><span class="line">        RX packets 0  bytes 0 (0.0 B)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 0  bytes 0 (0.0 B)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br><span class="line"></span><br><span class="line">enp6s0: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500</span><br><span class="line">        inet 192.168.6.23  netmask 255.255.255.0  broadcast 192.168.6.255</span><br><span class="line">        inet6 fe80::8e0:afff:feff:6fc  prefixlen 64  scopeid 0x20&lt;link&gt;</span><br><span class="line">        ether 0a:e0:af:ff:06:fc  txqueuelen 1000  (Ethernet)</span><br><span class="line">        RX packets 32476  bytes 3696355 (3.6 MB)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 81590  bytes 15647027 (15.6 MB)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br></pre></td></tr></table></figure>
+
+<p>从上可以看到enp6s0成功连接了网络，现在我希望将enp6s0作为wan口，另一个enp5s0作为lan口，将我的这个主机另一个网口利用起来，让我网络按照我上面预想的方式进行。</p>
+<h2 id="静态路由配置"><a href="#静态路由配置" class="headerlink" title="静态路由配置"></a>静态路由配置</h2><p>如果自己的一台设备连接的总路由器，另一台设备连接的主机的路由器（二级路由），此时第一台设备是无法ping通第二台的，也就无法通过SSH连接上第二台服务器使用。</p>
+<p>这里需要将主路由器进行路由配置，在路由器的控制台界面</p>
+<ul>
+<li><p>TP-LINK的是 传输控制-&gt;路由设置-&gt;静态路由：新增一条规则</p>
+<ul>
+<li>目的地址：填写子路由的IP地址范围，最后一位是0，例如：192.168.50.0</li>
+<li>子网掩码：255.255.255.0</li>
+<li>下一条：填写子路由在总路由局域网的IP地址，例如：192.168.120.104</li>
+</ul>
+</li>
+<li><p>华硕的是 内部网络（LAN）-&gt;路由设置-&gt;启动静态路由列表：在静态路由列表中新增一条</p>
+<ul>
+<li>网络&#x2F;主机IP：对应上面的目的地址</li>
+<li>子网掩码：255.255.255.0</li>
+<li>网关：对应上面的下一跳</li>
+</ul>
+</li>
+</ul>
+<p>在完成静态路由配置后还是无法ping通，一般是因为二级路由有防火墙设置，在子路由的控制台界面将防火墙关闭即可。</p>
+<p>ps：更简单的方案是把子网统一网段，也就是把二级路由器的dhcp关掉，ip分配通通让一级路由器来干。</p>
+<h2 id="Ubuntu内置软路由"><a href="#Ubuntu内置软路由" class="headerlink" title="Ubuntu内置软路由"></a>Ubuntu内置软路由</h2><p>一般搭建软路由的方式都是通过一个软路由盒子——也就是一个有多网口的终端，这个盒子会装上一个专门用来作为软路由的系统，大多数人同的是openwrt，然后进行配置就可以让OpenWRT管理网络。</p>
+<p>我没有买软路由，这玩意虽然配置一般，但买的话还是得近两百块，所以想了一下，看到过有帖子是可以将虚拟机作为软路由的，我的这个服务器CPU这么多核，内存这么大，不搞几个虚拟机多浪费，所以在Ubuntu中装上了KVM虚拟机。下载镜像后成功创建了一个虚拟机。在虚拟机中一番捣鼓后发现在浏览器输入ip真能进入OpenWRT控制台，但是不管我怎么折腾，控制台始终显示只有一个wan口。也就是说，只有传进来的，没有输出去的。</p>
+<p>这里是第一个需要注意的：KVM虚拟机需要进行网络设置后，其虚拟机才能和宿主机共享网络配置，否则虚拟机里面是拿不到宿主机的配置的。</p>
+<p>第二个就是主机的网络设置，这个也折腾了很久，根据教程做了很多东西，但不一定是有用功</p>
+<h3 id="宿主机网络设置"><a href="#宿主机网络设置" class="headerlink" title="宿主机网络设置"></a>宿主机网络设置</h3><p>启用IP转发： 打开终端并编辑<code>/etc/sysctl.conf</code>文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/sysctl.conf</span><br></pre></td></tr></table></figure>
+
+<p>找到以下行并确保其没有被注释（即没有以<code>#</code>开头）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net.ipv4.ip_forward=1</span><br></pre></td></tr></table></figure>
+
+<p>保存并关闭文件。然后加载新的sysctl设置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo sysctl -p</span><br></pre></td></tr></table></figure>
+
+<p>配置网络接口： 编辑网络接口配置文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/netplan/your_config_file.yaml</span><br></pre></td></tr></table></figure>
+
+<p>请将<code>your_config_file.yaml</code>替换为你的实际网络配置文件名，例如<code>01-netcfg.yaml</code>。</p>
+<p>在配置文件中，你需要设置enp6s0作为WAN口，enp5s0作为LAN口。假设你希望将LAN接口的IP地址设置为<code>192.168.5.1</code>，并且子网掩码为<code>255.255.255.0</code>，则配置文件可能如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">network:</span><br><span class="line">  version: 2</span><br><span class="line">  renderer: networkd</span><br><span class="line">  ethernets:</span><br><span class="line">    enp5s0:</span><br><span class="line">      dhcp4: no</span><br><span class="line">      addresses: [192.168.5.1/24]</span><br><span class="line">    enp6s0:</span><br><span class="line">      dhcp4: yes</span><br></pre></td></tr></table></figure>
+
+<p>保存并关闭文件。</p>
+<p>应用配置： 应用网络配置更改：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo netplan apply</span><br></pre></td></tr></table></figure>
+
+<p>设置NAT规则： 为了实现Internet共享，你需要配置NAT规则，将LAN端口（enp5s0）的流量转发到WAN端口（enp6s0）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo iptables -t nat -A POSTROUTING -o enp6s0 -j MASQUERADE</span><br></pre></td></tr></table></figure>
+
+<p>解释一下这行指令：</p>
+<p>这条命令是用来配置iptables的NAT规则，以实现网络地址转换（Network Address Translation，NAT）功能，通常用于网络共享或路由器配置。让我来详细介绍一下这行语句的含义：</p>
+<ol>
+<li><code>sudo</code>: 这个关键词让命令在超级用户（root）权限下执行，因为iptables规则修改通常需要管理员权限。</li>
+<li><code>iptables</code>: 这是Linux系统上用来配置防火墙规则的命令行工具。</li>
+<li><code>-t nat</code>: <code>-t</code>参数用于指定要操作的iptables表，这里是NAT表。</li>
+<li><code>-A POSTROUTING</code>: <code>-A</code>参数表示添加规则，<code>POSTROUTING</code>是一个NAT表中的链（chain）的名字。在这里，我们将规则添加到POSTROUTING链，该链用于在数据包从本机出去之后、离开网络接口之前处理这些数据包。</li>
+<li><code>-o enp6s0</code>: <code>-o</code>参数用于指定数据包出口的网络接口，这里是<code>enp6s0</code>，也就是WAN口的网络接口。</li>
+<li><code>-j MASQUERADE</code>: <code>-j</code>参数用于指定要采取的操作，这里是<code>MASQUERADE</code>，它是NAT表中的一个目标（target）。<code>MASQUERADE</code>用于将源地址修改为外部网络接口（WAN口）的IP地址，以便允许内部网络（LAN口）的设备通过WAN口进行访问外部互联网。</li>
+</ol>
+<p>综上所述，这条iptables规则的作用是将通过主机的<code>enp6s0</code>网口流出的数据包的源IP地址修改为该网口的IP地址，以实现网络共享或路由功能，允许通过<code>enp5s0</code>网口连接的设备可以访问外部互联网。</p>
+<p>保存iptables规则： Ubuntu 22.04使用<code>nftables</code>作为默认的防火墙管理工具。为了确保iptables规则在重启后仍然有效，你需要将规则保存：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install iptables-persistent</span><br><span class="line">sudo netfilter-persistent save</span><br></pre></td></tr></table></figure>
+
+<p>至此，你的Ubuntu Server应该已经配置好了。现在，你可以通过enp5s0连接到你的笔记本，然后共享主机的上网连接。</p>
+<p>请注意，网络共享可能涉及到网络安全风险。确保你的主机有合适的防火墙设置，并且仅允许必要的服务对外开放。</p>
+<h3 id="KVM网络设置"><a href="#KVM网络设置" class="headerlink" title="KVM网络设置"></a>KVM网络设置</h3><p>下一步是配置网桥，前面提到虚拟机是没办法直接用到宿主机的物理网口的，所以需要配置网桥，网桥的作用是将物理接口设置成为网桥的成员，可以让虚拟机使用宿主机的网桥。</p>
+<p>网桥配置如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">network:</span><br><span class="line"> version: 2</span><br><span class="line"> renderer: networkd</span><br><span class="line"> ethernets:</span><br><span class="line">   enp1s0:</span><br><span class="line">     dhcp4: yes</span><br><span class="line">   enp2s0:</span><br><span class="line">     dhcp4: yes</span><br><span class="line"> bridges:</span><br><span class="line">   br0:</span><br><span class="line">     interfaces: [enp1s0, enp2s0]</span><br><span class="line">     dhcp4: no</span><br><span class="line">     addresses: [192.168.1.100/24]  # 设置网桥的静态IP地址</span><br><span class="line">     gateway4: 192.168.1.1         # 设置网桥的网关</span><br><span class="line">     nameservers:</span><br><span class="line">       addresses: [8.8.8.8, 8.8.4.4]  # 设置网桥的DNS服务器</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><code>version: 2</code> 和 <code>renderer: networkd</code> 表明这是使用<code>netplan</code>网络配置工具，并使用<code>systemd-networkd</code>作为网络管理器的配置。</li>
+<li><code>ethernets</code>部分配置了物理网络接口<code>enp1s0</code>和<code>enp2s0</code>的网络配置：<ul>
+<li><code>enp1s0</code>：设置为使用DHCP协议获取IP地址（<code>dhcp4: yes</code>），这意味着<code>enp1s0</code>会向DHCP服务器请求获取IP地址、网关、DNS等网络配置。</li>
+<li><code>enp2s0</code>：设置为使用DHCP协议获取IP地址（<code>dhcp4: yes</code>），同样，这意味着<code>enp2s0</code>会向DHCP服务器请求获取IP地址、网关、DNS等网络配置。</li>
+</ul>
+</li>
+<li><code>bridges</code>部分配置了网桥接口<code>br0</code>的网络配置：<ul>
+<li><code>interfaces: [enp1s0, enp2s0]</code>：将物理接口<code>enp1s0</code>和<code>enp2s0</code>绑定到网桥接口<code>br0</code>上，创建一个包含两个物理接口的网桥接口。</li>
+<li><code>dhcp4: no</code>：将网桥接口<code>br0</code>的DHCP设置禁用，即不再使用DHCP自动获取IP地址。而是使用静态配置。（我后面感觉这里可以改为yes正确一点）</li>
+<li><code>addresses: [192.168.1.100/24]</code>：设置网桥接口<code>br0</code>的静态IP地址为<code>192.168.1.100</code>，并使用子网掩码<code>/24</code>（即<code>255.255.255.0</code>）。</li>
+<li><code>gateway4: 192.168.1.1</code>：设置网桥接口<code>br0</code>的网关为<code>192.168.1.1</code>。</li>
+<li><code>nameservers: addresses: [8.8.8.8, 8.8.4.4]</code>：设置网桥接口<code>br0</code>的DNS服务器为Google的公共DNS服务器<code>8.8.8.8</code>和<code>8.8.4.4</code>。</li>
+</ul>
+</li>
+</ol>
+<p>在上面的配置中，物理接口<code>enp1s0</code>和<code>enp2s0</code>被设置为使用DHCP获取IP地址，这意味着它们会自动向DHCP服务器请求网络配置信息。然后，这两个物理接口被绑定到一个网桥接口<code>br0</code>上。网桥接口<code>br0</code>的<code>dhcp4</code>设置被禁用（<code>no</code>），这意味着网桥本身不会使用DHCP获取IP地址，而是使用静态配置。</p>
+<p>通过这样的设置，网桥接口<code>br0</code>将使用手动配置的静态IP地址、网关和DNS服务器。同时，所有连接到网桥接口<code>br0</code>上的设备（包括<code>enp1s0</code>和<code>enp2s0</code>）将继承这些静态配置，以便它们在同一网络中运行，具有相同的网络配置。</p>
+<p>配置了网桥之后，物理接口（<code>enp1s0</code>和<code>enp2s0</code>）上的DHCP信息将不再直接生效。在网桥创建并激活后，物理接口不再直接连接到网络，而是成为了网桥的成员。</p>
+<p>当物理接口（<code>enp1s0</code>和<code>enp2s0</code>）加入网桥接口（<code>br0</code>）时，网桥会接管物理接口的配置。此时，物理接口将不再直接与网络交互，它的网络配置会传递给网桥接口，然后网桥接口使用这些配置与网络进行通信。</p>
+<p>网桥的作用是将多个物理接口合并成一个逻辑接口，以实现桥接功能。通过网桥，多个物理接口可以位于同一个网络中，共享相同的网络配置。这对于一些场景（如虚拟化环境、软路由等）非常有用，可以简化网络配置并实现更灵活的网络管理。</p>
+<h3 id="网桥设置步骤："><a href="#网桥设置步骤：" class="headerlink" title="网桥设置步骤："></a>网桥设置步骤：</h3><p>要创建一个网桥，并让网桥的配置完全等于当前物理接口的配置，你可以按照以下步骤进行操作：</p>
+<p><strong>安装所需软件：</strong> 确保你的系统中已经安装了<code>bridge-utils</code>软件包。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt install bridge-utils</span><br></pre></td></tr></table></figure>
+
+<p><strong>备份网络配置：</strong> 在更改网络配置前，最好先备份现有的网络配置文件，以便需要时可以恢复。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo cp /etc/netplan/01-netcfg.yaml /etc/netplan/01-netcfg.yaml.backup</span><br></pre></td></tr></table></figure>
+
+<p><strong>编辑网络配置：</strong> 打开网络配置文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo nano /etc/netplan/01-netcfg.yaml</span><br></pre></td></tr></table></figure>
+
+<p><strong>配置网桥：</strong> 在文件中添加以下内容来创建网桥接口，并让网桥的配置等于当前物理接口的配置。假设你的物理接口为<code>enp1s0</code>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">yamlCopy codenetwork:</span><br><span class="line">  version: 2</span><br><span class="line">  renderer: networkd</span><br><span class="line">  ethernets:</span><br><span class="line">    enp1s0:</span><br><span class="line">      dhcp4: yes   # 根据实际情况，设置为yes或no</span><br><span class="line">  bridges:</span><br><span class="line">    br0:</span><br><span class="line">      interfaces: [enp1s0]</span><br><span class="line">      dhcp4: yes   # 根据实际情况，设置为yes或no</span><br></pre></td></tr></table></figure>
+
+<p>在上面的配置中，<code>br0</code>是你要创建的网桥接口，<code>enp1s0</code>是你当前的物理接口。你可以根据需要设置<code>dhcp4</code>为<code>yes</code>或<code>no</code>，以决定是使用DHCP获取IP地址还是使用静态IP地址。</p>
+<p><strong>应用网络配置：</strong> 应用你的网络配置更改：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo netplan apply</span><br></pre></td></tr></table></figure>
+
+<p><strong>重启网络服务：</strong> 为了确保网络配置正确生效，可以重启网络服务：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl restart systemd-networkd</span><br></pre></td></tr></table></figure>
+
+<p>现在，你已经创建了一个网桥接口<code>br0</code>，并让它的配置完全等于当前物理接口<code>enp1s0</code>的配置。这样，<code>br0</code>将拥有与<code>enp1s0</code>相同的网络配置，包括IP地址、网关、DNS等。其他设备连接到网桥接口<code>br0</code>时，也将共享相同的网络配置。</p>
+<h3 id="virsh-查看和修改已经定义的网络"><a href="#virsh-查看和修改已经定义的网络" class="headerlink" title="virsh 查看和修改已经定义的网络"></a>virsh 查看和修改已经定义的网络</h3><p>在使用 <code>virsh</code> 命令管理虚拟机网络时，你可以使用以下命令来查看、修改和删除已经定义的网络。</p>
+<p><strong>查看已经定义的网络：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh net-list --all</span><br></pre></td></tr></table></figure>
+
+<p>这个命令会列出所有已经定义的网络，包括运行中的和未运行的。</p>
+<p><strong>查看指定网络的详细信息：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh net-dumpxml NETWORK_NAME</span><br></pre></td></tr></table></figure>
+
+<p>将 <code>NETWORK_NAME</code> 替换为你要查看详细信息的网络名称。这个命令会显示指定网络的XML配置信息，包括网络的名称、桥接接口、IP地址池等。</p>
+<p><strong>修改已经定义的网络：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh net-edit NETWORK_NAME</span><br></pre></td></tr></table></figure>
+
+<p>这个命令会打开一个文本编辑器，允许你直接编辑指定网络的XML配置。你可以根据需要修改网络的属性，然后保存并关闭编辑器。注意，在修改网络配置之后，你需要重新启动网络使修改生效：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">virsh net-destroy NETWORK_NAME</span><br><span class="line">virsh net-start NETWORK_NAME</span><br></pre></td></tr></table></figure>
+
+<p><strong>删除已经定义的网络：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virsh net-undefine NETWORK_NAME</span><br></pre></td></tr></table></figure>
+
+<p>这个命令会删除指定的网络定义，但不会影响运行中的虚拟机，它们仍然可以继续使用网络。如果要停止运行中的虚拟机使用该网络，你需要在虚拟机配置中修改网络接口。</p>
+<p>注意：在删除网络定义之前，请确保没有任何虚拟机正在使用该网络，否则删除操作可能会导致虚拟机失去网络连接。</p>
+<p>以上是一些常用的 <code>virsh</code> 命令来查看、修改和删除已经定义的网络。请谨慎操作，确保你了解网络配置的影响。如有需要，建议备份网络配置文件以防意外发生。</p>
+<h3 id="让设备能够连上网络"><a href="#让设备能够连上网络" class="headerlink" title="让设备能够连上网络"></a>让设备能够连上网络</h3><p>网桥配置成功后，如果想要设备连接上网络的话，因为前面设置的是静态路由，没有开启DHCP，所以需要手动分配IP地址，我因为没有手动设置IP地址，当时笔记本连接上服务器的网口后依然无法上网，这里也记录一下。</p>
+<p>需要将笔记本的IP地址设置为与网桥在同一子网中。根据你的当前网络配置，网桥<code>br0</code>的IP地址为<code>192.168.6.23</code>，子网掩码为<code>255.255.255.0</code>。</p>
+<p>假设你希望笔记本的IP地址为<code>192.168.6.100</code>，则你可以按照以下步骤在笔记本上进行配置：</p>
+<p><strong>Windows 操作系统：</strong></p>
+<ol>
+<li>打开控制面板，并进入”网络和 Internet”部分。</li>
+<li>点击”网络和共享中心”。</li>
+<li>在左侧导航栏中，点击”更改适配器设置”。</li>
+<li>找到通过网线连接的适配器，通常是”本地连接”或”以太网”适配器。</li>
+<li>右键点击适配器，并选择”属性”。</li>
+<li>在属性窗口中，双击”Internet 协议版本 4 (TCP&#x2F;IPv4)”。</li>
+<li>在”常规”选项卡中，选择”使用下面的 IP 地址”，并输入以下信息：<ul>
+<li>IP 地址：<code>192.168.6.100</code></li>
+<li>子网掩码：<code>255.255.255.0</code></li>
+<li>默认网关：<code>192.168.6.1</code> (这是网桥的网关地址)</li>
+<li>首选 DNS 服务器：<code>8.8.8.8</code> (Google 公共 DNS 服务器)</li>
+<li>备用 DNS 服务器：<code>144.144.144.144</code> (你提供的备用 DNS 服务器)</li>
+</ul>
+</li>
+<li>点击”确定”保存设置。</li>
+</ol>
+<h3 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virt-install --name openwrt --ram 4096 --vcpus 4 --hvm --os-variant=generic --network bridge=br0,model=virtio --graphics vnc,password=123qwe,port=6000,listen=0.0.0.0 --disk path=openwrt-22.03.4-x86-64-generic-ext4-combined.img --import --autostart</span><br></pre></td></tr></table></figure>
+
+<p> 我通过这个命令生成的openwrt虚拟机中网络似乎并没是我设置我br0网桥，我通过ifconfig查看到openwrt虚拟机的网络仅有一个lan口，这是怎么回事</p>
+<p>问题可能与使用 <code>--import</code> 参数有关。当使用 <code>--import</code> 参数时，<code>virt-install</code> 命令会从现有的镜像文件导入虚拟机，并且不会改变镜像文件中的网络配置。</p>
+<p>因此，如果你导入的镜像文件中的网络配置并没有连接到你指定的 <code>br0</code> 网桥，那么虚拟机启动后默认会继续使用镜像文件中的网络配置，而不会应用你在 <code>virt-install</code> 命令中指定的网络配置。</p>
+<p>为了解决这个问题，你可以采取以下两种方法之一：</p>
+<ol>
+<li><p><strong>在虚拟机启动后手动配置网络：</strong> 在虚拟机启动后，你可以手动配置网络并连接到 <code>br0</code> 网桥。首先，在虚拟机中使用 <code>ifconfig</code> 命令查看网络接口的状态。然后，使用 <code>brctl</code> 命令将虚拟机的网络接口连接到 <code>br0</code> 网桥：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brctl addif br0 eth0   # 假设虚拟机的网络接口名称是 eth0</span><br></pre></td></tr></table></figure>
+
+<p>请注意，这里的虚拟机网络接口名称可能是 <code>eth0</code> 或其他名称，取决于虚拟机中的网络配置。</p>
+</li>
+<li><p><strong>修改镜像文件的网络配置：</strong> 另一种方法是在导入前修改镜像文件中的网络配置，确保虚拟机在导入后使用正确的网络配置。这需要对镜像文件进行修改，涉及到比较复杂的操作，因此需要小心进行，以免导致镜像损坏。</p>
+</li>
+</ol>
+<p>总的来说，使用 <code>--import</code> 参数导入的虚拟机确实会保留原始镜像文件中的网络配置，可能导致网络连接不正确。如果你希望虚拟机使用指定的网络配置，可以尝试手动配置虚拟机的网络连接，或者在导入前修改镜像文件的网络配置。</p>
+<h4 id="虚拟机内的配置方式"><a href="#虚拟机内的配置方式" class="headerlink" title="虚拟机内的配置方式"></a>虚拟机内的配置方式</h4><p>在虚拟机中的 WAN 口通常连接到宿主机的物理网络接口（物理网卡），进而实现虚拟机与外部网络（例如家庭网络或互联网）的通信。这种配置使得虚拟机可以模拟真实的路由器或网关设备，将局域网中的流量转发到外部网络。</p>
+<p>在 KVM 虚拟机中，通常通过创建网桥（bridge）来连接虚拟机的 LAN 口和宿主机的物理网卡。而 WAN 口则直接通过虚拟机的配置与宿主机的物理网卡相连。这样，虚拟机就能够实现与外部网络的通信。</p>
+<p>在你的配置中，你可以尝试将虚拟机的 WAN 口连接到宿主机的物理网卡（例如 enp0s1），类似于以下配置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">plaintextCopy codevirt-install --name openwrt --ram 4096 --vcpus 4 --hvm --os-variant=generic \</span><br><span class="line">--network bridge=br0,model=virtio --network bridge=enp0s1,model=virtio \</span><br><span class="line">--graphics vnc,password=123qwe,port=6000,listen=0.0.0.0 \</span><br><span class="line">--disk path=openwrt-22.03.4-x86-64-generic-ext4-combined.img --import --autostart</span><br></pre></td></tr></table></figure>
+
+<p>请确保将 <code>enp0s1</code> 替换为你宿主机中实际的物理网卡名称。这样配置后，虚拟机的 LAN 口将连接到宿主机的网桥 <code>br0</code>，而虚拟机的 WAN 口将连接到宿主机的物理网卡 <code>enp0s1</code>，从而实现与外部网络的连接。</p>
+<p>在 OpenWrt 虚拟机中，配置 WAN 口是非常类似于配置物理的 OpenWrt 路由器。你需要打开 <code>/etc/config/network</code> 文件并添加或修改 WAN 口的配置。以下是一般情况下的示例配置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">plaintextCopy codeconfig interface &#x27;wan&#x27;</span><br><span class="line">    option proto &#x27;dhcp&#x27;  # 使用 DHCP 自动获取 IP 地址</span><br><span class="line">    option ifname &#x27;eth0&#x27;  # WAN 口连接的网卡名称，可能是 eth0 或其他虚拟网卡名称</span><br></pre></td></tr></table></figure>
+
+<p>如果你的网络环境需要使用静态 IP 配置，可以按照以下方式进行配置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">plaintextCopy codeconfig interface &#x27;wan&#x27;</span><br><span class="line">    option proto &#x27;static&#x27;  # 使用静态 IP 配置</span><br><span class="line">    option ifname &#x27;eth0&#x27;  # WAN 口连接的网卡名称，可能是 eth0 或其他虚拟网卡名称</span><br><span class="line">    option ipaddr &#x27;192.168.1.100&#x27;  # 替换为你想要的静态 IP 地址</span><br><span class="line">    option netmask &#x27;255.255.255.0&#x27;  # 根据你的网络配置设置子网掩码</span><br><span class="line">    option gateway &#x27;192.168.1.1&#x27;  # 根据你的网络配置设置网关</span><br><span class="line">    option dns &#x27;8.8.8.8&#x27;  # 根据你的网络配置设置 DNS 服务器</span><br></pre></td></tr></table></figure>
+
+<p>请注意，<code>eth0</code> 是一个示例网卡名称，实际网卡名称可能是其他的，你可以通过使用 <code>ifconfig</code> 或 <code>ip addr show</code> 命令来查看当前虚拟机中的网络接口名称。确保将 <code>ifname</code> 设置为正确的接口名称。</p>
+<p>完成配置后，保存文件并重启 OpenWrt 虚拟机的网络服务，使新的配置生效：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/init.d/network restart</span><br></pre></td></tr></table></figure>
+
+<p>这样，你的 OpenWrt 虚拟机就能够正确连接到宿主机的网桥和物理网络接口，实现与外部网络的通信。</p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>此时，我在将lan口设置为eth0之后现在确实可以访问网络了，但是我感觉我的软路由配置依旧很模糊。</p>
+<p>上面的笔记基于我在配置网络时和chatgpt的对话整理得到，其中有一些地方可能有误，因为是七月份配置的网络，一直到十月份才整理，期间间隔了很长一段时间。最后的结果是能正常上网，但发现openwrt软路由没有起到我想要的效果，如果是访问外网的话应该是可以实现的，但我的终端都带有clash，其实不怎么需要这样一个软路由，后面就没继续折腾了。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/linux/" class="category-chain-item">linux</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/linux/" class="print-no-link">#linux</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Ubuntu网络配置笔记</div>
+      <div>https://hukaichao.me/2023/11/05/Ubuntu网络配置笔记/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>凌冬</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年11月5日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/11/05/linux%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4/" title="linux常用指令">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">linux常用指令</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/08/21/AIDL%E9%80%9A%E4%BF%A1%E5%AD%A6%E4%B9%A0/" title="AIDL通信学习">
+                        <span class="hidden-mobile">AIDL通信学习</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

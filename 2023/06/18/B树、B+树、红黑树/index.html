@@ -1,0 +1,691 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="凌冬">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="平衡二叉树在记录标题三种树之前先简短记录一下平衡二叉树。 平衡二叉树是基于二叉搜索树的，二叉搜索树中查询的效率和树高有关，但二叉搜索树存在极端情况，即树链表化，为了改善这个情况，出现了平衡二叉树（也称为AVL树）。 AVL树是最早被发明的自平衡二叉查找树。在AVL树中，任一节点对应的两棵子树的最大高度差为1，因此它也被称为高度平衡树。查找、插入和删除在平均和最坏情况下的时间复杂度都是 O(logn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="B树、B+树、红黑树">
+<meta property="og:url" content="https://hukaichao.me/2023/06/18/B%E6%A0%91%E3%80%81B+%E6%A0%91%E3%80%81%E7%BA%A2%E9%BB%91%E6%A0%91/index.html">
+<meta property="og:site_name" content="凌冬的个人博客">
+<meta property="og:description" content="平衡二叉树在记录标题三种树之前先简短记录一下平衡二叉树。 平衡二叉树是基于二叉搜索树的，二叉搜索树中查询的效率和树高有关，但二叉搜索树存在极端情况，即树链表化，为了改善这个情况，出现了平衡二叉树（也称为AVL树）。 AVL树是最早被发明的自平衡二叉查找树。在AVL树中，任一节点对应的两棵子树的最大高度差为1，因此它也被称为高度平衡树。查找、插入和删除在平均和最坏情况下的时间复杂度都是 O(logn">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-06-18T11:47:27.000Z">
+<meta property="article:modified_time" content="2024-02-02T07:27:40.240Z">
+<meta property="article:author" content="凌冬">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>B树、B+树、红黑树 - 凌冬的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="B树、B+树、红黑树"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-06-18 19:47" pubdate>
+          2023年6月18日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          27 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">B树、B+树、红黑树</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="平衡二叉树"><a href="#平衡二叉树" class="headerlink" title="平衡二叉树"></a>平衡二叉树</h2><p>在记录标题三种树之前先简短记录一下平衡二叉树。</p>
+<p>平衡二叉树是基于二叉搜索树的，二叉搜索树中查询的效率和树高有关，但二叉搜索树存在极端情况，即树链表化，为了改善这个情况，出现了平衡二叉树（也称为AVL树）。</p>
+<p>AVL树是最早被发明的自平衡二叉查找树。在AVL树中，任一节点对应的两棵子树的最大高度差为1，因此它也被称为高度平衡树。查找、插入和删除在平均和最坏情况下的时间复杂度都是 O(logn）</p>
+<p>AVL树每次插入或者删除新的节点会进行左旋或者右旋操作进行自平衡，具体的旋转方法和代码实现如下链接：<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_37934101/article/details/81160254">AVL树的左旋、右旋描述及底层代码实现</a></p>
+<p>平衡二叉树的缺点就是：<br>（1）维护平衡过程的成本代价很高，因为每次删除一个节点或者增加一个节点的话，需要一次或者多次的左旋，右旋等去维护“平衡”状态<br>（2）查询的效率不稳定，最快O(1)，最慢O(logn)<br>（3）如果节点很多的话，那么这个AVL树的高度还是会很高的，那么查询效率还是会很低<br>（4) 节点存储的数据内容太少。没有很好利用操作系统和磁盘数据交换特性，也没有利用好磁盘IO的预读能力。因为操作系统和磁盘之间一次数据交换是已页为单位的，一页 &#x3D; 4K，即每次IO操作系统会将4K数据加载进内存。但是，在二叉树每个节点的结构只保存一个关键字，一个数据区，两个子节点的引用，并不能够填满4K的内容。幸幸苦苦做了一次的IO操作，却只加载了一个关键字，在树的高度很高，恰好又搜索的关键字位于叶子节点或者支节点的时候，取一个关键字要做很多次的IO。因此平衡二叉树不太符合MySQL的查询结构。</p>
+<h2 id="红黑树"><a href="#红黑树" class="headerlink" title="红黑树"></a>红黑树</h2><p>一种自平衡二叉查找树,但在每个节点增加一个存储位表示节点的颜色,可以是red或black. 通过对任何一条从根到叶子的路径上各个节点着色的方式的限制,红黑树确保没有一条路径会比其它路径长出两倍.</p>
+<p>它是一种弱平衡二叉树(由于是弱平衡,可以推出,相同的节点情况下,AVL树的高度低于红黑树),相对于要求严格的AVL树来说,它的旋转次数变少,所以对于搜索,插入,删除操作多的情况下,我们就用红黑树.</p>
+<h3 id="红黑树性质"><a href="#红黑树性质" class="headerlink" title="红黑树性质"></a>红黑树性质</h3><ol>
+<li>每个节点非红即黑，根节点是黑的。</li>
+<li>每个叶节点(叶节点即树尾端NUL指针或NULL节点)都是黑的.</li>
+<li>如果一个节点是红的,那么它的两儿子都是黑的（相邻的两个节点不能同时为红色）</li>
+<li>对于任意节点而言,其到叶子点树NIL指针的每条路径都包含相同数目的黑节点.</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/GodTheTang/article/details/121060187">红黑树详细介绍</a></p>
+<p><a target="_blank" rel="noopener" href="https://mr-dai.github.io/java_collection_treemap/">红黑树源码详解</a></p>
+<p>以上性质保证了红黑树在满足平衡二叉树特征的前提下，还可以做到 从根到叶子的最长路径最多不会超过最短路径的两倍 ，这主要是考虑两个极端的情况，由性质 3 和 4 我们可以知道在一棵红黑树上从根到叶子的最短路径全部由黑色结点构成，而最长结点则由红黑结点交错构成（始终按照一红一黑的顺序组织），又因为最短路径和最长路径的黑色结点数目是一致的，所以最长路径上的结点数是最短路径的两倍。</p>
+<h2 id="B树"><a href="#B树" class="headerlink" title="B树"></a>B树</h2><h3 id="2-3-4树"><a href="#2-3-4树" class="headerlink" title="2-3-4树"></a>2-3-4树</h3><p>在学习B树之前我学习了2-3-4树，B树是由2-3-4树转变而来，2-3-4树中一个节点最多只能有4个孩子，那如果每个孩子数再多一些就是B树。</p>
+<p>2-3-4树中的2、3、4的含义指的是一个节点可能含有的子节点数。对非子叶节点有三种可能的情况：</p>
+<ol>
+<li>有一个数据项的节点总是有两个子节点</li>
+<li>有两个数据项的节点总是有三个子节点</li>
+<li>有三个数据项的节点重是有四个子节点</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/heyanxi0101/article/details/79751514">2-3-4树详细介绍</a></p>
+<h3 id="B-树的特性"><a href="#B-树的特性" class="headerlink" title="B 树的特性"></a>B 树的特性</h3><p>B树是一种常用的M阶树，可广泛用于磁盘访问。 M阶树顺序的B树最多可以有m-1个键和M个子树。 使用B树的主要原因之一是它能够在单个节点中存储大量键，并且通过保持树的高度相对较小来存储大键值。<br>B树包含M阶树的所有属性。 此外，它还包含以下属性。</p>
+<ol>
+<li>B树中的每个节点最多包含m个子节点，m-1个关键字</li>
+<li>除根节点和叶节点外，B树中的每个节点至少包含m&#x2F;2（向下取整）个子节点。</li>
+<li>根节点必须至少有2个节点。</li>
+<li>所有叶节点必须处于同一级别，同一节点中的键按大小排序。</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://www.yiibai.com/data_structure/b-tree.html">B树详细介绍</a></p>
+<p>B-树相比平衡二叉树优点<br>每个节点存储多个多个关键词，合理利用空间大小，每次mysql进行读取时，都会进行预读取，每次把该节点数据读取出来并存储到内存中<br>B-树中每个节点存储的关键词变多，导致存储相同数量的数据，B-树的深度相比平衡二叉树深度更浅，减少了数据的查找次数和复杂度</p>
+<h2 id="B-树"><a href="#B-树" class="headerlink" title="B+树"></a>B+树</h2><h3 id="B-树的性质"><a href="#B-树的性质" class="headerlink" title="B+树的性质"></a>B+树的性质</h3><p>B+树是应文件系统所需而产生的一种B树的变形树。一棵m阶的B+树和m阶的B树的差异在于：<br>(1) 有n棵子树的结点中含有n个关键字；<br>(2) 所有的叶子结点中包含了全部关键字的信息，及指向含有这些关键字记录的指针，且叶子结点本身依关键字的大小自小而大的顺序链接；<br>(3) 所有的非终端结点可以看成是索引部分，结点中仅含有其子树根结点中最大（或最小）关键字。</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/351240279">B+树详细介绍</a></p>
+<h3 id="B-树对比红黑树"><a href="#B-树对比红黑树" class="headerlink" title="B+树对比红黑树"></a>B+树对比红黑树</h3><p>红黑树多用于内部排序，即全放在内存中<br>B+树多用于外存上时，B+也被成为一个磁盘友好的数据结构<br>红黑树和平衡二叉树有相同缺点，每个节点存储一个关键词，数据量大时，导致红黑树的深度很深，mysql每次读取时消耗大量io</p>
+<h3 id="B-树相比B树的优点"><a href="#B-树相比B树的优点" class="headerlink" title="B+树相比B树的优点"></a>B+树相比B树的优点</h3><p>B+树非叶子节点只存储key值，而B树存储key值和data值，B+树的层级更少，查询效率更高<br>mysql进行区间访问时，由于B+树叶子节点之间用指针相连，只需要遍历所有的叶子节点即可；而B树则需要中序遍历那样遍历<br>B+树所有关键词地址都存在叶子节点上，所以每次查询次数都相同，比B树稳定</p>
+<h3 id="为什么高度为3的B-树存储千万级数据？"><a href="#为什么高度为3的B-树存储千万级数据？" class="headerlink" title="为什么高度为3的B+树存储千万级数据？"></a>为什么高度为3的B+树存储千万级数据？</h3><p>解释这个问题的前提，mysql使用InnoDB引擎，mysql默认页文件大小为16k<br>假设我们一行数据大小为1k，那么一页存储16条数据，也就是说一个叶子节点能存储16条数据<br>再来看看非叶子节点，假设主键ID为bigint类型，那么长度为8B，指针大小在InnoDB引擎中的大小为6B，一共14B，那么一页中可以存放16k&#x2F;14B&#x3D;1170个(主键+指针)<br>也就是说高度为2的B+树可以存储的数据为:1170*16&#x3D;18720条；高度为3的B+树可以存储的数据为:1170*1170*16&#x3D;21902400(千万条数据)<br>这也是为什么mysql可以支撑千万级别数据的原因</p>
+<h2 id="Mysql存储引擎"><a href="#Mysql存储引擎" class="headerlink" title="Mysql存储引擎"></a>Mysql存储引擎</h2><p>MyISAM和InnoDB的区别<br>定义<br>InnoDB：MySQL默认的事务型引擎，也是最重要和使用最广泛的存储引擎。它被设计成为大量的短期事务，短期事务大部分情况下是正常提交的，很少被回滚。InnoDB的性能与自动崩溃恢复的特性，使得它在非事务存储需求中也很流行。除非有非常特别的原因需要使用其他的存储引擎，否则应该优先考虑InnoDB引擎。</p>
+<p>MyISAM：在MySQL 5.1 及之前的版本，MyISAM是默认引擎。MyISAM提供的大量的特性，包括全文索引、压缩、空间函数（GIS）等，但MyISAM并不支持事务以及行级锁，而且一个毫无疑问的缺陷是崩溃后无法安全恢复。</p>
+<p>事务<br>InnoDB：支持<br>MyISAM：不支持</p>
+<p>锁<br>InnoDB：支持行锁、表锁。行锁是实现在索引上的，如果没有索引，就没法使用行锁，将退化为表锁。<br>MyISAM：支持表锁。</p>
+<p>主键<br>InnoDB：必须有，没有指定会默认生成一个隐藏列作为主键<br>MyISAM：可以没有</p>
+<p>索引<br>InnoDB：聚集索引，使用 B+ 树作为索引结构，数据文件和索引绑在一起，必须要有主键。主键索引一次查询；辅助索引两次查询，先查询主键，再查询数据；<br>MyISAM：非聚集索引，使用 B+ 树作为索引结构，索引和数据文件是分离的。主键索引和辅助索引是独立的。</p>
+<p>外键<br>InnoDB：支持<br>MyISAM：不支持</p>
+<p>AUTO_INCREMENT<br>InnoDB：必须包含只有该字段的索引。引擎的自动增长列必须是索引，如果是组合索引也必须是组合索引的第一列。<br>MyISAM：可以和其他字段一起建立联合索引。引擎的自动增长列必须是索引，如果是组合索引，自动增长可以不是第一列，他可以根据前面几列进行排序后递增。</p>
+<p>数据库文件<br>InnoDB：frm是表定义文件，ibd是数据文件。支持两种存储方式：</p>
+<p>共享表空间存储：所有表的数据文件和索引都保存在一个表空间里，一个表空间可以有多个文件，通过 innodb_data_file_path 和 innodb_data_home_dir 参数设置共享表空间的位置和名字，一般共享表空间的名字叫 ibdata1-n。<br>多表空间存储：每个表都有一个表空间文件用于存储每个表的数据和索引，文件名以表名开关，以.ibd为扩展名<br>MyISAM：frm是表定义文件，myd是数据文件，myi是索引文件。支持三种存储格式：静态表（默认，注意数据末尾不能有空格，会被去掉。）、动态表、压缩表。</p>
+<p>表的行数<br>InnoDB：没有保存。select count(<em>) from table;会扫描全表。<br>MyISAM：保存。select count(</em>) from table;会直接取出该值。</p>
+<p>注：但加了 where 条件后，两者处理方式一样，都是扫描全表。</p>
+<p>全文索引<br>InnoDB：5.7及以后版本支持。<br>MyISAM：支持。</p>
+<p>总结<br>InnoDB：<br>优点：支持事务，支持外键，并发量较大，适合大量 update。<br>缺点：查询数据相对较快，不适合大量的 select。</p>
+<p>MyISAM：<br>优点：查询数据相对较快，适合大量的 select，可以全文索引。<br>缺点：不支持事务，不支持外键，并发量较小，不适合大量 update。</p>
+<p>如何选择？<br>你的数据库有外键吗？如有，选择 InnoDB。<br>你需要事务支持吗？如需要，选择 InnoDB。<br>你需要全文索引吗？在5.7及以后版本，都可选，优先考虑 InnoDB + Sphinx。<br>你经常使用什么样的查询模式？如果表中绝大多数都只是读查询，可以考虑 MyISAM，如果既有读写也挺频繁，请使用 InnoDB。<br>你的数据有多大？数据量大，选择 InnoDB，因为其支持事务处理和故障恢复。MyISAM 可能需要几小时或几天来恢复，InnoDB 只需要几分钟。<br>你需要在线热备份吗？如需要，选择 InnoDB。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0/" class="category-chain-item">数据结构与算法学习</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>B树、B+树、红黑树</div>
+      <div>https://hukaichao.me/2023/06/18/B树、B+树、红黑树/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>凌冬</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年6月18日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/06/18/43zhou-sai-xiao-jie/" title="4/3 周赛小结">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">4/3 周赛小结</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/06/18/JavaWeb%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1/" title="JavaWeb课程设计">
+                        <span class="hidden-mobile">JavaWeb课程设计</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

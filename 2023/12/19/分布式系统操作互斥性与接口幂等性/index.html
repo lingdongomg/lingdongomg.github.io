@@ -1,0 +1,786 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="凌冬">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="本文以美团技术团队分享的“分布式系统互斥性与幂等性问题的分析与解决”一文为核心进行笔记记录。 操作互斥性问题并非分布式环境所独有，在传统的多线程、多进程情况下已经有了很好的解决方案。 多线程情况下的参考方案可见之前为了面试总结的文章 “并发框架（JUC）” 多进程的解决方案在多道程序系统中存在许多进程，它们共享各种资源，然而有很多资源一次只能供一个进程使用，这便是临界资源。多进程中的临界资源大致上">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式系统操作互斥性与接口幂等性">
+<meta property="og:url" content="https://hukaichao.me/2023/12/19/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E6%93%8D%E4%BD%9C%E4%BA%92%E6%96%A5%E6%80%A7%E4%B8%8E%E6%8E%A5%E5%8F%A3%E5%B9%82%E7%AD%89%E6%80%A7/index.html">
+<meta property="og:site_name" content="凌冬的个人博客">
+<meta property="og:description" content="本文以美团技术团队分享的“分布式系统互斥性与幂等性问题的分析与解决”一文为核心进行笔记记录。 操作互斥性问题并非分布式环境所独有，在传统的多线程、多进程情况下已经有了很好的解决方案。 多线程情况下的参考方案可见之前为了面试总结的文章 “并发框架（JUC）” 多进程的解决方案在多道程序系统中存在许多进程，它们共享各种资源，然而有很多资源一次只能供一个进程使用，这便是临界资源。多进程中的临界资源大致上">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hukaichao.me/upload/meituan-gtis.jpg">
+<meta property="article:published_time" content="2023-12-19T01:54:19.000Z">
+<meta property="article:modified_time" content="2024-02-02T07:27:40.304Z">
+<meta property="article:author" content="凌冬">
+<meta property="article:tag" content="面经笔经">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://hukaichao.me/upload/meituan-gtis.jpg">
+  
+  
+  
+  <title>分布式系统操作互斥性与接口幂等性 - 凌冬的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="分布式系统操作互斥性与接口幂等性"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-12-19 09:54" pubdate>
+          2023年12月19日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          52 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">分布式系统操作互斥性与接口幂等性</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>本文以美团技术团队分享的“<a target="_blank" rel="noopener" href="https://tech.meituan.com/2016/09/29/distributed-system-mutually-exclusive-idempotence-cerberus-gtis.html">分布式系统互斥性与幂等性问题的分析与解决</a>”一文为核心进行笔记记录。</p>
+<p>操作互斥性问题并非分布式环境所独有，在传统的多线程、多进程情况下已经有了很好的解决方案。</p>
+<p>多线程情况下的参考方案可见之前为了面试总结的文章 “并发框架（JUC）”</p>
+<h2 id="多进程的解决方案"><a href="#多进程的解决方案" class="headerlink" title="多进程的解决方案"></a>多进程的解决方案</h2><p>在多道程序系统中存在许多进程，它们共享各种资源，然而有很多资源一次只能供一个进程使用，这便是临界资源。多进程中的临界资源大致上可以分为两类，一类是物理上的真实资源，如打印机；一类是硬盘或内存中的共享数据，如共享内存等。而进程内互斥访问临界资源的代码被称为临界区。</p>
+<p>针对临界资源的互斥访问，JVM层面的锁就已经失去效力了。在多进程的情况下，主要还是利用操作系统层面的进程间通信原理来解决临界资源的抢占问题。比较常见的一种方法便是使用信号量（Semaphores）。</p>
+<p>信号量在POSIX标准下有两种，分别为有名信号量和无名信号量。无名信号量通常保存在共享内存中，而有名信号量是与一个特定的文件名称相关联。信号量是一个整数变量，有计数信号量和二值信号量两种。对信号量的操作，主要是P操作（wait）和V操作（signal）。</p>
+<ul>
+<li>P操作：先检查信号量的大小，若值大于零，则将信号量减1，同时进程获得共享资源的访问权限，继续执行；若小于或者等于零，则该进程被阻塞后，进入等待队列。</li>
+<li>V操作：该操作将信号量的值加1，如果有进程阻塞着等待该信号量，那么其中一个进程将被唤醒。</li>
+</ul>
+<p>举个例子，设信号量为1，当一个进程A在进入临界区之前，先进行P操作。发现值大于零，那么就将信号量减为0，进入临界区执行。此时，若另一个进程B也要进去临界区，进行P操作，发现信号量等于0，则会被阻塞。当进程A退出临界区时，会进行V操作，将信号量的值加1，并唤醒阻塞的进程B。此时B就可以进入临界区了。</p>
+<p>这种方式，其实和多线程环境下的加解锁非常类似。因此用信号量处理临界资源抢占，也可以简单地理解为对临界区进行加锁。</p>
+<p>通过上面的一些了解，我们可以概括出解决互斥性问题，即资源抢占的基本方式为：</p>
+<p><strong>对共享资源的操作前后（进入退出临界区）加解锁，保证不同线程或进程可以互斥有序的操作资源。</strong></p>
+<p>加解锁方式，有显式的加解锁，如ReentrantLock或信号量；也有隐式的加解锁，如synchronized。那么在分布式环境中，为了保证不同JVM不同主机间不会出现资源抢占，那么同样只要对临界区加解锁就可以了。</p>
+<h2 id="分布式环境下的解决方案——分布式锁"><a href="#分布式环境下的解决方案——分布式锁" class="headerlink" title="分布式环境下的解决方案——分布式锁"></a>分布式环境下的解决方案——分布式锁</h2><p>首先，我们来看看分布式锁的基本条件。</p>
+<h3 id="分布式锁条件"><a href="#分布式锁条件" class="headerlink" title="分布式锁条件"></a>分布式锁条件</h3><h4 id="基本条件"><a href="#基本条件" class="headerlink" title="基本条件"></a>基本条件</h4><p>再回顾下多线程和多进程环境下的锁，可以发现锁的实现有很多共通之处，它们都需要满足一些最基本的条件： 1. 需要有存储锁的空间，并且锁的空间是可以访问到的。 2. 锁需要被唯一标识。 3. 锁要有至少两种状态。</p>
+<p>仔细分析这三个条件：</p>
+<ul>
+<li>存储空间</li>
+</ul>
+<p>锁是一个抽象的概念，锁的实现，需要依存于一个可以存储锁的空间。在多线程中是内存，在多进程中是内存或者磁盘。更重要的是，这个空间是可以被访问到的。多线程中，不同的线程都可以访问到堆中的成员变量；在多进程中，不同的进程可以访问到共享内存中的数据或者存储在磁盘中的文件。但是在分布式环境中，不同的主机很难访问对方的内存或磁盘。这就需要一个都能访问到的外部空间来作为存储空间。</p>
+<p>最普遍的外部存储空间就是数据库了，事实上也确实有基于数据库做分布式锁（行锁、version乐观锁），如quartz集群架构中就有所使用。除此以外，还有各式缓存如Redis、Tair、Memcached、Mongodb，当然还有专门的分布式协调服务Zookeeper，甚至是另一台主机。只要可以存储数据、锁在其中可以被多主机访问到，那就可以作为分布式锁的存储空间。</p>
+<ul>
+<li>唯一标识</li>
+</ul>
+<p>不同的共享资源，必然需要用不同的锁进行保护，因此相应的锁必须有唯一的标识。在多线程环境中，锁可以是一个对象，那么对这个对象的引用便是这个唯一标识。多进程环境中，信号量在共享内存中也是由引用来作为唯一的标识。但是如果不在内存中，失去了对锁的引用，如何唯一标识它呢？上文提到的有名信号量，便是用硬盘中的文件名作为唯一标识。因此，在分布式环境中，只要给这个锁设定一个名称，并且保证这个名称是全局唯一的，那么就可以作为唯一标识。</p>
+<ul>
+<li>至少两种状态</li>
+</ul>
+<p>为了给临界区加锁和解锁，需要存储两种不同的状态。如ReentrantLock中的status，0表示没有线程竞争，大于0表示有线程竞争；信号量大于0表示可以进入临界区，小于等于0则表示需要被阻塞。因此只要在分布式环境中，锁的状态有两种或以上：如有锁、没锁；存在、不存在等等，均可以实现。</p>
+<p>有了这三个条件，基本就可以实现一个简单的分布式锁了。下面以数据库为例，实现一个简单的分布式锁： 数据库表，字段为锁的ID（唯一标识），锁的状态（0表示没有被锁，1表示被锁）。 伪代码为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">lock = mysql.get(id);</span><br><span class="line">while(lock.status == 1) &#123;</span><br><span class="line">    sleep(100);</span><br><span class="line">&#125;</span><br><span class="line">mysql.update(lock.status = 1);</span><br><span class="line">doSomething();</span><br><span class="line">mysql.update(lock.status = 0);</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h4><p>以上的方式即可以实现一个粗糙的分布式锁，但是这样的实现，有没有什么问题呢？</p>
+<ul>
+<li>问题1：锁状态判断原子性无法保证 从读取锁的状态，到判断该状态是否为被锁，需要经历两步操作。如果不能保证这两步的原子性，就可能导致不止一个请求获取到了锁，这显然是不行的。因此，我们需要保证锁状态判断的原子性。</li>
+<li>问题2：网络断开或主机宕机，锁状态无法清除 假设在主机已经获取到锁的情况下，突然出现了网络断开或者主机宕机，如果不做任何处理该锁将仍然处于被锁定的状态。那么之后所有的请求都无法再成功抢占到这个锁。因此，我们需要在持有锁的主机宕机或者网络断开的时候，及时的释放掉这把锁。</li>
+<li>问题3：无法保证释放的是自己上锁的那把锁 在解决了问题2的情况下再设想一下，假设持有锁的主机A在临界区遇到网络抖动导致网络断开，分布式锁及时的释放掉了这把锁。之后，另一个主机B占有了这把锁，但是此时主机A网络恢复，退出临界区时解锁。由于都是同一把锁，所以A就会将B的锁解开。此时如果有第三个主机尝试抢占这把锁，也将会成功获得。因此，我们需要在解锁时，确定自己解的这个锁正是自己锁上的。</li>
+</ul>
+<h4 id="进阶条件"><a href="#进阶条件" class="headerlink" title="进阶条件"></a>进阶条件</h4><p>如果分布式锁的实现，还能再解决上面的三个问题，那么就可以算是一个相对完整的分布式锁了。然而，在实际的系统环境中，还会对分布式锁有更高级的要求。</p>
+<ol>
+<li>可重入：线程中的可重入，指的是外层函数获得锁之后，内层也可以获得锁，ReentrantLock和synchronized都是可重入锁；衍生到分布式环境中，一般仍然指的是线程的可重入，在绝大多数分布式环境中，都要求分布式锁是可重入的。</li>
+<li>惊群效应（Herd Effect）：在分布式锁中，惊群效应指的是，在有多个请求等待获取锁的时候，一旦占有锁的线程释放之后，如果所有等待的方都同时被唤醒，尝试抢占锁。但是这样的情况会造成比较大的开销，那么在实现分布式锁的时候，应该尽量避免惊群效应的产生。</li>
+<li>公平锁和非公平锁：不同的需求，可能需要不同的分布式锁。非公平锁普遍比公平锁开销小。但是业务需求如果必须要锁的竞争者按顺序获得锁，那么就需要实现公平锁。</li>
+<li>阻塞锁和自旋锁：针对不同的使用场景，阻塞锁和自旋锁的效率也会有所不同。阻塞锁会有上下文切换，如果并发量比较高且临界区的操作耗时比较短，那么造成的性能开销就比较大了。但是如果临界区操作耗时比较长，一直保持自旋，也会对CPU造成更大的负荷。</li>
+</ol>
+<p>保留以上所有问题和条件，我们接下来看一些比较典型的实现方案。</p>
+<h3 id="典型实现"><a href="#典型实现" class="headerlink" title="典型实现"></a>典型实现</h3><h4 id="ZooKeeper的实现"><a href="#ZooKeeper的实现" class="headerlink" title="ZooKeeper的实现"></a>ZooKeeper的实现</h4><p>ZooKeeper（以下简称“ZK”）中有一种节点叫做顺序节点，假如我们在&#x2F;lock&#x2F;目录下创建3个节点，ZK集群会按照发起创建的顺序来创建节点，节点分别为&#x2F;lock&#x2F;0000000001、&#x2F;lock&#x2F;0000000002、&#x2F;lock&#x2F;0000000003。</p>
+<p>ZK中还有一种名为临时节点的节点，临时节点由某个客户端创建，当客户端与ZK集群断开连接，则该节点自动被删除。EPHEMERAL_SEQUENTIAL为临时顺序节点。</p>
+<p>根据ZK中节点是否存在，可以作为分布式锁的锁状态，以此来实现一个分布式锁，下面是分布式锁的基本逻辑： 1. 客户端调用create()方法创建名为“&#x2F;dlm-locks&#x2F;lockname&#x2F;lock-”的临时顺序节点。 2. 客户端调用getChildren(“lockname”)方法来获取所有已经创建的子节点。 3. 客户端获取到所有子节点path之后，如果发现自己在步骤1中创建的节点是所有节点中序号最小的，那么就认为这个客户端获得了锁。 4. 如果创建的节点不是所有节点中需要最小的，那么则监视比自己创建节点的序列号小的最大的节点，进入等待。直到下次监视的子节点变更的时候，再进行子节点的获取，判断是否获取锁。</p>
+<p>释放锁的过程相对比较简单，就是删除自己创建的那个子节点即可，不过也仍需要考虑删除节点失败等异常情况。</p>
+<p>开源的基于ZK的Menagerie的源码就是一个典型的例子：<a target="_blank" rel="noopener" href="https://github.com/sfines/menagerie">https://github.com/sfines/menagerie</a> 。</p>
+<p>Menagerie中的lock首先实现了可重入锁，利用ThreadLocal存储进入的次数，每次加锁次数加1，每次解锁次数减1。如果判断出是当前线程持有锁，就不用走获取锁的流程。</p>
+<p>通过tryAcquireDistributed方法尝试获取锁，循环判断前序节点是否存在，如果存在则监视该节点并且返回获取失败。如果前序节点不存在，则再判断更前一个节点。如果判断出自己是第一个节点，则返回获取成功。</p>
+<p>为了在别的线程占有锁的时候阻塞，代码中使用JUC的condition来完成。如果获取尝试锁失败，则进入等待且放弃localLock，等待前序节点唤醒。而localLock是一个本地的公平锁，使得condition可以公平的进行唤醒，配合循环判断前序节点，实现了一个公平锁。</p>
+<p>这种实现方式非常类似于ReentrantLock的CHL队列，而且zk的临时节点可以直接避免网络断开或主机宕机，锁状态无法清除的问题，顺序节点可以避免惊群效应。这些特性都使得利用ZK实现分布式锁成为了最普遍的方案之一。</p>
+<h4 id="Redis的实现"><a href="#Redis的实现" class="headerlink" title="Redis的实现"></a>Redis的实现</h4><p>Redis的分布式缓存特性使其成为了分布式锁的一种基础实现。通过Redis中是否存在某个锁ID，则可以判断是否上锁。为了保证判断锁是否存在的原子性，保证只有一个线程获取同一把锁，Redis有<strong>SETNX</strong>（即SET if Not eXists）和<strong>GETSET</strong>（先写新值，返回旧值，原子性操作，可以用于分辨是不是首次操作）操作。</p>
+<p>为了防止主机宕机或网络断开之后的死锁，Redis没有ZK那种天然的实现方式，只能依赖设置超时时间来规避。</p>
+<p>以下是一种比较普遍但不太完善的Redis分布式锁的实现步骤： 1. 线程A发送SETNX lock.orderid 尝试获得锁，如果锁不存在，则set并获得锁。 2. 如果锁存在，则再判断锁的值（时间戳）是否大于当前时间，如果没有超时，则等待一下再重试。 3. 如果已经超时了，在用GETSET lock.{orderid} 来尝试获取锁，如果这时候拿到的时间戳仍旧超时，则说明已经获得锁了。 4. 如果在此之前，另一个线程C快一步执行了上面的操作，那么A拿到的时间戳是个未超时的值，这时A没有如期获得锁，需要再次等待或重试。</p>
+<p>该实现还有一个需要考虑的问题是全局时钟问题，由于生产环境主机时钟不能保证完全同步，对时间戳的判断也可能会产生误差。</p>
+<p>以上是Redis的一种常见的实现方式，除此以外还可以用SETNX+EXPIRE来实现。Redisson是一个官方推荐的Redis客户端并且实现了很多分布式的功能。它的分布式锁就提供了一种更完善的解决方案，源码：<a target="_blank" rel="noopener" href="https://github.com/mrniko/redisson">https://github.com/mrniko/redisson</a> 。</p>
+<h2 id="GTIS"><a href="#GTIS" class="headerlink" title="GTIS"></a>GTIS</h2><p>GTIS是美团技术团队的一个解决方案。它是一个轻量的重复操作关卡系统，它能够确保在分布式环境中操作的唯一性。我们可以用它来间接保证每个操作的幂等性。它具有如下特点： * 高效：低延时，单个方法平均响应时间在2ms内，几乎不会对业务造成影响； * 可靠：提供降级策略，以应对外部存储引擎故障所造成的影响；提供应用鉴权，提供集群配置自定义，降低不同业务之间的干扰； * 简单：接入简捷方便，学习成本低。只需简单的配置，在代码中进行两个方法的调用即可完成所有的接入工作； * 灵活：提供多种接口参数、使用策略，以满足不同的业务需求。</p>
+<h3 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h3><h4 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h4><p>GTIS的实现思路是将每一个不同的业务操作赋予其唯一性。这个唯一性是通过对不同操作所对应的唯一的内容特性生成一个唯一的全局ID来实现的。基本原则为：相同的操作生成相同的全局ID；不同的操作生成不同的全局ID。</p>
+<p>生成的全局ID需要存储在外部存储引擎中，数据库、Redis亦或是Tair等等均可实现。考虑到Tair天生分布式和持久化的优势，目前的GTIS存储在Tair中。其相应的key和value如下：</p>
+<ul>
+<li>key：将对于不同的业务，采用APP_KEY+业务操作内容特性生成一个唯一标识trans_contents。然后对唯一标识进行加密生成全局ID作为Key。</li>
+<li>value：current_timestamp + trans_contents，current_timestamp用于标识当前的操作线程。</li>
+</ul>
+<p>判断是否重复，主要利用Tair的SETNX方法，如果原来没有值则set且返回成功，如果已经有值则返回失败。</p>
+<h4 id="内部流程"><a href="#内部流程" class="headerlink" title="内部流程"></a>内部流程</h4><p>GTIS的内部实现流程为：</p>
+<ol>
+<li>业务方在业务操作之前，生成一个能够唯一标识该操作的transContents，传入GTIS；</li>
+<li>GTIS根据传入的transContents，用MD5生成全局ID；</li>
+<li>GTIS将全局ID作为key，current_timestamp+transContents作为value放入Tair进行setNx，将结果返回给业务方；</li>
+<li>业务方根据返回结果确定能否开始进行业务操作；</li>
+<li>若能，开始进行操作；若不能，则结束当前操作；</li>
+<li>业务方将操作结果和请求结果传入GTIS，系统进行一次请求结果的检验；</li>
+<li>若该次操作成功，GTIS根据key取出value值，跟传入的返回结果进行比对，如果两者相等，则将该全局ID的过期时间改为较长时间；</li>
+<li>GTIS返回最终结果。</li>
+</ol>
+<h4 id="实现难点"><a href="#实现难点" class="headerlink" title="实现难点"></a>实现难点</h4><p>GTIS的实现难点在于如何保证其判断重复的可靠性。由于分布式环境的复杂度和业务操作的不确定性，在上一章节分布式锁的实现中考虑的网络断开或主机宕机等等问题，同样需要在GTIS中设法解决。这里列出几个典型的场景：</p>
+<ul>
+<li>如果操作执行失败，理想的情况应该是另一个相同的操作可以立即进行。因此，需要对业务方的操作结果进行判断，如果操作失败，那么就需要立即删除该全局ID；</li>
+<li>如果操作超时或主机宕机，当前的操作无法告知GTIS操作是否成功。那么我们必须引入超时机制，一旦长时间获取不到业务方的操作反馈，那么也需要该全局ID失效；</li>
+<li>结合上两个场景，既然全局ID会失效并且可能会被删除，那就需要保证删除的不是另一个相同操作的全局ID。这就需要将特殊的标识记录下来，并由此来判断。这里所用的标识为当前时间戳。</li>
+</ul>
+<p>可以看到，解决这些问题的思路，也和上一章节中的实现有很多类似的地方。除此以外，还有更多的场景需要考虑和解决，所有分支流程如下:</p>
+<p><img src="/upload/meituan-gtis.jpg" srcset="/img/loading.gif" lazyload alt="meituan-gtis.jpg"></p>
+<p>使用方需要考虑的主要是下面两个参数：</p>
+<ul>
+<li>空间全局性：业务方输入的能够标志操作唯一性的内容特性，可以是唯一性的String类型的ID，也可以是map、POJO等形式。如订单ID等</li>
+<li>时间全局性：确定在多长时间内不允许重复，1小时内还是一个月内亦或是永久。</li>
+</ul>
+<h2 id="幂等性"><a href="#幂等性" class="headerlink" title="幂等性"></a>幂等性</h2><p><strong>概念：</strong>多次调用方法或者接口不会改变业务状态，可以保证重复调用的结果和单次调用的结果一致。</p>
+<p>设计一个接口的时候，幂等都是首要考虑的问题，特别是当你负责设计转账、支付这种涉及到 money 的接口</p>
+<h3 id="1、token-机制实现"><a href="#1、token-机制实现" class="headerlink" title="1、token 机制实现"></a>1、token 机制实现</h3><p>通过token 机制实现接口的幂等性,这是一种比较通用性的实现方法。</p>
+<p>具体流程步骤：</p>
+<ol>
+<li>客户端会先发送一个请求去获取 token，服务端会生成一个全局唯一的 ID 作为 token 保存在 redis 中，同时把这个 ID 返回给客户端</li>
+<li>客户端第二次调用业务请求的时候必须携带这个 token</li>
+<li>服务端会校验这个 token，如果校验成功，则执行业务，并删除 redis 中的 token</li>
+<li>如果校验失败，说明 redis 中已经没有对应的 token，则表示重复操作，直接返回指定的结果给客户端</li>
+</ol>
+<p>注意：</p>
+<ol>
+<li>对 redis 中是否存在 token 以及删除的代码逻辑建议用 Lua 脚本实现，保证原子性</li>
+<li>全局唯一 ID 可以用百度的 uid-generator、美团的 Leaf 去生成</li>
+</ol>
+<h3 id="2、基于-mysql-实现"><a href="#2、基于-mysql-实现" class="headerlink" title="2、基于 mysql 实现"></a>2、基于 mysql 实现</h3><p>这种实现方式是利用 mysql 唯一索引的特性。</p>
+<p>具体流程步骤：</p>
+<ol>
+<li>建立一张去重表，其中某个字段需要建立唯一索引</li>
+<li>客户端去请求服务端，服务端会将这次请求的一些信息插入这张去重表中</li>
+<li>因为表中某个字段带有唯一索引，如果插入成功，证明表中没有这次请求的信息，则执行后续的业务逻辑</li>
+<li>如果插入失败，则代表已经执行过当前请求，直接返回</li>
+</ol>
+<h2 id="接口幂等性实现代码"><a href="#接口幂等性实现代码" class="headerlink" title="接口幂等性实现代码"></a>接口幂等性实现代码</h2><p>采用自定义注解+aop的方式，自定义一个<code>RepeatSubmit</code>注解，然后采用doBefore和doAftterReturing方法实现幂等。设计上参考了GTIS防重系统，完整代码如下：</p>
+<p>RepeatSubmit</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 自定义注解防止表单重复提交</span><br><span class="line"> *</span><br><span class="line"> * @author Lion Li</span><br><span class="line"> */</span><br><span class="line">@Inherited</span><br><span class="line">@Target(ElementType.METHOD)</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">@Documented</span><br><span class="line">public @interface RepeatSubmit &#123;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 间隔时间(ms)，小于此时间视为重复提交</span><br><span class="line">     */</span><br><span class="line">    int interval() default 5000;</span><br><span class="line"></span><br><span class="line">    TimeUnit timeUnit() default TimeUnit.MILLISECONDS;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 提示消息 支持国际化 格式为 &#123;code&#125;</span><br><span class="line">     */</span><br><span class="line">    String message() default &quot;&#123;repeat.submit.message&#125;&quot;;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>RepeatSubmitAspect</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br></pre></td><td class="code"><pre><span class="line">import cn.dev33.satoken.SaManager;</span><br><span class="line">    import cn.hutool.core.util.ArrayUtil;</span><br><span class="line">    import cn.hutool.core.util.ObjectUtil;</span><br><span class="line">    import cn.hutool.crypto.SecureUtil;</span><br><span class="line">    import org.dromara.common.core.constant.GlobalConstants;</span><br><span class="line">    import org.dromara.common.core.domain.R;</span><br><span class="line">    import org.dromara.common.core.exception.ServiceException;</span><br><span class="line">    import org.dromara.common.core.utils.MessageUtils;</span><br><span class="line">    import org.dromara.common.core.utils.ServletUtils;</span><br><span class="line">    import org.dromara.common.core.utils.StringUtils;</span><br><span class="line">    import org.dromara.common.idempotent.annotation.RepeatSubmit;</span><br><span class="line">    import org.dromara.common.json.utils.JsonUtils;</span><br><span class="line">    import org.dromara.common.redis.utils.RedisUtils;</span><br><span class="line">    import jakarta.servlet.http.HttpServletRequest;</span><br><span class="line">    import jakarta.servlet.http.HttpServletResponse;</span><br><span class="line">    import org.aspectj.lang.JoinPoint;</span><br><span class="line">    import org.aspectj.lang.annotation.AfterReturning;</span><br><span class="line">    import org.aspectj.lang.annotation.AfterThrowing;</span><br><span class="line">    import org.aspectj.lang.annotation.Aspect;</span><br><span class="line">    import org.aspectj.lang.annotation.Before;</span><br><span class="line">    import org.springframework.validation.BindingResult;</span><br><span class="line">    import org.springframework.web.multipart.MultipartFile;</span><br><span class="line"></span><br><span class="line">    import java.time.Duration;</span><br><span class="line">    import java.util.Collection;</span><br><span class="line">    import java.util.Map;</span><br><span class="line">    import java.util.StringJoiner;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 防止重复提交(参考美团GTIS防重系统)</span><br><span class="line"> *</span><br><span class="line"> * @author Lion Li</span><br><span class="line"> */</span><br><span class="line">@Aspect</span><br><span class="line">public class RepeatSubmitAspect &#123;</span><br><span class="line"></span><br><span class="line">    private static final ThreadLocal&lt;String&gt; KEY_CACHE = new ThreadLocal&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    @Before(&quot;@annotation(repeatSubmit)&quot;)</span><br><span class="line">    public void doBefore(JoinPoint point, RepeatSubmit repeatSubmit) throws Throwable &#123;</span><br><span class="line">        // 如果注解不为0 则使用注解数值</span><br><span class="line">        long interval = repeatSubmit.timeUnit().toMillis(repeatSubmit.interval());</span><br><span class="line"></span><br><span class="line">        if (interval &lt; 1000) &#123;</span><br><span class="line">            throw new ServiceException(&quot;重复提交间隔时间不能小于&#x27;1&#x27;秒&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        HttpServletRequest request = ServletUtils.getRequest();</span><br><span class="line">        String nowParams = argsArrayToString(point.getArgs());</span><br><span class="line"></span><br><span class="line">        // 请求地址（作为存放cache的key值）</span><br><span class="line">        String url = request.getRequestURI();</span><br><span class="line"></span><br><span class="line">        // 唯一值（没有消息头则使用请求地址）</span><br><span class="line">        String submitKey = StringUtils.trimToEmpty(request.getHeader(SaManager.getConfig().getTokenName()));</span><br><span class="line"></span><br><span class="line">        submitKey = SecureUtil.md5(submitKey + &quot;:&quot; + nowParams);</span><br><span class="line">        // 唯一标识（指定key + url + 消息头）</span><br><span class="line">        String cacheRepeatKey = GlobalConstants.REPEAT_SUBMIT_KEY + url + submitKey;</span><br><span class="line">        if (RedisUtils.setObjectIfAbsent(cacheRepeatKey, &quot;&quot;, Duration.ofMillis(interval))) &#123;</span><br><span class="line">            KEY_CACHE.set(cacheRepeatKey);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            String message = repeatSubmit.message();</span><br><span class="line">            if (StringUtils.startsWith(message, &quot;&#123;&quot;) &amp;&amp; StringUtils.endsWith(message, &quot;&#125;&quot;)) &#123;</span><br><span class="line">                message = MessageUtils.message(StringUtils.substring(message, 1, message.length() - 1));</span><br><span class="line">            &#125;</span><br><span class="line">            throw new ServiceException(message);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 处理完请求后执行</span><br><span class="line">     *</span><br><span class="line">     * @param joinPoint 切点</span><br><span class="line">     */</span><br><span class="line">    @AfterReturning(pointcut = &quot;@annotation(repeatSubmit)&quot;, returning = &quot;jsonResult&quot;)</span><br><span class="line">    public void doAfterReturning(JoinPoint joinPoint, RepeatSubmit repeatSubmit, Object jsonResult) &#123;</span><br><span class="line">        if (jsonResult instanceof R&lt;?&gt; r) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                // 成功则不删除redis数据 保证在有效时间内无法重复提交</span><br><span class="line">                if (r.getCode() == R.SUCCESS) &#123;</span><br><span class="line">                    return;</span><br><span class="line">                &#125;</span><br><span class="line">                RedisUtils.deleteObject(KEY_CACHE.get());</span><br><span class="line">            &#125; finally &#123;</span><br><span class="line">                KEY_CACHE.remove();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 拦截异常操作</span><br><span class="line">     *</span><br><span class="line">     * @param joinPoint 切点</span><br><span class="line">     * @param e         异常</span><br><span class="line">     */</span><br><span class="line">    @AfterThrowing(value = &quot;@annotation(repeatSubmit)&quot;, throwing = &quot;e&quot;)</span><br><span class="line">    public void doAfterThrowing(JoinPoint joinPoint, RepeatSubmit repeatSubmit, Exception e) &#123;</span><br><span class="line">        RedisUtils.deleteObject(KEY_CACHE.get());</span><br><span class="line">        KEY_CACHE.remove();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 参数拼装</span><br><span class="line">     */</span><br><span class="line">    private String argsArrayToString(Object[] paramsArray) &#123;</span><br><span class="line">        StringJoiner params = new StringJoiner(&quot; &quot;);</span><br><span class="line">        if (ArrayUtil.isEmpty(paramsArray)) &#123;</span><br><span class="line">            return params.toString();</span><br><span class="line">        &#125;</span><br><span class="line">        for (Object o : paramsArray) &#123;</span><br><span class="line">            if (ObjectUtil.isNotNull(o) &amp;&amp; !isFilterObject(o)) &#123;</span><br><span class="line">                params.add(JsonUtils.toJsonString(o));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return params.toString();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 判断是否需要过滤的对象。</span><br><span class="line">     *</span><br><span class="line">     * @param o 对象信息。</span><br><span class="line">     * @return 如果是需要过滤的对象，则返回true；否则返回false。</span><br><span class="line">     */</span><br><span class="line">    @SuppressWarnings(&quot;rawtypes&quot;)</span><br><span class="line">    public boolean isFilterObject(final Object o) &#123;</span><br><span class="line">        Class&lt;?&gt; clazz = o.getClass();</span><br><span class="line">        if (clazz.isArray()) &#123;</span><br><span class="line">            return clazz.getComponentType().isAssignableFrom(MultipartFile.class);</span><br><span class="line">        &#125; else if (Collection.class.isAssignableFrom(clazz)) &#123;</span><br><span class="line">            Collection collection = (Collection) o;</span><br><span class="line">            for (Object value : collection) &#123;</span><br><span class="line">                return value instanceof MultipartFile;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else if (Map.class.isAssignableFrom(clazz)) &#123;</span><br><span class="line">            Map map = (Map) o;</span><br><span class="line">            for (Object value : map.values()) &#123;</span><br><span class="line">                return value instanceof MultipartFile;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return o instanceof MultipartFile || o instanceof HttpServletRequest || o instanceof HttpServletResponse</span><br><span class="line">            || o instanceof BindingResult;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>IdempotentConfig</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 幂等功能配置</span><br><span class="line"> *</span><br><span class="line"> * @author Lion Li</span><br><span class="line"> */</span><br><span class="line">@AutoConfiguration(after = RedisConfiguration.class)</span><br><span class="line">public class IdempotentConfig &#123;</span><br><span class="line"></span><br><span class="line">    @Bean</span><br><span class="line">    public RepeatSubmitAspect repeatSubmitAspect() &#123;</span><br><span class="line">        return new RepeatSubmitAspect();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>resources&#x2F;META-INF.spring 目录下</p>
+<p>org.springframework.boot.autoconfigure.AutoConfiguration.imports</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">org.dromara.common.idempotent.config.IdempotentConfig</span><br></pre></td></tr></table></figure>
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E9%9D%A2%E7%BB%8F%E7%AC%94%E7%BB%8F/" class="category-chain-item">面经笔经</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E9%9D%A2%E7%BB%8F%E7%AC%94%E7%BB%8F/" class="print-no-link">#面经笔经</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>分布式系统操作互斥性与接口幂等性</div>
+      <div>https://hukaichao.me/2023/12/19/分布式系统操作互斥性与接口幂等性/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>凌冬</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年12月19日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/12/19/%E5%86%99%E4%B8%80%E4%B8%AA%E7%99%BB%E5%BD%95%E7%B3%BB%E7%BB%9F%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E5%9C%B0%E6%96%B9/" title="写一个登录系统需要注意的地方">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">写一个登录系统需要注意的地方</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/12/19/%E5%AF%86%E7%A0%81%E5%AD%A6%E5%AD%A6%E4%B9%A0/" title="密码学学习">
+                        <span class="hidden-mobile">密码学学习</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

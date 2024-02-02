@@ -1,0 +1,705 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="凌冬">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="介绍树的定义树（Tree）是n（n&gt;&#x3D;0)个结点的有限集。n&#x3D;0时称为空树。在任意一颗非空树中：  有且仅有一个特定的称为根（Root）的结点； 当n&gt;1时，其余结点可分为m(m&gt;0)个互不相交的有限集T1、T2、……、Tn，其中每一个集合本身又是一棵树，并且称为根的子树。 n&gt;0时根结点是唯一的，不可能存在多个根结点，数据结构中的树只能有一个根结点。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="二叉树 binary tree">
+<meta property="og:url" content="https://hukaichao.me/2023/06/18/%E4%BA%8C%E5%8F%89%E6%A0%91%20binary%20tree/index.html">
+<meta property="og:site_name" content="凌冬的个人博客">
+<meta property="og:description" content="介绍树的定义树（Tree）是n（n&gt;&#x3D;0)个结点的有限集。n&#x3D;0时称为空树。在任意一颗非空树中：  有且仅有一个特定的称为根（Root）的结点； 当n&gt;1时，其余结点可分为m(m&gt;0)个互不相交的有限集T1、T2、……、Tn，其中每一个集合本身又是一棵树，并且称为根的子树。 n&gt;0时根结点是唯一的，不可能存在多个根结点，数据结构中的树只能有一个根结点。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hukaichao.me/upload/2022/02/image-4e65df7ce6ae40c79dc9fb55c1ef4990.png">
+<meta property="og:image" content="https://hukaichao.me/upload/2022/02/image-307377abcc33456ca9b4b5b0305f852a.png">
+<meta property="og:image" content="https://hukaichao.me/upload/2022/02/image-a7355330bce641018c4e1e7973cb190e.png">
+<meta property="og:image" content="https://hukaichao.me/upload/2022/02/image-770b9aa90fd24541a5b6b8af62496108.png">
+<meta property="article:published_time" content="2023-06-18T11:47:26.000Z">
+<meta property="article:modified_time" content="2024-02-02T07:27:40.300Z">
+<meta property="article:author" content="凌冬">
+<meta property="article:tag" content="递归">
+<meta property="article:tag" content="二叉树">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://hukaichao.me/upload/2022/02/image-4e65df7ce6ae40c79dc9fb55c1ef4990.png">
+  
+  
+  
+  <title>二叉树 binary tree - 凌冬的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="二叉树 binary tree"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-06-18 19:47" pubdate>
+          2023年6月18日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          29 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">二叉树 binary tree</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><h3 id="树的定义"><a href="#树的定义" class="headerlink" title="树的定义"></a>树的定义</h3><p>树（Tree）是n（n&gt;&#x3D;0)个结点的有限集。n&#x3D;0时称为空树。在任意一颗非空树中：</p>
+<ol>
+<li>有且仅有一个特定的称为根（Root）的结点；</li>
+<li>当n&gt;1时，其余结点可分为m(m&gt;0)个互不相交的有限集T1、T2、……、Tn，其中每一个集合本身又是一棵树，并且称为根的子树。</li>
+<li>n&gt;0时根结点是唯一的，不可能存在多个根结点，数据结构中的树只能有一个根结点。</li>
+<li>m&gt;0时，子树的个数没有限制，但它们一定是互不相交的。</li>
+</ol>
+<p>结点拥有的子树数目称为结点的度。<br><img src="/upload/2022/02/image-4e65df7ce6ae40c79dc9fb55c1ef4990.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p>树中结点的最大层次数称为树的深度或高度，下图中树的深度为4<br><img src="/upload/2022/02/image-307377abcc33456ca9b4b5b0305f852a.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<h3 id="二叉树的性质"><a href="#二叉树的性质" class="headerlink" title="二叉树的性质"></a>二叉树的性质</h3><p>简单地理解，满足以下两个条件的树就是二叉树：</p>
+<ol>
+<li>本身是有序树；</li>
+<li>树中包含的各个节点的度不能超过 2，即只能是 0、1 或者 2；</li>
+</ol>
+<p>二叉树具有以下几个性质：</p>
+<ol>
+<li>二叉树中，第 i 层最多有 2i-1 个结点。</li>
+<li>如果二叉树的深度为 K，那么此二叉树最多有 2K-1 个结点。</li>
+<li>二叉树中，终端结点数（叶子结点数）为 n0，度为 2 的结点数为 n2，则 n0&#x3D;n2+1。<br>(性质 3 的计算方法为：对于一个二叉树来说，除了度为 0 的叶子结点和度为 2 的结点，剩下的就是度为 1 的结点（设为 n1），那么总结点 n&#x3D;n0+n1+n2。<br>同时，对于每一个结点来说都是由其父结点分支表示的，假设树中分枝数为 B，那么总结点数 n&#x3D;B+1。而分枝数是可以通过 n1 和 n2 表示的，即 B&#x3D;n1+2 * n2。所以，n用另外一种方式表示为n&#x3D;n1+2 * n2+1。<br>两种方式得到的 n 值组成一个方程组，就可以得出 n0&#x3D;n2+1。)</li>
+</ol>
+<p>二叉树还可以继续分类，衍生出满二叉树和完全二叉树。</p>
+<h4 id="满二叉树"><a href="#满二叉树" class="headerlink" title="满二叉树"></a>满二叉树</h4><p>如果二叉树中除了叶子结点，每个结点的度都为 2，则此二叉树称为满二叉树。示意图如下：<br><img src="/upload/2022/02/image-a7355330bce641018c4e1e7973cb190e.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<p>满二叉树除了满足普通二叉树的性质，还具有以下性质：</p>
+<ol>
+<li>满二叉树中第 i 层的节点数为 2n-1 个。</li>
+<li>深度为 k 的满二叉树必有 2k-1 个节点 ，叶子数为 2k-1。</li>
+<li>满二叉树中不存在度为 1 的节点，每一个分支点中都两棵深度相同的子树，且叶子节点都在最底层。</li>
+<li>具有 n 个节点的满二叉树的深度为 log2(n+1)。</li>
+</ol>
+<h4 id="完全二叉树"><a href="#完全二叉树" class="headerlink" title="完全二叉树"></a>完全二叉树</h4><p>如果二叉树中除去最后一层节点为满二叉树，且最后一层的结点依次从左到右分布，则此二叉树被称为完全二叉树。<br><img src="/upload/2022/02/image-770b9aa90fd24541a5b6b8af62496108.png" srcset="/img/loading.gif" lazyload alt="image.png"><br>完全二叉树除了具有普通二叉树的性质，它自身也具有一些独特的性质，比如说，n 个结点的完全二叉树的深度为 [log2 n]+1。<br>[log2 n] 表示取小于 log2 n 的最大整数。例如，[log2 4] &#x3D; 2，而 [log2 5] 结果也是 2。</p>
+<p>对于任意一个完全二叉树来说，如果将含有的结点按照层次从左到右依次标号，对于任意一个结点 i ，完全二叉树还有以下几个结论成立：</p>
+<ol>
+<li>当 i&gt;1 时，父亲结点为结点 [i&#x2F;2] 。（i&#x3D;1 时，表示的是根结点，无父亲结点）</li>
+<li>如果 2 * i&gt;n（总结点的个数），则结点 i 肯定没有左孩子（为叶子结点）；否则其左孩子是结点 2 * i 。</li>
+<li>如果 2 * i+1&gt;n ，则结点 i 肯定没有右孩子；否则右孩子是结点 2 * i+1 。</li>
+</ol>
+<h2 id="节点的实现"><a href="#节点的实现" class="headerlink" title="节点的实现"></a>节点的实现</h2><p>二叉树的存储结构有两种，分别为顺序存储和链式存储。<br>二叉树的顺序存储，指的是使用顺序表（数组）存储二叉树。需要注意的是，只有完全二叉树才可以使用顺序表存储。<br>因为并不是每个二叉树都是完全二叉树，普通二叉树使用顺序表存储或多或多会存在空间浪费的现象，所以二叉树并不适合用数组存储。在本文中只用代码实现二叉树的链式存储。</p>
+<p>链式存储中二叉树的每个节点都有三个主要数据，分别为节点数据，指向左子节点，指向右子节点，二叉树再由节点组成。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Node</span>&lt;T&gt; &#123;</span><br><span class="line">	T data;   <span class="comment">// 结点数据</span></span><br><span class="line">	Node&lt;T&gt; left;  <span class="comment">// 指向左孩子结点</span></span><br><span class="line">	Node&lt;T&gt; right;  <span class="comment">// 指向右孩子结点</span></span><br><span class="line">	<span class="type">boolean</span> isFirst;  <span class="comment">// 用于非递归后序遍历</span></span><br><span class="line">	</span><br><span class="line">	<span class="keyword">public</span> <span class="title function_">Node</span><span class="params">(T data)</span> &#123; </span><br><span class="line">		<span class="built_in">this</span>.data = data;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="keyword">public</span> String <span class="title function_">toString</span><span class="params">()</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> data == <span class="literal">null</span> ? <span class="literal">null</span> : data.toString();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">equals</span><span class="params">(Object obj)</span> &#123;</span><br><span class="line">		<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">		<span class="keyword">if</span> (obj <span class="keyword">instanceof</span> Node) &#123;</span><br><span class="line">			Node&lt;T&gt; temp = (Node&lt;T&gt;) obj;</span><br><span class="line">			<span class="keyword">if</span> (data.equals(temp.data)) &#123;</span><br><span class="line">				<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="二叉树的实现及遍历算法"><a href="#二叉树的实现及遍历算法" class="headerlink" title="二叉树的实现及遍历算法"></a>二叉树的实现及遍历算法</h2><p>树的遍历有四种方式:</p>
+<pre><code>   (1) 先序遍历：先访问根节点，再访问左子树，最后访问右子树。
+
+   (2) 后序遍历：先左子树，再右子树，最后根节点。
+
+   (3) 中序遍历：先左子树，再根节点，最后右子树。
+
+   (4) 层序遍历：每一层从左到右访问每一个节点。
+</code></pre>
+<p>二叉树的构建和遍历</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.LinkedList;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BinaryTree</span>&lt;E&gt; &#123;</span><br><span class="line">	<span class="comment">// 二叉树的根结点     </span></span><br><span class="line">	<span class="keyword">private</span> Node&lt;E&gt; root;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="title function_">BinaryTree</span><span class="params">()</span> &#123;</span><br><span class="line">		<span class="built_in">super</span>(); <span class="comment">//调用父类的无参构造方法</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 根据一个树的根结点复制构造树</span></span><br><span class="line">	<span class="keyword">public</span> <span class="title function_">BinaryTree</span><span class="params">(Node&lt;E&gt; node)</span> &#123;</span><br><span class="line">		<span class="comment">// TODO Auto-generated constructor stub</span></span><br><span class="line">		<span class="built_in">this</span>.root = copy(node);</span><br><span class="line">	&#125;</span><br><span class="line">  </span><br><span class="line">	<span class="comment">// 根据一个树的前序遍历结果复制构造树</span></span><br><span class="line">	<span class="keyword">public</span> <span class="title function_">BinaryTree</span><span class="params">(<span class="type">char</span>[] preOrderStr)</span> &#123;</span><br><span class="line">		root = createTreeByPreOrederStr(preOrderStr, <span class="literal">null</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	  </span><br><span class="line">	<span class="comment">// 根据一个树的前序遍历+中序遍历(或中序遍历+后序遍历)复制构造树</span></span><br><span class="line">	<span class="keyword">public</span> <span class="title function_">BinaryTree</span><span class="params">(String s1, String s2, <span class="type">boolean</span> isPreIn)</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> (isPreIn) &#123;</span><br><span class="line">			root = createBinaryTreeByPreAndIn(s1, s2);</span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			root = createBinaryTreeByInAndPost(s1, s2);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** </span></span><br><span class="line"><span class="comment">根据广义表表达式创建树</span></span><br><span class="line"><span class="comment">广义表达式如下：</span></span><br><span class="line"><span class="comment">（1）表中的一个字母表示一个结点的数据信息；</span></span><br><span class="line"><span class="comment">（2）每个根节点作为由子树构成的表的名字放在表的前面；</span></span><br><span class="line"><span class="comment">（3）每个结点的左子树与右子树之间用逗号分开；如果只有右子树而无左子树，则逗号不能省略；</span></span><br><span class="line"><span class="comment">  例如：A(B(D),C(F(,E),G))</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> Node <span class="title function_">createBinaryTree</span><span class="params">(String exp)</span> &#123;</span><br><span class="line">		LinkedList&lt;Node&gt; stack = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;Node&gt;(); <span class="comment">// 辅助栈</span></span><br><span class="line">		<span class="type">Node</span> <span class="variable">node</span> <span class="operator">=</span> <span class="literal">null</span>; <span class="comment">// 新结点</span></span><br><span class="line">		<span class="type">Node</span> <span class="variable">temp</span> <span class="operator">=</span> <span class="literal">null</span>; <span class="comment">// 用于入栈</span></span><br><span class="line">		<span class="type">Node</span> <span class="variable">parent</span> <span class="operator">=</span> <span class="literal">null</span>; <span class="comment">// 父亲结点</span></span><br><span class="line">		<span class="type">boolean</span> <span class="variable">flag</span> <span class="operator">=</span> <span class="literal">false</span>; <span class="comment">// true 表示链入到父结点的左孩子位置，false表示链入父结点的右孩子位置</span></span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; exp.length(); i++) &#123; <span class="comment">// 逐个读入表达式的各个字符</span></span><br><span class="line">			<span class="type">char</span> <span class="variable">c</span> <span class="operator">=</span> exp.charAt(i);</span><br><span class="line">			<span class="keyword">switch</span> (c) &#123;</span><br><span class="line">			<span class="keyword">case</span> <span class="string">&#x27;(&#x27;</span>: <span class="comment">// 当前节点有孩子节点，入栈以便设置其孩子</span></span><br><span class="line">				stack.push(temp);</span><br><span class="line">				<span class="comment">//此处用到了链表作为栈，并调用了push和pop方法，在Java封装好的LinkedList中链表确实有这两个方法，作用的增加头节点和删除头节点，可以作为栈来使用</span></span><br><span class="line">				flag = <span class="literal">true</span>;</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="keyword">case</span> <span class="string">&#x27;)&#x27;</span>: <span class="comment">// 设置好了栈顶节点的孩子，出栈</span></span><br><span class="line">				stack.pop();</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="keyword">case</span> <span class="string">&#x27;,&#x27;</span>: <span class="comment">// 当前节点无孩子，不需要设置其孩子节点，因此不需要入栈</span></span><br><span class="line">				flag = <span class="literal">false</span>;</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			<span class="keyword">default</span>: <span class="comment">// 创建根据内容创建节点</span></span><br><span class="line">				node = <span class="keyword">new</span> <span class="title class_">Node</span>(c);</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">// 若树不存在，则创建树的根结点</span></span><br><span class="line">			<span class="keyword">if</span> (root == <span class="literal">null</span>) &#123;</span><br><span class="line">				root = node;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">// 为栈顶节点链入子女</span></span><br><span class="line">			<span class="keyword">if</span> (!stack.isEmpty()) &#123;</span><br><span class="line">				<span class="keyword">if</span> (node != <span class="literal">null</span>) &#123; <span class="comment">// 当读入的是&#x27;(&#x27;、&#x27;)&#x27;、&#x27;,&#x27;字符时，略过</span></span><br><span class="line">					parent = stack.peek();</span><br><span class="line">					<span class="keyword">if</span> (flag) &#123;</span><br><span class="line">						parent.left = node;</span><br><span class="line">					&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">						parent.right = node;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			temp = node; <span class="comment">// 用于入栈</span></span><br><span class="line">			node = <span class="literal">null</span>; <span class="comment">// node链入后，置空</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> root;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 广序/层次遍历，工作队列</span></span><br><span class="line">	<span class="keyword">public</span> String <span class="title function_">levelOrder</span><span class="params">()</span> &#123;</span><br><span class="line">		<span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">		LinkedList&lt;Node&lt;E&gt;&gt; queue = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;Node&lt;E&gt;&gt;(); <span class="comment">// 辅助队列</span></span><br><span class="line">		<span class="keyword">if</span> (root != <span class="literal">null</span>) &#123;</span><br><span class="line">			queue.add(root);</span><br><span class="line">			<span class="keyword">while</span> (!queue.isEmpty()) &#123;</span><br><span class="line">				Node&lt;E&gt; temp = queue.pop();</span><br><span class="line">				sb.append(temp.data).append(<span class="string">&quot; &quot;</span>);</span><br><span class="line"></span><br><span class="line">				<span class="comment">// 在遍历当前节点时，同时将其左右孩子入队</span></span><br><span class="line">				<span class="keyword">if</span> (temp.left != <span class="literal">null</span>)</span><br><span class="line">					queue.add(temp.left);</span><br><span class="line">				<span class="keyword">if</span> (temp.right != <span class="literal">null</span>)</span><br><span class="line">					queue.add(temp.right);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> sb.toString().trim();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 前序遍历(递归)</span></span><br><span class="line">	<span class="keyword">public</span> String <span class="title function_">preOrder</span><span class="params">(Node&lt;E&gt; root)</span> &#123;</span><br><span class="line">		<span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>(); <span class="comment">// 存到递归调用栈</span></span><br><span class="line">		<span class="keyword">if</span> (root != <span class="literal">null</span>) &#123; <span class="comment">// 递归终止条件</span></span><br><span class="line">			sb.append(root.data + <span class="string">&quot; &quot;</span>); <span class="comment">// 前序遍历当前结点</span></span><br><span class="line">			sb.append(preOrder(root.left)); <span class="comment">// 前序遍历左子树</span></span><br><span class="line">			sb.append(preOrder(root.right)); <span class="comment">// 前序遍历右子树</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> sb.toString();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 前序遍历(迭代):非线性结构(树)，工作栈：当前节点入栈</span></span><br><span class="line">	<span class="keyword">public</span> String <span class="title function_">preOrder</span><span class="params">()</span> &#123;</span><br><span class="line"></span><br><span class="line">		<span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">		LinkedList&lt;Node&lt;E&gt;&gt; stack = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;Node&lt;E&gt;&gt;(); <span class="comment">// 工作栈：记录回退路径</span></span><br><span class="line">		Node&lt;E&gt; node = root;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">while</span> (node != <span class="literal">null</span> || !stack.isEmpty()) &#123; <span class="comment">// 迭代条件</span></span><br><span class="line">			<span class="keyword">if</span> (node != <span class="literal">null</span>) &#123; <span class="comment">// 当前节点不为空</span></span><br><span class="line">				sb.append(node.data + <span class="string">&quot; &quot;</span>); <span class="comment">// 访问当前节点</span></span><br><span class="line">				stack.push(node); <span class="comment">// 当前节点入栈</span></span><br><span class="line">				node = node.left; <span class="comment">// 遍历其左子树</span></span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				node = stack.pop(); <span class="comment">// 弹出其父节点</span></span><br><span class="line">				node = node.right; <span class="comment">// 遍历其右子树</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> sb.toString();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 中序遍历(递归)</span></span><br><span class="line">	<span class="keyword">public</span> String <span class="title function_">inOrder</span><span class="params">(Node&lt;E&gt; root)</span> &#123;</span><br><span class="line">		<span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>(); <span class="comment">// 存到递归调用栈</span></span><br><span class="line">		<span class="keyword">if</span> (root != <span class="literal">null</span>) &#123; <span class="comment">// 递归终止条件</span></span><br><span class="line">			sb.append(inOrder(root.left)); <span class="comment">// 中序遍历左子树</span></span><br><span class="line">			sb.append(root.data + <span class="string">&quot; &quot;</span>); <span class="comment">// 中序遍历当前结点</span></span><br><span class="line">			sb.append(inOrder(root.right)); <span class="comment">// 中序遍历右子树</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> sb.toString();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 中序遍历(迭代)：非线性结构(树)，工作栈：当前节点入栈</span></span><br><span class="line">	<span class="keyword">public</span> String <span class="title function_">inOrder</span><span class="params">()</span> &#123;</span><br><span class="line">		<span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">		LinkedList&lt;Node&lt;E&gt;&gt; stack = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;Node&lt;E&gt;&gt;(); <span class="comment">// 工作栈：记录回退路径</span></span><br><span class="line">		Node&lt;E&gt; node = root;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">while</span> (node != <span class="literal">null</span> || !stack.isEmpty()) &#123; <span class="comment">// 迭代条件</span></span><br><span class="line">			<span class="keyword">if</span> (node != <span class="literal">null</span>) &#123; <span class="comment">// 当前节点不为空</span></span><br><span class="line">				stack.push(node); <span class="comment">// 当前节点入栈</span></span><br><span class="line">				node = node.left; <span class="comment">// 遍历其左子树</span></span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				node = stack.pop(); <span class="comment">// 父节点弹栈</span></span><br><span class="line">				sb.append(node.data + <span class="string">&quot; &quot;</span>); <span class="comment">// 访问父节点</span></span><br><span class="line">				node = node.right; <span class="comment">// 遍历访问其右子树</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> sb.toString();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 后序遍历(递归)</span></span><br><span class="line">	<span class="keyword">public</span> String <span class="title function_">postOrder</span><span class="params">(Node&lt;E&gt; root)</span> &#123;</span><br><span class="line">		<span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>(); <span class="comment">// 存到递归调用栈</span></span><br><span class="line">		<span class="keyword">if</span> (root != <span class="literal">null</span>) &#123; <span class="comment">// 递归终止条件</span></span><br><span class="line">			sb.append(postOrder(root.left)); <span class="comment">// 后序遍历左子树</span></span><br><span class="line">			sb.append(postOrder(root.right)); <span class="comment">// 后序遍历右子树</span></span><br><span class="line">			sb.append(root.data + <span class="string">&quot; &quot;</span>); <span class="comment">// 后序遍历当前结点</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> sb.toString();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 后序遍历(迭代):非线性结构(树)，工作栈：当前节点入栈</span></span><br><span class="line">	<span class="keyword">public</span> String <span class="title function_">postOrder</span><span class="params">()</span> &#123;</span><br><span class="line">		<span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">		LinkedList&lt;Node&lt;E&gt;&gt; stack = <span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;Node&lt;E&gt;&gt;(); <span class="comment">// 记录回退路径的工作栈</span></span><br><span class="line">		Node&lt;E&gt; node = root;</span><br><span class="line">		<span class="keyword">while</span> (node != <span class="literal">null</span> || !stack.isEmpty()) &#123; <span class="comment">// 迭代条件</span></span><br><span class="line">			<span class="keyword">if</span> (node != <span class="literal">null</span>) &#123; <span class="comment">// 当前节点不为空</span></span><br><span class="line">				node.isFirst = <span class="literal">true</span>; <span class="comment">// 首次访问该节点，记为true</span></span><br><span class="line">				stack.push(node); <span class="comment">// 压栈操作</span></span><br><span class="line">				node = node.left; <span class="comment">// 继续遍历左子树</span></span><br><span class="line">			&#125; <span class="keyword">else</span> &#123; <span class="comment">// 当前节点为空但工作栈不为空</span></span><br><span class="line">				node = stack.pop(); <span class="comment">// 当前节点弹栈</span></span><br><span class="line">				<span class="keyword">if</span> (node.isFirst) &#123;</span><br><span class="line">					node.isFirst = <span class="literal">false</span>; <span class="comment">// 第二次访问该节点,改为false</span></span><br><span class="line">					stack.push(node); <span class="comment">// 只有在第三次才访问，因此，前节点再次压栈</span></span><br><span class="line">					node = node.right; <span class="comment">// 访问该节点的右子树</span></span><br><span class="line">				&#125; <span class="keyword">else</span> &#123; <span class="comment">// 第三次访问该节点</span></span><br><span class="line">					sb.append(node.data + <span class="string">&quot; &quot;</span>); <span class="comment">// 访问</span></span><br><span class="line">					node = <span class="literal">null</span>; <span class="comment">// 当前节点的左子树、右子树及本身均已访问,需要访问工作栈中的节点</span></span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> sb.toString();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 根据前序、中序遍历结果重建二叉树</span></span><br><span class="line">	<span class="keyword">public</span> Node&lt;E&gt; <span class="title function_">createBinaryTreeByPreAndIn</span><span class="params">(String pre, String in)</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> (pre.length() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">			Node&lt;E&gt; root = <span class="keyword">new</span> <span class="title class_">Node</span>(pre.charAt(<span class="number">0</span>));</span><br><span class="line">			<span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> in.indexOf(pre.charAt(<span class="number">0</span>));</span><br><span class="line">			root.left = createBinaryTreeByPreAndIn(pre.substring(<span class="number">1</span>, index + <span class="number">1</span>),</span><br><span class="line">					in.substring(<span class="number">0</span>, index));</span><br><span class="line">			root.right = createBinaryTreeByPreAndIn(</span><br><span class="line">					pre.substring(index + <span class="number">1</span>, pre.length()),</span><br><span class="line">					in.substring(index + <span class="number">1</span>, in.length()));</span><br><span class="line">			<span class="keyword">return</span> root;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 根据中序、后序遍历结果重建二叉树</span></span><br><span class="line">	<span class="keyword">public</span> Node&lt;E&gt; <span class="title function_">createBinaryTreeByInAndPost</span><span class="params">(String in, String post)</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> (post.length() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">			Node&lt;E&gt; root = <span class="keyword">new</span> <span class="title class_">Node</span>(post.charAt(post.length() - <span class="number">1</span>));</span><br><span class="line">			<span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> in.indexOf(post.charAt(post.length() - <span class="number">1</span>));</span><br><span class="line"></span><br><span class="line">			root.left = createBinaryTreeByInAndPost(in.substring(<span class="number">0</span>, index),</span><br><span class="line">					post.substring(<span class="number">0</span>, index));</span><br><span class="line">			root.right = createBinaryTreeByInAndPost(</span><br><span class="line">					in.substring(index + <span class="number">1</span>, in.length()),</span><br><span class="line">					post.substring(index, post.length() - <span class="number">1</span>));</span><br><span class="line">			<span class="keyword">return</span> root;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 根据原树的根结点复制出一颗一模一样的树</span></span><br><span class="line">	<span class="keyword">public</span> Node&lt;E&gt; <span class="title function_">copy</span><span class="params">(Node&lt;E&gt; root)</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> (root == <span class="literal">null</span>)</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">		Node&lt;E&gt; node = <span class="keyword">new</span> <span class="title class_">Node</span>&lt;E&gt;(<span class="literal">null</span>);</span><br><span class="line">		node.data = root.data;</span><br><span class="line">		node.left = copy(root.left);</span><br><span class="line">		node.right = copy(root.right);</span><br><span class="line">		<span class="keyword">return</span> node;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 方法createTreeByPreOrederStr需要用到的指针</span></span><br><span class="line">	<span class="keyword">private</span> <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 根据前序遍历结果重建二叉树，所有的叶子节点都用&quot;#&quot;表示</span></span><br><span class="line">	<span class="keyword">public</span> Node&lt;E&gt; <span class="title function_">createTreeByPreOrederStr</span><span class="params">(<span class="type">char</span>[] preOrderStr, Node&lt;E&gt; temp)</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> (index &lt; preOrderStr.length) &#123;</span><br><span class="line">			<span class="type">char</span> <span class="variable">c</span> <span class="operator">=</span> preOrderStr[index++];</span><br><span class="line">			<span class="keyword">if</span> (c != <span class="string">&#x27;#&#x27;</span>) &#123; <span class="comment">// 递归终止条件</span></span><br><span class="line">				Node&lt;E&gt; node = <span class="keyword">new</span> <span class="title class_">Node</span>(c);</span><br><span class="line">				node.left = createTreeByPreOrederStr(preOrderStr, node); <span class="comment">// 递归为当前节点创建左子树</span></span><br><span class="line">				node.right = createTreeByPreOrederStr(preOrderStr, node); <span class="comment">// 递归为当前节点创建右子树</span></span><br><span class="line">				<span class="keyword">return</span> node;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 获取树的根结点</span></span><br><span class="line">	<span class="keyword">public</span> Node&lt;E&gt; <span class="title function_">getRoot</span><span class="params">()</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> root;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 获得当前结点的左孩子结点</span></span><br><span class="line">	<span class="keyword">public</span> Node&lt;E&gt; <span class="title function_">getLeftChild</span><span class="params">(Node&lt;E&gt; node)</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> node.left;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 获得当前结点的右孩子结点</span></span><br><span class="line">	<span class="keyword">public</span> Node&lt;E&gt; <span class="title function_">getRightChild</span><span class="params">(Node&lt;E&gt; node)</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> node.right;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 后序遍历的思想：树中节点个数</span></span><br><span class="line">	<span class="keyword">public</span> <span class="type">int</span> <span class="title function_">size</span><span class="params">(Node&lt;E&gt; root)</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> (root != <span class="literal">null</span>) &#123; <span class="comment">// 递归终止条件</span></span><br><span class="line">			<span class="keyword">return</span> size(root.left) + size(root.right) + <span class="number">1</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 后序遍历的思想：树的高度(空树为0)</span></span><br><span class="line">	<span class="keyword">public</span> <span class="type">int</span> <span class="title function_">height</span><span class="params">(Node&lt;E&gt; root)</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> (root != <span class="literal">null</span>) &#123; <span class="comment">// 递归终止条件</span></span><br><span class="line">			<span class="type">int</span> <span class="variable">h1</span> <span class="operator">=</span> height(root.left);</span><br><span class="line">			<span class="type">int</span> <span class="variable">h2</span> <span class="operator">=</span> height(root.right);</span><br><span class="line">			<span class="keyword">return</span> h1 &gt; h2 ? h1 + <span class="number">1</span> : h2 + <span class="number">1</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 以广义表的形式打印二叉树：前序遍历的应用</span></span><br><span class="line">	<span class="keyword">public</span> String <span class="title function_">printBinaryTree</span><span class="params">(Node&lt;E&gt; root)</span> &#123;</span><br><span class="line">		<span class="type">StringBuilder</span> <span class="variable">sb</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">		<span class="keyword">if</span> (root != <span class="literal">null</span>) &#123;</span><br><span class="line">			sb.append(root.data);</span><br><span class="line">			<span class="keyword">if</span> (root.left != <span class="literal">null</span> || root.right != <span class="literal">null</span>) &#123;</span><br><span class="line">				sb.append(<span class="string">&#x27;(&#x27;</span>);</span><br><span class="line">				sb.append(printBinaryTree(root.left));</span><br><span class="line">				sb.append(<span class="string">&#x27;,&#x27;</span>);</span><br><span class="line">				sb.append(printBinaryTree(root.right));</span><br><span class="line">				sb.append(<span class="string">&#x27;)&#x27;</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> sb.toString();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="keyword">public</span> String <span class="title function_">toString</span><span class="params">()</span> &#123;</span><br><span class="line">		<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">		<span class="keyword">return</span> levelOrder();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 根据树的根结点判断两颗树是否相等</span></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">equals</span><span class="params">(Node&lt;E&gt; n1, Node&lt;E&gt; n2)</span> &#123;</span><br><span class="line">		<span class="keyword">if</span>(n1==<span class="literal">null</span> &amp;&amp; n2==<span class="literal">null</span>)</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span>(n1!=<span class="literal">null</span> &amp;&amp; n2!=<span class="literal">null</span>)&#123;</span><br><span class="line">			<span class="keyword">if</span>(n1.data==n2.data)</span><br><span class="line">				<span class="keyword">return</span> equals(n1.left, n2.left) &amp;&amp; equals(n1.right, n2.right);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>个人学习小结，其中可能有错误，还望在下方评论指出 &#x3D; V &#x3D;</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B8%8E%E7%AE%97%E6%B3%95%E5%AD%A6%E4%B9%A0/" class="category-chain-item">数据结构与算法学习</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E9%80%92%E5%BD%92/" class="print-no-link">#递归</a>
+      
+        <a href="/tags/%E4%BA%8C%E5%8F%89%E6%A0%91/" class="print-no-link">#二叉树</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>二叉树 binary tree</div>
+      <div>https://hukaichao.me/2023/06/18/二叉树 binary tree/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>凌冬</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年6月18日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/06/18/%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%20Binary%20Search%20Tree/" title="二叉搜索树 Binary Search Tree">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">二叉搜索树 Binary Search Tree</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/06/18/%E5%89%91%E6%8C%87%20Offer%2005.%20%E6%9B%BF%E6%8D%A2%E7%A9%BA%E6%A0%BC/" title="剑指 Offer 05. 替换空格">
+                        <span class="hidden-mobile">剑指 Offer 05. 替换空格</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

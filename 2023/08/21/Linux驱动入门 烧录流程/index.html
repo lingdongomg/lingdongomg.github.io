@@ -1,0 +1,695 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="凌冬">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="1、基础概念：设备树（Device Tree）：设备树是一种描述硬件设备的数据结构，用于将硬件设备的信息传递给操作系统内核。它是一种与平台无关的中间层描述语言，提供了一种标准化的方式来描述嵌入式系统的硬件设备和资源，包括处理器、外设、总线、中断等。设备树以一种层次化的结构组织设备信息，通过使用节点和属性的方式来描述硬件设备的层次关系和特性。   DTS（Device Tree Source）：DT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux驱动入门 烧录流程">
+<meta property="og:url" content="https://hukaichao.me/2023/08/21/Linux%E9%A9%B1%E5%8A%A8%E5%85%A5%E9%97%A8%20%E7%83%A7%E5%BD%95%E6%B5%81%E7%A8%8B/index.html">
+<meta property="og:site_name" content="凌冬的个人博客">
+<meta property="og:description" content="1、基础概念：设备树（Device Tree）：设备树是一种描述硬件设备的数据结构，用于将硬件设备的信息传递给操作系统内核。它是一种与平台无关的中间层描述语言，提供了一种标准化的方式来描述嵌入式系统的硬件设备和资源，包括处理器、外设、总线、中断等。设备树以一种层次化的结构组织设备信息，通过使用节点和属性的方式来描述硬件设备的层次关系和特性。   DTS（Device Tree Source）：DT">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hukaichao.me/upload/2023/08/image-iwba.png">
+<meta property="og:image" content="https://hukaichao.me/upload/2023/08/image-lrsm.png">
+<meta property="article:published_time" content="2023-08-21T14:18:55.000Z">
+<meta property="article:modified_time" content="2024-02-02T07:27:40.265Z">
+<meta property="article:author" content="凌冬">
+<meta property="article:tag" content="linux">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://hukaichao.me/upload/2023/08/image-iwba.png">
+  
+  
+  
+  <title>Linux驱动入门 烧录流程 - 凌冬的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Linux驱动入门 烧录流程"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-08-21 22:18" pubdate>
+          2023年8月21日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          34 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Linux驱动入门 烧录流程</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="1、基础概念："><a href="#1、基础概念：" class="headerlink" title="1、基础概念："></a>1、基础概念：</h2><h3 id="设备树（Device-Tree）："><a href="#设备树（Device-Tree）：" class="headerlink" title="设备树（Device Tree）："></a>设备树（Device Tree）：</h3><p>设备树是一种描述硬件设备的数据结构，用于将硬件设备的信息传递给操作系统内核。它是一种与平台无关的中间层描述语言，提供了一种标准化的方式来描述嵌入式系统的硬件设备和资源，包括处理器、外设、总线、中断等。设备树以一种层次化的结构组织设备信息，通过使用节点和属性的方式来描述硬件设备的层次关系和特性。
+ </p>
+<h3 id="DTS（Device-Tree-Source）："><a href="#DTS（Device-Tree-Source）：" class="headerlink" title="DTS（Device Tree Source）："></a>DTS（Device Tree Source）：</h3><p>DTS是设备树的源代码文件，它使用一种基于文本的语言来描述设备树。DTS文件使用一种简单的语法来描述硬件设备的属性和连接关系，它是设备树的源代码表示形式。DTS文件通过编译生成设备树二进制文件（DTB），该二进制文件在启动时由引导加载程序（Bootloader）加载到内存中，并由操作系统内核解析和使用。</p>
+<h3 id="驱动（Driver）："><a href="#驱动（Driver）：" class="headerlink" title="驱动（Driver）："></a>驱动（Driver）：</h3><p>驱动是指用于控制硬件设备的软件模块。驱动程序与特定的硬件设备进行交互，向操作系统提供设备的功能和接口。驱动程序负责将硬件的特定功能转化为操作系统能够理解和操作的形式。在Linux内核中，驱动程序通常以模块的形式存在，可以动态加载和卸载。</p>
+<h3 id="字符设备（Character-Device）："><a href="#字符设备（Character-Device）：" class="headerlink" title="字符设备（Character Device）："></a>字符设备（Character Device）：</h3><p>字符设备是一种在Linux系统中用于进行字符数据输入和输出的设备类型。它通过提供一系列的字符数据流来进行与用户空间的交互。在Linux内核中，字符设备是一种抽象的设备接口，可以通过驱动程序实现与实际硬件设备的交互。驱动程序负责将字符设备的操作转发到实际硬件设备上。（字符设备也是硬件设备，字符驱动也是驱动，只不过是采用字符数据流来交互的）</p>
+<h2 id="2、结合培训项目理解"><a href="#2、结合培训项目理解" class="headerlink" title="2、结合培训项目理解"></a>2、结合培训项目理解</h2><p>初学者看完定义大概会觉得很抽象，例如我大学专业是数据科学，岗位是做上层开发，对于底层的知识全来源于计算机组成原理这门课，所以学驱动的时候感觉很多东西完全不动，不过不慌，后面结合培训时的项目来慢慢理解。</p>
+<p> </p>
+<h3 id="2-1、DTS"><a href="#2-1、DTS" class="headerlink" title="2.1、DTS"></a>2.1、DTS</h3><p> </p>
+<p>如下是培训时拉取的代码，用于练习的rk3288板子对应的dts文件的开头一段代码，按照上面的定义，dts也就是设备树的源代码文件，这个文件就对应着rk3288这个硬件的设备属性和连接关系。</p>
+<p> </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">/dts-v1/;</span><br><span class="line"></span><br><span class="line">#include &quot;rk3288-evb.dtsi&quot;</span><br><span class="line"></span><br><span class="line">#include &quot;rk3288-android.dtsi&quot;</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">/ &#123;</span><br><span class="line"></span><br><span class="line">compatible = &quot;rockchip,rk3288-evb-rk808&quot;, &quot;rockchip,rk3288&quot;;</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">led &#123;</span><br><span class="line"></span><br><span class="line">status = &quot;okay&quot;;</span><br><span class="line"></span><br><span class="line">compatible = &quot;techvision,tv_led&quot;;</span><br><span class="line"></span><br><span class="line">red-gpio = &lt;&amp;gpio7 21 GPIO_ACTIVE_HIGH&gt;; /* gpio7_c5 */</span><br><span class="line"></span><br><span class="line">green-gpio = &lt;&amp;gpio7 3 GPIO_ACTIVE_HIGH&gt;; /* gpio7_a3 */</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">edp_panel: edp-panel &#123;</span><br><span class="line"></span><br><span class="line">   status = &quot;okay&quot;;</span><br><span class="line"></span><br><span class="line">   compatible = &quot;lg,lp079qx1-sp0v&quot;, &quot;panel-simple&quot;;</span><br><span class="line"></span><br><span class="line">   //enable-gpios = &lt;&amp;gpio7 4 GPIO_ACTIVE_HIGH&gt;;</span><br><span class="line"></span><br><span class="line">   //enable-delay-ms = &lt;120&gt;;</span><br><span class="line"></span><br><span class="line">   //pinctrl-0 = &lt;&amp;lcd_cs&gt;;</span><br><span class="line"></span><br><span class="line">   power-supply = &lt;&amp;vcc_lcd&gt;;</span><br><span class="line"></span><br><span class="line">   backlight = &lt;&amp;backlight&gt;;</span><br></pre></td></tr></table></figure>
+<p> </p>
+<p>让我们逐行解释这段代码的作用：</p>
+<p> </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">/dts-v1/;：</span><br><span class="line">这行代码指定了设备树源代码的版本。</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line">#include &quot;rk3288-evb.dtsi&quot;和#include &quot;rk3288-android.dtsi&quot;：</span><br><span class="line">这两行代码包含了其他设备树源代码文件，即引用了rk3288-evb.dtsi和rk3288-android.dtsi文件中的设备树定义。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">/ &#123;：</span><br><span class="line">这行代码开始了设备树的根节点。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">compatible = &quot;rockchip,rk3288-evb-rk808&quot;, &quot;rockchip,rk3288&quot;;：</span><br><span class="line">这行代码指定了设备树根节点的兼容性属性。它表示该设备树适用于rockchip公司的rk3288-evb-rk808和rk3288平台。</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line">led &#123;：</span><br><span class="line">这行代码定义了一个名为&quot;led&quot;的子节点，用于描述一个LED设备。</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line">status = &quot;okay&quot;;：</span><br><span class="line">这行代码指定了&quot;led&quot;节点的状态为&quot;okay&quot;，表示该设备节点可以正常使用。</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">compatible = &quot;techvision,tv_led&quot;;：</span><br><span class="line">这行代码指定了&quot;led&quot;节点的兼容性属性为&quot;techvision,tv_led&quot;，表示该节点与&quot;techvision&quot;公司的&quot;tv_led&quot;设备兼容。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">red-gpio = &lt;&amp;gpio7 21 GPIO_ACTIVE_HIGH&gt;;和green-gpio = &lt;&amp;gpio7 3 GPIO_ACTIVE_HIGH&gt;;：</span><br><span class="line">这两行代码定义了&quot;led&quot;节点的属性。它们指定了红色和绿色LED的GPIO引脚以及其激活电平。</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line">edp_panel: edp-panel &#123;：</span><br><span class="line">这行代码定义了一个名为&quot;edp-panel&quot;的子节点，用于描述一个EDP面板设备。(什么是EDP面板我也不理解，知道是个硬件设备就行了)</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line">status = &quot;okay&quot;;：</span><br><span class="line">这行代码指定了&quot;edp-panel&quot;节点的状态为&quot;okay&quot;，表示该设备节点可以正常使用。</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line">compatible = &quot;lg,lp079qx1-sp0v&quot;, &quot;panel-simple&quot;;：</span><br><span class="line">这行代码指定了&quot;edp-panel&quot;节点的兼容性属性为&quot;lg,lp079qx1-sp0v&quot;，表示该节点与LG公司的&quot;lp079qx1-sp0v&quot;面板设备兼容。</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line">power-supply = &lt;&amp;vcc_lcd&gt;;：</span><br><span class="line">这行代码指定了&quot;edp-panel&quot;节点的电源供应属性为&quot;vcc_lcd&quot;，表示该面板设备使用了名为&quot;vcc_lcd&quot;的电源。</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line">backlight = &lt;&amp;backlight&gt;;：</span><br><span class="line">这行代码指定了&quot;edp-panel&quot;节点的背光属性为&quot;backlight&quot;，表示该面板设备使用了名为&quot;backlight&quot;的背光控制。</span><br></pre></td></tr></table></figure>
+<p> </p>
+<p>这个edp面板的代码有些长，截取了一部分。以上这段代码定义了LED设备和EDP面板设备的属性、连接关系和兼容性，使得驱动程序能够通过解析设备树来获取这些设备的配置信息，并正确地控制和操作这些硬件设备。看了这段代码和说明，应该对设备树和dts有了个基础的理解。</p>
+<h3 id="2-2、驱动"><a href="#2-2、驱动" class="headerlink" title="2.2、驱动"></a>2.2、驱动</h3><p>驱动是软件模块，在项目中的体现就是一个.c文件，至少我培训的时候接触到的驱动是这样，下面是一个tv_led.c的文件，其实就是控制tv_led这个硬件设备的驱动了，同样结合代码来理解驱动干了什么。</p>
+<p> </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br></pre></td><td class="code"><pre><span class="line">/* </span><br><span class="line">这段代码是一个条件编译的示例，它使用了预处理指令来控制编译时的行为。</span><br><span class="line"></span><br><span class="line">在这段代码中，#if 1 表示条件为真，所以条件 1 总是为真。</span><br><span class="line">因此，#if 1 后面的代码块会被编译器处理。</span><br><span class="line">#define TV_LED_DEBUG(x...) printk(x) 是一个宏定义，它会将 x... 参数传递给 printk 函数。</span><br><span class="line">这个宏允许在调试期间输出日志信息。</span><br><span class="line"> </span><br><span class="line">然而，如果你想在发布版本中禁用调试日志输出，可以通过设置条件 #if 0 来实现。当条件为假时，#else 后面的代码块会被编译器处理。在这个示例中，#else 的作用是定义一个空的宏 TV_LED_DEBUG(x...)，循环 do &#123; &#125; while (0) 本身并没有实际的迭代或循环功能。它被称为&quot;空循环&quot;或&quot;空操作循环&quot;，主要用于语法上的需要，从而禁用了任何与调试相关的操作。</span><br><span class="line"></span><br><span class="line">这样设计的目的是，当你需要调试时，可以将 #if 1 修改为 #if 0，从而快速禁用或启用调试日志输出，而无需手动注释或删除相关代码。这对于开发和维护代码非常有用。</span><br><span class="line">*/</span><br><span class="line"></span><br><span class="line">#if 1</span><br><span class="line">#define TV_LED_DEBUG(x...) printk(x)</span><br><span class="line">#else</span><br><span class="line">#define TV_LED_DEBUG(x...) do &#123; &#125; while (0)</span><br><span class="line">#endif</span><br><span class="line"> </span><br><span class="line">#define GPIO_OUTPUT_HIGH   1</span><br><span class="line">#define GPIO_OUTPUT_LOW    0</span><br><span class="line"> </span><br><span class="line">/*</span><br><span class="line">这段代码定义了三个 ioctl 命令的宏，用于与设备进行通信。ioctl 是一种用于控制设备的系统调用，在此处用于发送特定的命令给设备驱动程序。</span><br><span class="line"></span><br><span class="line">下面是对每个宏定义的详细解释.</span><br><span class="line"> </span><br><span class="line">TV_LED_CMD_R: 这个宏定义使用了 _IOW 宏，它表示我们要向设备写入数据，并且将数据从用户空间传递给内核空间。其中 &#x27;l&#x27; 是命令类型，代表 LED 控制命令。24 是命令编号，可以根据具体需求进行定义。unsigned int 是传递给设备驱动程序的参数类型。</span><br><span class="line">*/</span><br><span class="line"></span><br><span class="line">/* ioctl commonds */</span><br><span class="line">#define TV_LED_CMD_R       _IOW(&#x27;l&#x27;, 24, unsigned int)</span><br><span class="line">#define TV_LED_CMD_G       _IOW(&#x27;l&#x27;, 25, unsigned int)</span><br><span class="line">#define TV_LED_CMD_B       _IOW(&#x27;l&#x27;, 26, unsigned int)</span><br><span class="line"> </span><br><span class="line">struct tv_led_dev &#123;</span><br><span class="line">struct device *dev;</span><br><span class="line">struct mutex lock;</span><br><span class="line"> </span><br><span class="line">/* about char device */</span><br><span class="line">int major;</span><br><span class="line">int minor;</span><br><span class="line">dev_t ndev;</span><br><span class="line">struct device *mdev;</span><br><span class="line">struct class *cls;</span><br><span class="line">struct cdev *cdev;</span><br><span class="line"> </span><br><span class="line">int red_gpio;</span><br><span class="line">int green_gpio;</span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line">static struct tv_led_dev *g_tv_led;</span><br><span class="line"> </span><br><span class="line">static int tv_led_open(struct inode inode, struct file filp)</span><br><span class="line">&#123;</span><br><span class="line">TV_LED_DEBUG(&quot;tv_led_open.\n&quot;);</span><br><span class="line">return 0;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">static int tv_led_release(struct inode inode, struct file filp)</span><br><span class="line">&#123;</span><br><span class="line">TV_LED_DEBUG(&quot;tv_led_release.\n&quot;);</span><br><span class="line">return 0;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">static ssize_t tv_led_read(struct file filp, char __user buf,</span><br><span class="line">size_t sz, loff_t *off)</span><br><span class="line">&#123;</span><br><span class="line">TV_LED_DEBUG(&quot;tv_led_read.\n&quot;);</span><br><span class="line">return sizeof(int);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">static ssize_t tv_led_write(struct file filp, const char __user buf,</span><br><span class="line">size_t count, loff_t* f_pos)</span><br><span class="line">&#123;</span><br><span class="line">TV_LED_DEBUG(&quot;tv_led_write.\n&quot;);</span><br><span class="line">return sizeof(int);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">/*</span><br><span class="line">下面的代码是一个名为tv_led_ioctl的静态函数，用于处理设备驱动程序中的IO控制操作。</span><br><span class="line">函数接受三个参数：指向struct file的指针filp，无符号整数cmd和无符号长整型data。</span><br><span class="line"></span><br><span class="line">代码首先根据传入的data值判断要设置的状态，如果data为0，则将state设置为GPIO_OUTPUT_LOW，否则将其设置为GPIO_OUTPUT_HIGH。</span><br><span class="line"> </span><br><span class="line">接下来，函数输出调试信息，显示传入的cmd和data的值。</span><br><span class="line"> </span><br><span class="line">然后，代码检查全局指针g_tv_led是否为空，如果为空，输出错误消息并返回g_tv_led的错误指针。</span><br><span class="line"> </span><br><span class="line">接下来，代码使用switch语句根据传入的cmd值执行相应的操作。</span><br><span class="line">在case TV_LED_CMD_R:中，调用gpio_set_value函数设置g_tv_led-&gt;red_gpio引脚的状态为state。</span><br><span class="line">在case TV_LED_CMD_G:中，类似地，调用gpio_set_value函数设置g_tv_led-&gt;green_gpio引脚的状态为state。</span><br><span class="line">在case TV_LED_CMD_B:中注释掉了对g_tv_led-&gt;blue_gpio引脚的设置操作。</span><br><span class="line">*/</span><br><span class="line"></span><br><span class="line">static long tv_led_ioctl(struct file *filp, unsigned int cmd,</span><br><span class="line">                         unsigned long data)</span><br><span class="line">&#123;</span><br><span class="line">int state = (data == 0) ? GPIO_OUTPUT_LOW : GPIO_OUTPUT_HIGH;</span><br><span class="line"> </span><br><span class="line">TV_LED_DEBUG(&quot;tv_led_ioctl. cmd = %d, data = %lu\n&quot;, cmd, data);</span><br><span class="line"> </span><br><span class="line">if (!g_tv_led) &#123;</span><br><span class="line">pr_err(&quot;global pointer g_tv_led is NULL!&quot;);</span><br><span class="line">return PTR_ERR(g_tv_led);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">switch (cmd) &#123;</span><br><span class="line">case TV_LED_CMD_R:</span><br><span class="line">gpio_set_value(g_tv_led-&gt;red_gpio, state);</span><br><span class="line">break;</span><br><span class="line">case TV_LED_CMD_G:</span><br><span class="line">gpio_set_value(g_tv_led-&gt;green_gpio, state);</span><br><span class="line">break;</span><br><span class="line">case TV_LED_CMD_B:</span><br><span class="line">// gpio_set_value(g_tv_led-&gt;blue_gpio, state);</span><br><span class="line">break;</span><br><span class="line">default:</span><br><span class="line">break;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">return 0;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">/*</span><br><span class="line">这段代码定义了一个名为tv_led_driver_fops的静态变量，其类型是struct file_operations结构体。struct file_operations是Linux内核中用于定义文件操作的结构体之一。</span><br><span class="line"></span><br><span class="line">.owner: 指定模块所有者（即拥有此结构体的模块）。在这里，THIS_MODULE表示当前模块是该结构体的所有者。</span><br><span class="line">.open: 指向打开设备时会被调用的函数 tv_led_open。</span><br><span class="line">.release: 指向释放设备时会被调用的函数 tv_led_release。</span><br><span class="line">.read: 指向读取设备数据时会被调用的函数 tv_led_read。</span><br><span class="line">.write: 指向写入设备数据时会被调用的函数 tv_led_write。</span><br><span class="line">.unlocked_ioctl: 指向处理设备IO控制命令时会被调用的函数 tv_led_ioctl。</span><br><span class="line">.compat_ioctl: 指向处理兼容性设备IO控制命令时会被调用的函数 tv_led_ioctl（用于32位应用程序与64位内核的兼容性）。</span><br><span class="line">*/</span><br><span class="line"></span><br><span class="line">static struct file_operations tv_led_driver_fops = &#123;</span><br><span class="line">.owner   = THIS_MODULE,</span><br><span class="line">.open    = tv_led_open,</span><br><span class="line">.release = tv_led_release,</span><br><span class="line">.read    = tv_led_read,</span><br><span class="line">.write   = tv_led_write,</span><br><span class="line">.unlocked_ioctl = tv_led_ioctl,</span><br><span class="line">.compat_ioctl   = tv_led_ioctl,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>后面还有一些代码，我就不贴了，但是我将函数和对应的功能简单描述如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">tv_led_init_char_dev(struct tv_led_dev *tv_led): 初始化字符设备，包括分配字符设备号、创建字符设备对象、注册字符设备等。</span><br><span class="line"> </span><br><span class="line">tv_led_parse_dt(struct tv_led_dev *tv_led): 解析设备树（Device Tree），获取并配置驱动程序所需的GPIO引脚信息。</span><br><span class="line"></span><br><span class="line">tv_led_probe(struct platform_device *pdev): 在设备被探测到时被调用的函数，用于初始化并注册驱动程序的相关资源和功能。</span><br><span class="line"></span><br><span class="line">tv_led_suspend(struct platform_device *pdev, pm_message_t state): 在系统挂起（suspend）时被调用的函数，用于保存驱动程序的状态。</span><br><span class="line"></span><br><span class="line">tv_led_resume(struct platform_device *pdev): 在系统恢复（resume）时被调用的函数，用于恢复驱动程序的状态。</span><br><span class="line"></span><br><span class="line">tv_led_remove(struct platform_device *pdev): 当设备从系统中移除时被调用的函数，用于释放驱动程序所使用的资源。</span><br><span class="line"></span><br><span class="line">tv_led_of_match[]: 用于匹配设备树中的设备节点，以确定是否加载该驱动程序。</span><br><span class="line"></span><br><span class="line">tv_led_driver: 定义了驱动程序的属性，如名称、设备匹配表、回调函数等。</span><br><span class="line"></span><br><span class="line">tv_led_init(): 模块初始化函数，在驱动程序加载时被调用，注册驱动程序。</span><br><span class="line"></span><br><span class="line">tv_led_exit(): 模块退出函数，在驱动程序卸载时被调用，注销驱动程序。</span><br></pre></td></tr></table></figure>
+<p>其中tv_led_init和tv_led_exit就是模块的出口和入口，入口在模块加载时被调用，在函数中完成模块的初始化工作，例如注册字符设备、申请资源等。出口在模块卸载时被调用，在函数中完成模块的清理工作，例如注销字符设备、释放资源等。</p>
+<p>既然驱动是一个.c文件，那肯定是要编译才能使用的，编译进内核具体操作其实很简单，运行一个 .sh 的shell脚本即可，培训时这个kernel.sh脚本如下，其中的核心其实也就是make编译命令，然后得到两个img镜像文件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">cd kernel</span><br><span class="line"></span><br><span class="line">make ARCH=arm rk3288-tb.img -j$(grep processor /proc/cpuinfo | awk &#x27;&#123;field=$NF&#125;;END&#123;print field+1&#125;&#x27;)</span><br><span class="line"></span><br><span class="line">cd ..</span><br><span class="line"></span><br><span class="line">rm -f RKTools/windows/AndroidTool/rockdev/Image/kernel.img</span><br><span class="line"></span><br><span class="line">rm -f RKTools/windows/AndroidTool/rockdev/Image/resource.img</span><br><span class="line"></span><br><span class="line">mkdir -p RKTools/windows/AndroidTool/rockdev/Image/</span><br><span class="line"></span><br><span class="line">cp -v kernel/kernel.img      RKTools/windows/AndroidTool/rockdev/Image/</span><br><span class="line"></span><br><span class="line">cp -v kernel/resource.img    RKTools/windows/AndroidTool/rockdev/Image/</span><br></pre></td></tr></table></figure>
+
+<p>得到img镜像后需要通过烧录工具拷进去，烧录工具像下面这样：<br><img src="/upload/2023/08/image-iwba.png" srcset="/img/loading.gif" lazyload><br>选中678，也就是上面编译出来的两个镜像和一个boot。</p>
+<p>这里在烧录的时候要连接板子，好像是要安装一个驱动才能识别到板子（大概吧，因为我拿到驱动直接就安装了，也不知道不装启动会怎样），驱动安装工具像下面这样：<br><img src="/upload/2023/08/image-lrsm.png" srcset="/img/loading.gif" lazyload><br>到这里，驱动就通过烧录写进了开发板里面，就可以为上层提供调用设备的接口了。</p>
+<p>这里培训的时候有提到一些指令，但我在实际操作中没怎么用到，还是贴在下面</p>
+<p>加载和卸载模块：</p>
+<p>加载模块：使用insmod命令加载驱动模块，语法为insmod module_name.ko。</p>
+<p>卸载模块：使用rmmod命令卸载驱动模块，语法为rmmod module_name。</p>
+<p>查看模块：lsmod</p>
+<p> </p>
+<h3 id="2-3-测试"><a href="#2-3-测试" class="headerlink" title="2.3 测试"></a>2.3 测试</h3><p>驱动写好了，培训时有一个作业是写一个c程序根据驱动来控制板子上的灯，在驱动的代码中可以看到tv_led_ioctl这个函数已经写好了灯的开关，只需要写一个c程序调用即可，下面是一个示例（别像我一样用sleep控制，这样写被负责人看到说了，睡眠会占用cpu资源）</p>
+<p> </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;fcntl.h&gt;</span><br><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line">#include &lt;sys/ioctl.h&gt;</span><br><span class="line">#define TV_LED_CMD_R  _IOW(&#x27;l&#x27;, 24, unsigned int)</span><br><span class="line">#define TV_LED_CMD_G  _IOW(&#x27;l&#x27;, 25, unsigned int)</span><br><span class="line">#define TV_LED_CMD_B  _IOW(&#x27;l&#x27;, 26, unsigned int)</span><br><span class="line">int main(int argc, char ** argv)</span><br><span class="line">&#123;</span><br><span class="line">    int fd;</span><br><span class="line">    int i;</span><br><span class="line">    fd =  open(&quot;/dev/tv_led&quot;, O_RDWR);</span><br><span class="line">    if(fd &lt; 0) &#123;</span><br><span class="line">        printf(&quot;Failed to open device file\n&quot;);</span><br><span class="line">        return -1;</span><br><span class="line">&#125;</span><br><span class="line">    // 循环控制 LED 灯</span><br><span class="line">    for(i = 0; i &lt; 10; i++) &#123;</span><br><span class="line">        // 点亮 LED 灯</span><br><span class="line">        ioctl(fd, TV_LED_CMD_G, 1);</span><br><span class="line">        printf(&quot;yellow LED on\n&quot;);</span><br><span class="line">        sleep(1);</span><br><span class="line">        // 熄灭 LED 灯</span><br><span class="line">        ioctl(fd, TV_LED_CMD_G, 0);</span><br><span class="line">        printf(&quot;yellow LED off\n&quot;);</span><br><span class="line">        sleep(1);</span><br><span class="line">        // 点亮 LED 灯</span><br><span class="line">        ioctl(fd, TV_LED_CMD_R, 1);</span><br><span class="line">        printf(&quot;red LED on\n&quot;);</span><br><span class="line">        sleep(1);</span><br><span class="line">        // 熄灭 LED 灯</span><br><span class="line">        ioctl(fd, TV_LED_CMD_R, 0);</span><br><span class="line">        printf(&quot;red LED off\n&quot;);</span><br><span class="line">        sleep(1);</span><br><span class="line">    &#125;</span><br><span class="line">    close(fd);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> </p>
+<p>代码写好后需要搭配一个rk文件进行编译，这里涉及到交叉编译，因为本地的系统和开发板的架构是不一样的，一个是x86，一个是arm架构，c编译需要适配arm架构，所以需要使用交叉编译工具链，我们可以在一台机器上使用特定于目标平台的编译器，将源代码转换为适用于目标平台的二进制文件。这样可以方便地开发软件，尤其是嵌入式系统、移动应用程序和跨平台开发。</p>
+<p> </p>
+<p>我直接用的这边负责人的服务器进行的编译，自己服务器上没装sdk，所以具体怎么安装交叉编译工具链我还不太了解，先过了。采用mm指令编译好后得到一个文件，将文件通过adb shell拷进开发板，赋予权限，执行，不出意外就能看到板子上的灯被控制了。这里贴一个mk文件，我目前还不太了解mk文件要咋写，直接用的项目中的。</p>
+<p> </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">LOCAL_PATH := $(call my-dir)</span><br><span class="line"></span><br><span class="line">include $(CLEAR_VARS)</span><br><span class="line"></span><br><span class="line">LOCAL_SRC_FILES := \</span><br><span class="line"></span><br><span class="line">led.c</span><br><span class="line"></span><br><span class="line">LOCAL_MODULE:= led</span><br><span class="line"></span><br><span class="line">#LOCAL_CFLAGS += -DEXPORT= -DFLOATING_POINT -DUSE_SMALLFT -DVAR_ARRAYS</span><br><span class="line"></span><br><span class="line">#LOCAL_CFLAGS += -O3 -fstrict-aliasing -fprefetch-loop-arrays</span><br><span class="line"></span><br><span class="line">LOCAL_CFLAGS += -Wno-unused-parameter</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">LOCAL_C_INCLUDES += \</span><br><span class="line"></span><br><span class="line">$(LOCAL_PATH)/include</span><br><span class="line"></span><br><span class="line">include $(BUILD_EXECUTABLE)</span><br></pre></td></tr></table></figure>
+<p> <br>到此，跟着这篇文章可以做到，自己点亮开发板，对设备树、驱动有了一个初步的认识，这篇文章也是我总结培训的流程写下来的。</p>
+<p> </p>
+<p> </p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/linux/" class="category-chain-item">linux</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/linux/" class="print-no-link">#linux</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Linux驱动入门 烧录流程</div>
+      <div>https://hukaichao.me/2023/08/21/Linux驱动入门 烧录流程/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>凌冬</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年8月21日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/08/21/%E5%AE%89%E5%8D%93%E5%9F%BA%E7%A1%80%20%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/" title="安卓基础 源码编译">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">安卓基础 源码编译</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/08/21/JNI%E5%85%A5%E9%97%A8/" title="JNI入门">
+                        <span class="hidden-mobile">JNI入门</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

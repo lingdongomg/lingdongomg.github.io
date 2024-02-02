@@ -1,0 +1,795 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="凌冬">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="ES61. ES6介绍JavaScript 基础教程:  https:&#x2F;&#x2F;wangdoc.com&#x2F;javascript&#x2F; ES6 入门教程: https:&#x2F;&#x2F;es6.ruanyifeng.com&#x2F; 2. ES6功能1.变量声明const和let在ES6之前，我们都是用var关键字声明变量。无论声明在何处，都会被视为声明在函数的最顶部(不在函数内即在全局作用域的最顶部)。这就是函数变量提升例如: 1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ES6 基础使用">
+<meta property="og:url" content="https://hukaichao.me/2023/06/18/ES6%20%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="凌冬的个人博客">
+<meta property="og:description" content="ES61. ES6介绍JavaScript 基础教程:  https:&#x2F;&#x2F;wangdoc.com&#x2F;javascript&#x2F; ES6 入门教程: https:&#x2F;&#x2F;es6.ruanyifeng.com&#x2F; 2. ES6功能1.变量声明const和let在ES6之前，我们都是用var关键字声明变量。无论声明在何处，都会被视为声明在函数的最顶部(不在函数内即在全局作用域的最顶部)。这就是函数变量提升例如: 1">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-06-18T11:47:28.000Z">
+<meta property="article:modified_time" content="2024-02-02T07:27:40.244Z">
+<meta property="article:author" content="凌冬">
+<meta property="article:tag" content="面经笔经">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>ES6 基础使用 - 凌冬的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="ES6 基础使用"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-06-18 19:47" pubdate>
+          2023年6月18日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          33 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">ES6 基础使用</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="ES6"><a href="#ES6" class="headerlink" title="ES6"></a>ES6</h1><h2 id="1-ES6介绍"><a href="#1-ES6介绍" class="headerlink" title="1. ES6介绍"></a>1. ES6介绍</h2><p>JavaScript 基础教程:  <a target="_blank" rel="noopener" href="https://wangdoc.com/javascript/">https://wangdoc.com/javascript/</a></p>
+<p>ES6 入门教程: <a target="_blank" rel="noopener" href="https://es6.ruanyifeng.com/">https://es6.ruanyifeng.com/</a></p>
+<h2 id="2-ES6功能"><a href="#2-ES6功能" class="headerlink" title="2. ES6功能"></a>2. ES6功能</h2><h3 id="1-变量声明const和let"><a href="#1-变量声明const和let" class="headerlink" title="1.变量声明const和let"></a>1.变量声明const和let</h3><p>在ES6之前，我们都是用var关键字声明变量。无论声明在何处，都会被视为声明在函数的最顶部(不在函数内即在全局作用域的最顶部)。这就是函数变量提升例如:</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">aa</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">if</span>(flag) &#123;</span><br><span class="line">        <span class="keyword">var</span> test = <span class="string">&#x27;hello man&#x27;</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(test)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上的代码实际上是：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">aa</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> test <span class="comment">// 变量提升，函数最顶部</span></span><br><span class="line">  <span class="keyword">if</span>(flag) &#123;</span><br><span class="line">      test = <span class="string">&#x27;hello man&#x27;</span></span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">//此处访问 test 值为 undefined</span></span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(test)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//此处访问 test 值为 undefined</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以不用关心flag是否为 true or false。实际上，无论如何 test 都会被创建声明。</p>
+<p>接下来ES6主角登场：<br> 我们通常用 let 和 const 来声明，let 表示变量、const 表示常量。let 和 const 都是块级作用域。怎么理解这个块级作用域？</p>
+<ul>
+<li>在一个函数内部</li>
+<li>在一个代码块内部</li>
+</ul>
+<blockquote>
+<p>&#x3D;&#x3D;说白了只要在{}花括号内的代码块即可以认为 let 和 const 的作用域&#x3D;&#x3D;</p>
+</blockquote>
+<p>看以下代码：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">aa</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">if</span>(flag) &#123;</span><br><span class="line">       <span class="keyword">let</span> test = <span class="string">&#x27;hello man&#x27;</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//test 在此处访问不到</span></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(test)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>let</code>的作用域是在它所在当前代码块，但不会被提升到当前函数的最顶部。<br> 再来说说<code>const</code><br> <code>const</code>声明的变量必须提供一个值，而且会被认为是常量，意思就是它的值被设置完成后就不能再修改了。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> name = <span class="string">&#x27;lux&#x27;</span></span><br><span class="line">    name = <span class="string">&#x27;joe&#x27;</span> <span class="comment">// 再次赋值此时会报错</span></span><br></pre></td></tr></table></figure>
+
+<p>说说TDZ(暂时性死区)，想必你早有耳闻。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    console.log(<span class="keyword">value</span>) <span class="comment">// 报错</span></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">value</span> = <span class="string">&#x27;lala&#x27;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们都知道，JS引擎扫描代码时，如果发现变量声明，用 var 声明变量时会将声明提升到函数或全局作用域的顶部。但是 let 或者 const，会将声明关进一个小黑屋也是TDZ(暂时性死区)，只有执行到变量声明这句语句时，变量才会从小黑屋被放出来，才能安全使用这个变量。</p>
+<p>哦了，说一道面试题</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> funcs = []</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">      funcs.<span class="title function_">push</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123; <span class="variable language_">console</span>.<span class="title function_">log</span>(i) &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">  funcs.<span class="title function_">forEach</span>(<span class="keyword">function</span>(<span class="params">func</span>) &#123;</span><br><span class="line">      <span class="title function_">func</span>()</span><br><span class="line">  &#125;)</span><br></pre></td></tr></table></figure>
+
+<p>这样的面试题是大家很常见，很多同学一看就知道输出十次10<br> 但是如果我们想依次输出0到9呢？<br> 有两种解决方法，直接看一下代码：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ES5知识，我们可以利用“立即调用函数”解决这个问题</span></span><br><span class="line">  <span class="keyword">var</span> funcs = []</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">      funcs.<span class="title function_">push</span>(</span><br><span class="line">        (<span class="keyword">function</span>(<span class="params">value</span>) &#123;</span><br><span class="line">          <span class="keyword">return</span> <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">              <span class="variable language_">console</span>.<span class="title function_">log</span>(value)</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;)(i)</span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">  funcs.<span class="title function_">forEach</span>(<span class="keyword">function</span>(<span class="params">func</span>) &#123;</span><br><span class="line">      <span class="title function_">func</span>()</span><br><span class="line">  &#125;)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 再来看看es6怎么处理的</span></span><br><span class="line">    <span class="keyword">const</span> funcs = []</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">        funcs.<span class="title function_">push</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">log</span>(i)</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">    funcs.<span class="title function_">forEach</span>(<span class="function"><span class="params">func</span> =&gt;</span> <span class="title function_">func</span>())</span><br></pre></td></tr></table></figure>
+
+<p>达到相同的效果，ES6 简洁的解决方案是不是更让你心动！！！</p>
+<h3 id="2-字符串"><a href="#2-字符串" class="headerlink" title="2.字符串"></a>2.字符串</h3><p> ES6模板字符简直是开发者的福音啊，解决了 ES5 在字符串功能上的痛点。</p>
+<p>第一个用途，&#x3D;&#x3D;基本的字符串格式化&#x3D;&#x3D;。将表达式嵌入字符串中进行拼接。用${}来界定。</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//ES5 </span></span><br><span class="line"> <span class="keyword">var</span> name = <span class="string">&#x27;lux&#x27;</span></span><br><span class="line"> <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;hello&#x27;</span> + name)</span><br><span class="line"> <span class="comment">//es6</span></span><br><span class="line"> <span class="keyword">const</span> name = <span class="string">&#x27;lux&#x27;</span></span><br><span class="line"> <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`hello <span class="subst">$&#123;name&#125;</span>`</span>) <span class="comment">//hello lux</span></span><br></pre></td></tr></table></figure>
+
+<p>第二个用途，在ES5时我们通过反斜杠()来做&#x3D;&#x3D;多行字符串或者字符串一行行拼接&#x3D;&#x3D;。ES6反引号(&#96;&#96;)直接搞定。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ES5</span></span><br><span class="line">  <span class="keyword">var</span> msg = <span class="string">&quot;Hi \</span></span><br><span class="line"><span class="string">  man!</span></span><br><span class="line"><span class="string">  &quot;</span></span><br><span class="line">  <span class="comment">// ES6</span></span><br><span class="line">  <span class="keyword">const</span> <span class="variable constant_">template</span> = `&lt;div&gt;</span><br><span class="line">      &lt;span&gt;hello world&lt;/span&gt;</span><br><span class="line">  &lt;/div&gt;`</span><br></pre></td></tr></table></figure>
+
+<p>对于字符串 ES6+ 当然也提供了很多厉害也很有意思的方法😊 说几个常用的。</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1.includes：判断是否包含然后直接返回布尔值</span></span><br><span class="line"><span class="keyword">const</span> str = <span class="string">&#x27;hahay&#x27;</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(str.<span class="title function_">includes</span>(<span class="string">&#x27;y&#x27;</span>)) <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 2.repeat: 获取字符串重复n次</span></span><br><span class="line"><span class="keyword">const</span> str = <span class="string">&#x27;he&#x27;</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(str.<span class="title function_">repeat</span>(<span class="number">3</span>)) <span class="comment">// &#x27;hehehe&#x27;</span></span><br><span class="line"><span class="comment">//如果你带入小数, Math.floor(num) 来处理</span></span><br><span class="line"><span class="comment">// s.repeat(3.1) 或者 s.repeat(3.9) 都当做成 s.repeat(3) 来处理</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 3. startsWith 和 endsWith 判断是否以 给定文本 开始或者结束</span></span><br><span class="line"><span class="keyword">const</span> str =  <span class="string">&#x27;hello world!&#x27;</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(str.<span class="title function_">startsWith</span>(<span class="string">&#x27;hello&#x27;</span>)) <span class="comment">// true</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(str.<span class="title function_">endsWith</span>(<span class="string">&#x27;!&#x27;</span>)) <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 4. padStart 和 padEnd 填充字符串，应用场景：时分秒</span></span><br><span class="line"><span class="built_in">setInterval</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> now = <span class="keyword">new</span> <span class="title class_">Date</span>()</span><br><span class="line">    <span class="keyword">const</span> hours = now.<span class="title function_">getHours</span>().<span class="title function_">toString</span>()</span><br><span class="line">    <span class="keyword">const</span> minutes = now.<span class="title function_">getMinutes</span>().<span class="title function_">toString</span>()</span><br><span class="line">    <span class="keyword">const</span> seconds = now.<span class="title function_">getSeconds</span>().<span class="title function_">toString</span>()</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;hours.padStart(<span class="number">2</span>, <span class="number">0</span>)&#125;</span>:<span class="subst">$&#123;minutes.padStart(<span class="number">2</span>, <span class="number">0</span>)&#125;</span>:<span class="subst">$&#123;seconds.padStart(<span class="number">2</span>, <span class="number">0</span>)&#125;</span>`</span>)</span><br><span class="line">&#125;, <span class="number">1000</span>)</span><br></pre></td></tr></table></figure>
+
+<p>关于模板字符串现在比较常出现的面试题有两道。同学们不妨写试试看？</p>
+<p>模拟一个模板字符串的实现。</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> address = <span class="string">&#x27;北京海淀区&#x27;</span></span><br><span class="line"> <span class="keyword">let</span> name = <span class="string">&#x27;lala&#x27;</span></span><br><span class="line"> <span class="keyword">let</span> str = <span class="string">&#x27;$&#123;name&#125;在$&#123;address&#125;上班...&#x27;</span></span><br><span class="line"> <span class="comment">// 模拟一个方法 myTemplate(str) 最终输出 &#x27;lala在北京海淀区上班...&#x27;</span></span><br><span class="line"> <span class="keyword">function</span> <span class="title function_">myTemplate</span>(<span class="params">str</span>) &#123;</span><br><span class="line">     <span class="comment">// try it</span></span><br><span class="line"> &#125;</span><br><span class="line"> <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">myTemplate</span>(str)) <span class="comment">// lala在北京海淀区上班...</span></span><br></pre></td></tr></table></figure>
+
+<p>实现标签化模板(自定义模板规则)。</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> name = <span class="string">&#x27;cc&#x27;</span></span><br><span class="line">  <span class="keyword">const</span> gender = <span class="string">&#x27;male&#x27;</span></span><br><span class="line">  <span class="keyword">const</span> hobby = <span class="string">&#x27;basketball&#x27;</span></span><br><span class="line">  <span class="comment">// 实现tag最终输出 &#x27;姓名：**cc**，性别：**male**，爱好：**basketball**&#x27;</span></span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">tag</span>(<span class="params">strings</span>) &#123;</span><br><span class="line">      <span class="comment">// do it</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> str = tag<span class="string">`姓名：<span class="subst">$&#123;name&#125;</span>，性别：<span class="subst">$&#123;gender&#125;</span>，爱好：<span class="subst">$&#123;hobby&#125;</span>`</span></span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(str) <span class="comment">// &#x27;姓名：**cc**，性别：**male**，爱好：**basketball**&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-函数"><a href="#3-函数" class="headerlink" title="3.函数"></a>3.函数</h3><h4 id="函数默认参数"><a href="#函数默认参数" class="headerlink" title="函数默认参数"></a>函数默认参数</h4><p>在ES5我们给函数定义参数默认值是怎么样？</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">function action(<span class="built_in">num</span>) &#123;</span><br><span class="line">        <span class="built_in">num</span> = <span class="built_in">num</span> || <span class="number">200</span></span><br><span class="line">        <span class="comment">//当传入num时，num为传入的值</span></span><br><span class="line">        <span class="comment">//当没传入参数时，num即有了默认值200</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">num</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>但细心观察的同学们肯定会发现，num传入为0的时候就是false，但是我们实际的需求就是要拿到num &#x3D; 0，此时num &#x3D; 200 明显与我们的实际想要的效果明显不一样.</p>
+<p>ES6为参数提供了默认值。在定义函数时便初始化了这个参数，以便在参数没有被传递进去时使用。</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">action</span>(<span class="params">num = <span class="number">200</span></span>) &#123;</span><br><span class="line">      <span class="variable language_">console</span>.<span class="title function_">log</span>(num)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">action</span>(<span class="number">0</span>) <span class="comment">// 0</span></span><br><span class="line">  <span class="title function_">action</span>() <span class="comment">//200</span></span><br><span class="line">  <span class="title function_">action</span>(<span class="number">300</span>) <span class="comment">//300</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="箭头函数"><a href="#箭头函数" class="headerlink" title="箭头函数"></a>箭头函数</h4><p>ES6很有意思的一部分就是函数的快捷写法。也就是箭头函数。</p>
+<p>箭头函数最直观的三个特点:</p>
+<blockquote>
+<p>不需要 function 关键字来创建函数<br>省略 return 关键字<br>继承当前上下文的 this 关键字</p>
+</blockquote>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//例如：</span></span><br><span class="line">    [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>].<span class="title function_">map</span>(<span class="function"><span class="params">x</span> =&gt;</span> x + <span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line"><span class="comment">//等同于：</span></span><br><span class="line">    [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>].<span class="title function_">map</span>((<span class="keyword">function</span>(<span class="params">x</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> x + <span class="number">1</span></span><br><span class="line">    &#125;).<span class="title function_">bind</span>(<span class="variable language_">this</span>))</span><br></pre></td></tr></table></figure>
+
+<h5 id="说个小细节"><a href="#说个小细节" class="headerlink" title="说个小细节:"></a>说个小细节:</h5><p>&#x3D;&#x3D;当你的函数有且仅有一个参数的时候，是可以省略掉括号的&#x3D;&#x3D;。当你函数返回有且仅有一个表达式的时候可以省略{} 和 return；例如:</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">当你的函数有且仅有一个参数的时候，是可以省略掉括号的。当你函数返回有且仅有一个表达式的时候可以省略&#123;&#125; 和 <span class="keyword">return</span>；例如:</span><br></pre></td></tr></table></figure>
+
+<p>作为参考:</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> <span class="title function_">people</span> = (<span class="params">name, age</span>) =&gt; &#123;</span><br><span class="line">       <span class="keyword">const</span> fullName = <span class="string">&#x27;hello&#x27;</span> + name</span><br><span class="line">       <span class="keyword">return</span> fullName</span><br><span class="line">   &#125; </span><br><span class="line">   <span class="comment">//如果缺少()或者&#123;&#125;就会报错</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 请使用ES6重构以下代码</span></span><br><span class="line"> <span class="keyword">var</span> calculate = <span class="keyword">function</span>(<span class="params">x, y, z</span>) &#123;</span><br><span class="line">   <span class="keyword">if</span> (<span class="keyword">typeof</span> x != <span class="string">&#x27;number&#x27;</span>) &#123; x = <span class="number">0</span> &#125;</span><br><span class="line">   <span class="keyword">if</span> (<span class="keyword">typeof</span> y != <span class="string">&#x27;number&#x27;</span>) &#123; y = <span class="number">6</span> &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">var</span> dwt = x % y</span><br><span class="line">   <span class="keyword">var</span> result</span><br><span class="line"></span><br><span class="line">   <span class="keyword">if</span> (dwt == z) &#123; result = <span class="literal">true</span> &#125;</span><br><span class="line">   <span class="keyword">if</span> (dwt != z) &#123; result = <span class="literal">false</span> &#125;</span><br><span class="line">   </span><br><span class="line">   <span class="keyword">return</span> result</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title function_">calculate</span> = (<span class="params">x, y, z</span>) =&gt; &#123;</span><br><span class="line">   x = <span class="keyword">typeof</span> x !== <span class="string">&#x27;number&#x27;</span> ? <span class="number">0</span> : x</span><br><span class="line">   y = <span class="keyword">typeof</span> y !== <span class="string">&#x27;number&#x27;</span> ? <span class="number">6</span> : y</span><br><span class="line">   <span class="keyword">return</span> x % y === z</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-拓展的对象功能"><a href="#4-拓展的对象功能" class="headerlink" title="4.拓展的对象功能"></a>4.拓展的对象功能</h3><p>4.拓展的对象功能</p>
+<p>ES5我们对于对象都是以键值对的形式书写，是有可能出现键值对重名的。例如：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">people</span>(<span class="params">name, age</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="attr">name</span>: name,</span><br><span class="line">        <span class="attr">age</span>: age</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>键值对重名，ES6可以简写如下：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">people</span>(<span class="params">name, age</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        name,</span><br><span class="line">        age</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ES6 同样改进了为对象字面量方法赋值的语法。ES5为对象添加方法：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> people = &#123;</span><br><span class="line">     <span class="attr">name</span>: <span class="string">&#x27;lux&#x27;</span>,</span><br><span class="line">     <span class="attr">getName</span>: <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">         <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">name</span>)</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>ES6通过省略冒号与 function 关键字，将这个语法变得更简洁</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> people = &#123;</span><br><span class="line">     <span class="attr">name</span>: <span class="string">&#x27;lux&#x27;</span>,</span><br><span class="line">     getName () &#123;</span><br><span class="line">         <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">name</span>)</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>ES6</code>对象提供了<code>Object.assign()</code>这个方法来实现浅复制。<br> <code>Object.assign()</code> 可以把任意多个源对象自身可枚举的属性拷贝给目标对象，然后返回目标对象。第一参数即为目标对象。在实际项目中，我们为了不改变源对象。一般会把目标对象传为{}</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> objA = &#123; <span class="attr">name</span>: <span class="string">&#x27;cc&#x27;</span>, <span class="attr">age</span>: <span class="number">18</span> &#125;</span><br><span class="line">   <span class="keyword">const</span> objB = &#123; <span class="attr">address</span>: <span class="string">&#x27;beijing&#x27;</span> &#125;</span><br><span class="line">   <span class="keyword">const</span> objC = &#123;&#125; <span class="comment">// 这个为目标对象</span></span><br><span class="line">   <span class="keyword">const</span> obj = <span class="title class_">Object</span>.<span class="title function_">assign</span>(objC, objA, objB)</span><br><span class="line"></span><br><span class="line">   <span class="comment">// 我们将 objA objB objC obj 分别输出看看</span></span><br><span class="line">   <span class="variable language_">console</span>.<span class="title function_">log</span>(objA)   <span class="comment">// &#123; name: &#x27;cc&#x27;, age: 18 &#125;</span></span><br><span class="line">   <span class="variable language_">console</span>.<span class="title function_">log</span>(objB) <span class="comment">// &#123; address: &#x27;beijing&#x27; &#125;</span></span><br><span class="line">   <span class="variable language_">console</span>.<span class="title function_">log</span>(objC) <span class="comment">// &#123; name: &#x27;cc&#x27;, age: 18, address: &#x27;beijing&#x27; &#125;</span></span><br><span class="line">   <span class="variable language_">console</span>.<span class="title function_">log</span>(obj) <span class="comment">// &#123; name: &#x27;cc&#x27;, age: 18, address: &#x27;beijing&#x27; &#125;</span></span><br><span class="line"></span><br><span class="line">   <span class="comment">// 是的，目标对象ObjC的值被改变了。</span></span><br><span class="line">   <span class="comment">// so，如果objC也是你的一个源对象的话。请在objC前面填在一个目标对象&#123;&#125;</span></span><br><span class="line">   <span class="title class_">Object</span>.<span class="title function_">assign</span>(&#123;&#125;, objC, objA, objB)</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-更方便的数据访问–解构"><a href="#5-更方便的数据访问–解构" class="headerlink" title="5.更方便的数据访问–解构"></a>5.更方便的数据访问–解构</h3><p>数组和对象是JS中最常用也是最重要表示形式。为了简化提取信息，ES6新增了解构，这是将一个数据结构分解为更小的部分的过程</p>
+<p>ES5我们提取对象中的信息形式如下：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> people = &#123;</span><br><span class="line">     <span class="attr">name</span>: <span class="string">&#x27;lux&#x27;</span>,</span><br><span class="line">     <span class="attr">age</span>: <span class="number">20</span></span><br><span class="line"> &#125;</span><br><span class="line"> <span class="keyword">const</span> name = people.<span class="property">name</span></span><br><span class="line"> <span class="keyword">const</span> age = people.<span class="property">age</span></span><br><span class="line"> <span class="variable language_">console</span>.<span class="title function_">log</span>(name + <span class="string">&#x27; --- &#x27;</span> + age)</span><br></pre></td></tr></table></figure>
+
+<p>是不是觉得很熟悉，没错，在ES6之前我们就是这样获取对象信息的，一个一个获取。现在，解构能让我们从对象或者数组里取出数据存为变量，例如</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//对象</span></span><br><span class="line">  <span class="keyword">const</span> people = &#123;</span><br><span class="line">      <span class="attr">name</span>: <span class="string">&#x27;lux&#x27;</span>,</span><br><span class="line">      <span class="attr">age</span>: <span class="number">20</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">const</span> &#123; name, age &#125; = people</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;name&#125;</span> --- <span class="subst">$&#123;age&#125;</span>`</span>)</span><br><span class="line">  <span class="comment">//数组</span></span><br><span class="line">  <span class="keyword">const</span> color = [<span class="string">&#x27;red&#x27;</span>, <span class="string">&#x27;blue&#x27;</span>]</span><br><span class="line">  <span class="keyword">const</span> [first, second] = color</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(first) <span class="comment">//&#x27;red&#x27;</span></span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(second) <span class="comment">//&#x27;blue&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>要不来点儿面试题，看看自己的掌握情况？</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 请使用 ES6 重构一下代码</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 第一题</span></span><br><span class="line"><span class="keyword">var</span> jsonParse = <span class="built_in">require</span>(<span class="string">&#x27;body-parser&#x27;</span>).<span class="property">jsonParse</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 第二题</span></span><br><span class="line"><span class="keyword">var</span> body = request.<span class="property">body</span></span><br><span class="line"><span class="keyword">var</span> username = body.<span class="property">username</span></span><br><span class="line"><span class="keyword">var</span> password = body.<span class="property">password</span></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1.</span></span><br><span class="line">  <span class="keyword">import</span> &#123; jsonParse &#125; <span class="keyword">from</span> <span class="string">&#x27;body-parser&#x27;</span></span><br><span class="line">  <span class="comment">// 2. </span></span><br><span class="line">  <span class="keyword">const</span> &#123; body, <span class="attr">body</span>: &#123; username, password &#125; &#125; = request</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-Spread-Operator-展开运算符"><a href="#6-Spread-Operator-展开运算符" class="headerlink" title="6.Spread Operator 展开运算符"></a>6.Spread Operator 展开运算符</h3><p>ES6中另外一个好玩的特性就是Spread Operator 也是三个点儿…接下来就展示一下它的用途。</p>
+<p>组装对象或者数组</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">  <span class="comment">//数组</span></span><br><span class="line">    <span class="keyword">const</span> color = [<span class="string">&#x27;red&#x27;</span>, <span class="string">&#x27;yellow&#x27;</span>]</span><br><span class="line">    <span class="keyword">const</span> colorful = [...color, <span class="string">&#x27;green&#x27;</span>, <span class="string">&#x27;pink&#x27;</span>]</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(colorful) <span class="comment">//[red, yellow, green, pink]</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//对象</span></span><br><span class="line">    <span class="keyword">const</span> alp = &#123; <span class="attr">fist</span>: <span class="string">&#x27;a&#x27;</span>, <span class="attr">second</span>: <span class="string">&#x27;b&#x27;</span>&#125;</span><br><span class="line">    <span class="keyword">const</span> alphabets = &#123; ...alp, <span class="attr">third</span>: <span class="string">&#x27;c&#x27;</span> &#125;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(alphabets) <span class="comment">//&#123; &quot;fist&quot;: &quot;a&quot;, &quot;second&quot;: &quot;b&quot;, &quot;third&quot;: &quot;c&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>有时候我们想获取数组或者对象除了前几项或者除了某几项的其他项</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//数组</span></span><br><span class="line">    <span class="keyword">const</span> <span class="built_in">number</span> = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>]</span><br><span class="line">    <span class="keyword">const</span> [first, ...rest] = <span class="built_in">number</span></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(rest) <span class="comment">//2,3,4,5</span></span><br><span class="line">    <span class="comment">//对象</span></span><br><span class="line">    <span class="keyword">const</span> user = &#123;</span><br><span class="line">        <span class="attr">username</span>: <span class="string">&#x27;lux&#x27;</span>,</span><br><span class="line">        <span class="attr">gender</span>: <span class="string">&#x27;female&#x27;</span>,</span><br><span class="line">        <span class="attr">age</span>: <span class="number">19</span>,</span><br><span class="line">        <span class="attr">address</span>: <span class="string">&#x27;peking&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">const</span> &#123; username, ...rest &#125; = user</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(rest) <span class="comment">//&#123;&quot;address&quot;: &quot;peking&quot;, &quot;age&quot;: 19, &quot;gender&quot;: &quot;female&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于 Object 而言，还可以用于组合成新的 Object 。(ES2017 stage-2 proposal) 当然如果有重复的属性名，右边覆盖左边</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> first = &#123;</span><br><span class="line">      a: <span class="number">1</span>,</span><br><span class="line">      b: <span class="number">2</span>,</span><br><span class="line">      c: <span class="number">6</span>,</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="type">const</span> second = &#123;</span><br><span class="line">      c: <span class="number">3</span>,</span><br><span class="line">      d: <span class="number">4</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="type">const</span> total = &#123; ...first, ...second &#125;</span><br><span class="line">  console.<span class="built_in">log</span>(total) <span class="comment">// &#123; a: 1, b: 2, c: 3, d: 4 &#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="7-import-和-export"><a href="#7-import-和-export" class="headerlink" title="7.import 和 export"></a>7.import 和 export</h3><p>import导入模块、export导出模块</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//全部导入</span></span><br><span class="line"><span class="keyword">import</span> people <span class="keyword">from</span> <span class="string">&#x27;./example&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//有一种特殊情况，即允许你将整个模块当作单一对象进行导入</span></span><br><span class="line"><span class="comment">//该模块的所有导出都会作为对象的属性存在</span></span><br><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> example <span class="keyword">from</span> <span class="string">&quot;./example.js&quot;</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(example.<span class="property">name</span>)</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(example.<span class="property">age</span>)</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(example.<span class="title function_">getName</span>())</span><br><span class="line"></span><br><span class="line"><span class="comment">//导入部分</span></span><br><span class="line"><span class="keyword">import</span> &#123;name, age&#125; <span class="keyword">from</span> <span class="string">&#x27;./example&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 导出默认, 有且只有一个默认</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title class_">App</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 部分导出</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">App</span> extend <span class="title class_">Component</span> &#123;&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>以前有人问我，导入的时候有没有大括号的区别是什么。下面是我在工作中的&#x3D;&#x3D;总结&#x3D;&#x3D;：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>当用<span class="keyword">export</span> <span class="keyword">default</span> people导出时，就用 <span class="keyword">import</span> people 导入（不带大括号）</span><br><span class="line"></span><br><span class="line"><span class="number">2.</span>一个文件里，有且只能有一个<span class="keyword">export</span> <span class="keyword">default</span>。但可以有多个<span class="keyword">export</span>。</span><br><span class="line"></span><br><span class="line"><span class="number">3.</span>当用<span class="keyword">export</span> name 时，就用<span class="keyword">import</span> &#123; name &#125;导入（记得带上大括号）</span><br><span class="line"></span><br><span class="line"><span class="number">4.</span>当一个文件里，既有一个<span class="keyword">export</span> <span class="keyword">default</span> people, 又有多个<span class="keyword">export</span> name 或者 <span class="keyword">export</span> age时，导入就用 <span class="keyword">import</span> people, &#123; name, age &#125; </span><br><span class="line"></span><br><span class="line"><span class="number">5.</span>当一个文件里出现n多个 <span class="keyword">export</span> 导出很多模块，导入时除了一个一个导入，也可以用<span class="keyword">import</span> * <span class="keyword">as</span> example</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-Promise"><a href="#8-Promise" class="headerlink" title="8. Promise"></a>8. Promise</h3><blockquote>
+<p>在promise之前代码过多的回调或者嵌套，可读性差、耦合度高、扩展性低。通过Promise机制，扁平化的代码机构，大大提高了代码可读性；用同步编程的方式来编写异步代码，保存线性的代码逻辑，极大的降低了代码耦合性而提高了程序的可扩展性。</p>
+</blockquote>
+<p>说白了就是用同步的方式去写异步代码。</p>
+<p>发起异步请求</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">fetch</span>(<span class="string">&#x27;/api/todos&#x27;</span>)</span><br><span class="line">     .<span class="title function_">then</span>(<span class="function"><span class="params">res</span> =&gt;</span> res.<span class="title function_">json</span>())</span><br><span class="line">     .<span class="title function_">then</span>(<span class="function"><span class="params">data</span> =&gt;</span> (&#123; data &#125;))</span><br><span class="line">     .<span class="title function_">catch</span>(<span class="function"><span class="params">err</span> =&gt;</span> (&#123; err &#125;));</span><br></pre></td></tr></table></figure>
+
+<p>今天看到一篇关于面试题的很有意思。</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">setTimeout</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">     <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">1</span>)</span><br><span class="line">   &#125;, <span class="number">0</span>);</span><br><span class="line">   <span class="keyword">new</span> <span class="title class_">Promise</span>(<span class="keyword">function</span> <span class="title function_">executor</span>(<span class="params">resolve</span>) &#123;</span><br><span class="line">     <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">2</span>);</span><br><span class="line">     <span class="keyword">for</span>( <span class="keyword">var</span> i=<span class="number">0</span> ; i&lt;<span class="number">10000</span> ; i++ ) &#123;</span><br><span class="line">       i == <span class="number">9999</span> &amp;&amp; <span class="title function_">resolve</span>();</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">3</span>);</span><br><span class="line">   &#125;).<span class="title function_">then</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">     <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">4</span>);</span><br><span class="line">   &#125;).<span class="title function_">catch</span>(<span class="function"><span class="params">err</span> =&gt;</span> (&#123; err &#125;));</span><br><span class="line">   <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="number">5</span>);</span><br></pre></td></tr></table></figure>
+
+<p>当然以上promise的知识点，这个只是冰山一角。需要更多地去学习了解一下。</p>
+<h3 id="9-Generators"><a href="#9-Generators" class="headerlink" title="9.Generators"></a>9.Generators</h3><p>生成器（ generator）是能返回一个迭代器的函数。生成器函数也是一种函数，最直观的表现就是比普通的function多了个星号*，在其函数体内可以使用yield关键字,有意思的是函数会在每个yield后暂停。</p>
+<p>这里生活中有一个比较形象的例子。咱们到银行办理业务时候都得向大厅的机器取一张排队号。你拿到你的排队号，机器并不会自动为你再出下一张票。也就是说取票机“暂停”住了，直到下一个人再次唤起才会继续吐票。</p>
+<p>OK。说说迭代器。当你调用一个generator时，它将返回一个迭代器对象。这个迭代器对象拥有一个叫做next的方法来帮助你重启generator函数并得到下一个值。next方法不仅返回值，它返回的对象具有两个属性：done和value。value是你获得的值，done用来表明你的generator是否已经停止提供值。继续用刚刚取票的例子，每张排队号就是这里的value，打印票的纸是否用完就这是这里的done。</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 生成器</span></span><br><span class="line"><span class="keyword">function</span> *<span class="title function_">createIterator</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">yield</span> <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">yield</span> <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">yield</span> <span class="number">3</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 生成器能像正规函数那样被调用，但会返回一个迭代器</span></span><br><span class="line"><span class="keyword">let</span> iterator = <span class="title function_">createIterator</span>();</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(iterator.<span class="title function_">next</span>().<span class="property">value</span>); <span class="comment">// 1</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(iterator.<span class="title function_">next</span>().<span class="property">value</span>); <span class="comment">// 2</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(iterator.<span class="title function_">next</span>().<span class="property">value</span>); <span class="comment">// 3</span></span><br></pre></td></tr></table></figure>
+
+<p>那生成器和迭代器又有什么用处呢？</p>
+<p>围绕着生成器的许多兴奋点都与异步编程直接相关。异步调用对于我们来说是很困难的事，我们的函数并不会等待异步调用完再执行，你可能会想到用回调函数，（当然还有其他方案比如Promise比如Async&#x2F;await）。</p>
+<p>&#x3D;&#x3D;生成器可以让我们的代码进行等待。就不用嵌套的回调函数&#x3D;&#x3D;。使用generator可以确保当异步调用在我们的generator函数运行一下行代码之前完成时暂停函数的执行。</p>
+<p>那么问题来了，咱们也不能手动一直调用next()方法，你需要一个能够调用生成器并启动迭代器的方法。就像这样子的</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">run</span>(<span class="params">taskDef</span>) &#123; <span class="comment">//taskDef即一个生成器函数</span></span><br><span class="line"></span><br><span class="line">       <span class="comment">// 创建迭代器，让它在别处可用</span></span><br><span class="line">       <span class="keyword">let</span> task = <span class="title function_">taskDef</span>();</span><br><span class="line"></span><br><span class="line">       <span class="comment">// 启动任务</span></span><br><span class="line">       <span class="keyword">let</span> result = task.<span class="title function_">next</span>();</span><br><span class="line">   </span><br><span class="line">       <span class="comment">// 递归使用函数来保持对 next() 的调用</span></span><br><span class="line">       <span class="keyword">function</span> <span class="title function_">step</span>(<span class="params"></span>) &#123;</span><br><span class="line">   </span><br><span class="line">           <span class="comment">// 如果还有更多要做的</span></span><br><span class="line">           <span class="keyword">if</span> (!result.<span class="property">done</span>) &#123;</span><br><span class="line">               result = task.<span class="title function_">next</span>();</span><br><span class="line">               <span class="title function_">step</span>();</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">   </span><br><span class="line">       <span class="comment">// 开始处理过程</span></span><br><span class="line">       <span class="title function_">step</span>();</span><br><span class="line">   </span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>生成器与迭代器最有趣、最令人激动的方面，或许就是可创建外观清晰的异步操作代码。你不必到处使用回调函数，而是可以建立貌似同步的代码，但实际上却使用 yield 来等待异步操作结束。</p>
+</blockquote>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E9%9D%A2%E7%BB%8F%E7%AC%94%E7%BB%8F/" class="category-chain-item">面经笔经</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E9%9D%A2%E7%BB%8F%E7%AC%94%E7%BB%8F/" class="print-no-link">#面经笔经</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>ES6 基础使用</div>
+      <div>https://hukaichao.me/2023/06/18/ES6 基础使用/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>凌冬</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年6月18日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/08/09/Ubuntu%E9%A3%8E%E6%89%87%E8%BD%AC%E9%80%9F%E6%8E%A7%E5%88%B6/" title="Ubuntu风扇转速控制">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Ubuntu风扇转速控制</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/06/18/Hadoop2%E6%9B%B4%E6%96%B0Hadoop3/" title="Hadoop2更新Hadoop3">
+                        <span class="hidden-mobile">Hadoop2更新Hadoop3</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

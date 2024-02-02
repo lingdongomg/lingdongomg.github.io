@@ -1,0 +1,733 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="凌冬">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="介绍学习完SpringBoot,实际上只是大致过了一遍，很多注释和深入的原理都没怎么看懂，跟着书上的内容试着做一下这个秒杀项目，书名为《一步一步学SpringBoot》从这个项目中巩固所学习的内容。秒杀架构的设计主要思想有以下四点：  缓存将部分业务逻辑迁移到内存的缓存或者Redis中，从而极大的提高并发读效率。 削峰秒杀开始的一瞬间会有一个瞬间流量峰值，如果使这个瞬间的流量峰值变得平缓是成功设计">
+<meta property="og:type" content="article">
+<meta property="og:title" content="高并发秒杀系统">
+<meta property="og:url" content="https://hukaichao.me/2023/06/18/%E9%AB%98%E5%B9%B6%E5%8F%91%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:site_name" content="凌冬的个人博客">
+<meta property="og:description" content="介绍学习完SpringBoot,实际上只是大致过了一遍，很多注释和深入的原理都没怎么看懂，跟着书上的内容试着做一下这个秒杀项目，书名为《一步一步学SpringBoot》从这个项目中巩固所学习的内容。秒杀架构的设计主要思想有以下四点：  缓存将部分业务逻辑迁移到内存的缓存或者Redis中，从而极大的提高并发读效率。 削峰秒杀开始的一瞬间会有一个瞬间流量峰值，如果使这个瞬间的流量峰值变得平缓是成功设计">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hukaichao.me/upload/2022/05/image-87634531d1df4908b5846ed9c446c59a.png">
+<meta property="article:published_time" content="2023-06-18T11:47:28.000Z">
+<meta property="article:modified_time" content="2024-02-02T07:27:40.347Z">
+<meta property="article:author" content="凌冬">
+<meta property="article:tag" content="java学习">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://hukaichao.me/upload/2022/05/image-87634531d1df4908b5846ed9c446c59a.png">
+  
+  
+  
+  <title>高并发秒杀系统 - 凌冬的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="高并发秒杀系统"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-06-18 19:47" pubdate>
+          2023年6月18日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          30 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">高并发秒杀系统</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>学习完SpringBoot,实际上只是大致过了一遍，很多注释和深入的原理都没怎么看懂，跟着书上的内容试着做一下这个秒杀项目，书名为《一步一步学SpringBoot》从这个项目中巩固所学习的内容。秒杀架构的设计主要思想有以下四点：</p>
+<ol>
+<li>缓存<br>将部分业务逻辑迁移到内存的缓存或者Redis中，从而极大的提高并发读效率。</li>
+<li>削峰<br>秒杀开始的一瞬间会有一个瞬间流量峰值，如果使这个瞬间的流量峰值变得平缓是成功设计秒杀系统的关键。要实现流量的削峰填谷，一般的方法是采用缓存和MQ中间件。</li>
+<li>异步<br>将同步业务设计成异步处理的任务，以提高网站的整体可用性。</li>
+<li>限流<br>秒杀库存量一般很少，只有少部分用户才能秒杀成功，所以需要限制大部分用户流量，只准少量用户流量进入后端服务器。</li>
+</ol>
+<p>项目结构目录：<br><img src="/upload/2022/05/image-87634531d1df4908b5846ed9c446c59a.png" srcset="/img/loading.gif" lazyload alt="image.png"></p>
+<h1 id="项目开发"><a href="#项目开发" class="headerlink" title="项目开发"></a>项目开发</h1><h2 id="搭建开发环境"><a href="#搭建开发环境" class="headerlink" title="搭建开发环境"></a>搭建开发环境</h2><p>创建SpringBoot项目时选择创建Spring Initializr（初始化）项目，IDEA会自动配置默认的SpingBoot服务器URL：start.spring.io</p>
+<h3 id="pom-xml"><a href="#pom-xml" class="headerlink" title="pom.xml"></a>pom.xml</h3><p>SpringBoot项目和Maven项目很像，有一个pom.xml文件，在其中已经自动添加了几个依赖和插件，除此之外该项目中还额外手动添加了以下依赖。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-jpa<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>mysql<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mysql-connector-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-jdbc<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-thymeleaf<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-redis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-activemq<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>JPA（Java Persistence API）是Sum公司官方提出的Java持久化规范，不提供实现，JPA的主要实现有Hibernate、EclipseLink、OpenJPA等。<br>Spring Data JPA的顶层接口是Repository，是一个空类，它的子类有CrudRepository、JpaRepository、PagingAndSortringRepository等。我们在使用时都是通过实现JpaRepository（包括增删改查分页接口）加上自己的业务方法。</p>
+<p>thymeleaf是模板引擎，拥有丰富的标签语言和函数，在SpringBoot页面开发设计中一般采用thymeleaf编写html文件进行页面开发。</p>
+<p>redis缓存，是被企业广泛使用的缓存。<br>使用方法：先在pom在加入redis依赖，然后在application.properties文件中添加配置信息（包括redis数据库(0)、服务器地址（localhost）、端口号（6379）、密码（空））。<br>redis的使用：在启动项目时会在监听器类中插入代码，将数据存放到redis缓存中，之后在service类中注入RedisTemplata对象就可以在缓存中进行相关操作了。redis的常用操作有：</p>
+<ul>
+<li>redisTemplate.opsForList().leftPushAll(ALL_USER,x) 查询缓存中所有用户数据,若ALL_USER键不存在，会创建该键及与其关联的List，之后再将参数中是x从左到右依次插入。</li>
+<li>redisTemplate.opsForList().range(ALL_USER,0,-1) 取链表中的全部元素，0代表第一个元素，-1代表最后一个元素。</li>
+</ul>
+<p>JMS（Java Message Service）Java消息服务，是一组Java应用程序接口，提供消息的创建、发送、读取等一系列服务。JMS支持两种消息发送和接受模型，一种为P2P，基于队列的消息生产者发送消息到队列，消息消费者从队列中接受消息，队列的存在时消息的异步传输成为可能。另一种为Pub&#x2F;Sub,（Publish&#x2F;Subscribe）发布-订阅模型。定义了如何向一个内容节点（Topice）发布和订阅消息。该模型在消息的一对多广播时采用。</p>
+<h3 id="application-properties"><a href="#application-properties" class="headerlink" title="application.properties"></a>application.properties</h3><p>里面是SpringBoot配置数据库、thymeleaf引擎、redis、mq的配置信息。</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">### mysql连接信息</span></span><br><span class="line"><span class="attr">spring.datasource.url</span>=<span class="string">jdbc:mysql://127.0.0.1:3306/speed-kill-system?serverTimezone=UTC</span></span><br><span class="line"><span class="comment">###用户名</span></span><br><span class="line"><span class="attr">spring.datasource.username</span>=<span class="string">root</span></span><br><span class="line"><span class="comment">###密码</span></span><br><span class="line"><span class="attr">spring.datasource.password</span>=<span class="string">123456</span></span><br><span class="line"><span class="comment">###驱动</span></span><br><span class="line"><span class="attr">spring.datasource.driver-class-name</span>=<span class="string">com.mysql.cj.jdbc.Driver</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">#thymeleaf配置</span></span><br><span class="line"><span class="comment">#模板的模式，支持如：HTML、XML、TEXT、JAVASCRIPT等</span></span><br><span class="line"><span class="attr">spring.thymeleaf.mode</span>=<span class="string">HTML5</span></span><br><span class="line"><span class="comment">#编码，可不用配置</span></span><br><span class="line"><span class="attr">spring.thymeleaf.encoding</span>=<span class="string">UTF-8</span></span><br><span class="line"><span class="comment">#内容类别，可不用配置</span></span><br><span class="line"><span class="attr">spring.thymeleaf.servlet.content-type</span>=<span class="string">text/html</span></span><br><span class="line"><span class="comment">#开发配置为false，避免修改模板还要重启服务器</span></span><br><span class="line"><span class="attr">spring.thymeleaf.cache</span>=<span class="string">false</span></span><br><span class="line"><span class="comment">#配置模板路径，默认就是templates，可不用配置</span></span><br><span class="line"><span class="comment">#spring.thymeleaf.prefix=classpath:/templates/</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">### redis缓存配置</span></span><br><span class="line"><span class="comment">### 默认redis数据库为db0</span></span><br><span class="line"><span class="attr">spring.redis.database</span>=<span class="string">0</span></span><br><span class="line"><span class="comment">### 服务器地址，默认为localhost</span></span><br><span class="line"><span class="attr">spring.redis.host</span>=<span class="string">localhost</span></span><br><span class="line"><span class="comment">### 链接端口，默认为6379</span></span><br><span class="line"><span class="attr">spring.redis.port</span>=<span class="string">6379</span></span><br><span class="line"><span class="comment">### redis密码默认为空</span></span><br><span class="line"><span class="attr">spring.redis.password</span>=<span class="string"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">### activemq 配置</span></span><br><span class="line"><span class="attr">spring.activemq.broker-url</span>=<span class="string">tcp://localhost:61616</span></span><br><span class="line"><span class="attr">spring.activemq.in-memory</span>=<span class="string">true</span></span><br><span class="line"><span class="attr">spring.activemq.pool.enabled</span>=<span class="string">false</span></span><br><span class="line"><span class="attr">spring.activemq.packages.trust-all</span>=<span class="string">true</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="model层"><a href="#model层" class="headerlink" title="model层"></a>model层</h2><p>创建项目相关实体类</p>
+<h3 id="AyUser-java"><a href="#AyUser-java" class="headerlink" title="AyUser.java"></a>AyUser.java</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@Table(name = &quot;ay_user&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AyUser</span> <span class="keyword">implements</span> <span class="title class_">Serializable</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//主键</span></span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="keyword">private</span> Integer id;</span><br><span class="line">    <span class="comment">//用户名</span></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="comment">//电话号码</span></span><br><span class="line">    <span class="keyword">private</span> String phoneNumber;</span><br><span class="line"><span class="comment">//省略get和set方法,以下同</span></span><br></pre></td></tr></table></figure>
+<p>@Entity、@Table、@Id、@GeneratedValue 都是JPA的注解</p>
+<ul>
+<li>@Entity说明这个class是实体类，并且使用默认的orm规则，即class名即数据库表中表名，class字段名即表中的字段名</li>
+<li>如果想改变这种默认的orm规则，就要使用@Table来改变class名与数据库中表名的映射规则，@Column来改变class中字段名与db中表的字段名的映射规则</li>
+<li>@Id 标注用于声明一个实体类的属性映射为数据库的主键列。该属性通常置于属性声明语句之前，可与声明语句同行，也可写在单独行上。 </li>
+<li>@GeneratedValue 用于标注主键的生成策略，通过strategy 属性指定。默认情况下，JPA 自动选择一个最适合底层数据库的主键生成策略：SqlServer对应identity，MySQL 对应 auto increment。</li>
+</ul>
+<h3 id="AyProduct-java"><a href="#AyProduct-java" class="headerlink" title="AyProduct.java"></a>AyProduct.java</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@Table(name = &quot;ay_product&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AyProduct</span> <span class="keyword">implements</span> <span class="title class_">Serializable</span> &#123;</span><br><span class="line">     <span class="comment">// 商品id</span></span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="keyword">private</span> Integer id;</span><br><span class="line">    <span class="comment">// 商品图片</span></span><br><span class="line">    <span class="keyword">private</span> String productImg;</span><br><span class="line">    <span class="comment">// 商品名称</span></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="comment">// 商品数量</span></span><br><span class="line">    <span class="keyword">private</span> Integer number;</span><br><span class="line">    <span class="comment">// 秒杀开始时间</span></span><br><span class="line">     <span class="keyword">private</span> Date startTime;</span><br><span class="line">    <span class="comment">// 秒杀结束时间</span></span><br><span class="line">    <span class="keyword">private</span> Date endTime;</span><br><span class="line">    <span class="comment">// 创建时间</span></span><br><span class="line">    <span class="keyword">private</span> Date createTime;</span><br></pre></td></tr></table></figure>
+
+<h3 id="AyUserKillProduct-java"><a href="#AyUserKillProduct-java" class="headerlink" title="AyUserKillProduct.java"></a>AyUserKillProduct.java</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@Table(name = &quot;ay_user_kill_product&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AyUserKillProduct</span> <span class="keyword">implements</span> <span class="title class_">Serializable</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="meta">@GeneratedValue(strategy = GenerationType.IDENTITY)</span></span><br><span class="line">    <span class="keyword">private</span> Integer id;</span><br><span class="line">    <span class="comment">// 商品id</span></span><br><span class="line">    <span class="keyword">private</span> Integer productId;</span><br><span class="line">    <span class="comment">// 用户id</span></span><br><span class="line">    <span class="keyword">private</span> Integer userId;</span><br><span class="line">     <span class="comment">// 状态，-1：无效；0：成功；1：已付款&#x27;</span></span><br><span class="line">    <span class="keyword">private</span> Integer state;</span><br><span class="line">     <span class="comment">// 创建时间</span></span><br><span class="line">    <span class="keyword">private</span> Date createTime;</span><br></pre></td></tr></table></figure>
+
+<h3 id="KillState-java"><a href="#KillState-java" class="headerlink" title="KillState.java"></a>KillState.java</h3><p>Java 枚举类使用 enum 关键字来定义，各个常量使用逗号 , 来分割。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> <span class="title class_">KillStatus</span> &#123;</span><br><span class="line"></span><br><span class="line">    IN_VALID(-<span class="number">1</span>, <span class="string">&quot;无效&quot;</span>),</span><br><span class="line">    SUCCESS(<span class="number">0</span>, <span class="string">&quot;成功&quot;</span>),</span><br><span class="line">    PAY(<span class="number">1</span>,<span class="string">&quot;已付款&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> code;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    KillStatus()&#123;&#125;</span><br><span class="line"></span><br><span class="line">    KillStatus(<span class="type">int</span> code,String name)&#123;</span><br><span class="line">        <span class="built_in">this</span>.code = code;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getCode</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> code;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setCode</span><span class="params">(<span class="type">int</span> code)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.code = code;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Repository"><a href="#Repository" class="headerlink" title="Repository"></a>Repository</h2><p>Spring Data JPA 是Spring Data的一个子项目，它通过提供基于JPA的Respository，极大地减少了JPA作为数据访问方案的代码量，通过该<br>框架开发者可以省略实现持久层业务逻辑的工作，唯一要做的就是声明持久层的接口，其他都交给Spring Data JPA来完成</p>
+<p>SpringBoot中一般用三种方法访问数据库，分别是使用JDBC（JdbcTemplate）、使用Mybatis（配置、注解）、JPA（Repository）<br>详细介绍：<a target="_blank" rel="noopener" href="https://blog.csdn.net/JavaSupeMan/article/details/105683959">https://blog.csdn.net/JavaSupeMan/article/details/105683959</a></p>
+<h3 id="ProductRepository-java"><a href="#ProductRepository-java" class="headerlink" title="ProductRepository.java"></a>ProductRepository.java</h3><p>public interface ProductRepository extends JpaRepository&lt;T, ID&gt;,</p>
+<p>根据上述描述：T 需要类型化为实体类(Entity)AyProduct，ID需要实体类AyProduct中Id（我定义的Id类型是Integer）的类型</p>
+<p>负责商品的CRUD</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">ProductRepository</span> <span class="keyword">extends</span> <span class="title class_">JpaRepository</span>&lt;AyProduct,Integer&gt; &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="AyUserKillProductRepository-java"><a href="#AyUserKillProductRepository-java" class="headerlink" title="AyUserKillProductRepository.java"></a>AyUserKillProductRepository.java</h3><p>负责用户秒杀商品记录的CRUD</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">AyUserKillProductRepository</span> <span class="keyword">extends</span> <span class="title class_">JpaRepository</span>&lt;AyUserKillProduct,Integer&gt; &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="ActiveMQ"><a href="#ActiveMQ" class="headerlink" title="ActiveMQ"></a>ActiveMQ</h2><p>activemq中间件，MQ全称为MessageQueue消息队列，是一个消息的接受和转发的容器，可用于消息推送，ActiveMQ是Apache提供的一个开源的消息系统，完全由Java实现，因此能很好的支持J2EE提出的JMS规范。<br>使用方法：先引入依赖，再到application.properties配置文件中添加ActicveMQ配置，包括</p>
+<ul>
+<li>端口号 61616，</li>
+<li>memory true,</li>
+<li>enabled false,</li>
+<li>信任所有的包trust-all true。</li>
+</ul>
+<p>之后需要创建Producer类和Consumer类，在Producer类中注入JmsMessagingTemplate类，该类是发消息的工具类，并创建方法sendMessage,方法中调用注入类的convertAndSend方法。<br>在Consumer类中使用@JmsListener标签来监听一个队列，并创建receiveQueue方法处理接收到的信息。<br>在实际使用时注入创建的Producer类，然后创建destination对象（创建消息队列），再往队列中发送消息即可。</p>
+<h3 id="生产者开发"><a href="#生产者开发" class="headerlink" title="生产者开发"></a>生产者开发</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AyProductKillProducer</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//日志</span></span><br><span class="line">    <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LoggerFactory.getLogger(ProductServiceImpl.class);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> JmsMessagingTemplate jmsMessagingTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     *  描述：发送消息</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> destination 目标地址</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> killProduct 描述商品</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">sendMessage</span><span class="params">(Destination destination, <span class="keyword">final</span> AyUserKillProduct killProduct)</span> &#123;</span><br><span class="line">        logger.info(<span class="string">&quot;AyProductKillProducer sendMessage , killProduct is&quot;</span> + killProduct);</span><br><span class="line">        jmsMessagingTemplate.convertAndSend(destination, killProduct);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="消费者开发"><a href="#消费者开发" class="headerlink" title="消费者开发"></a>消费者开发</h3><p>通过SpringBoot实现队列消费，只需要通过@JmsListener(destination &#x3D; “queueName”) 注解，就可以实现对特定队列的消费</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AyProductKillConsumer</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//日志</span></span><br><span class="line">    <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LoggerFactory.getLogger(ProductServiceImpl.class);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> AyUserKillProductService ayUserKillProductService;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 消费消息</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> killProduct</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@JmsListener(destination = &quot;ay.queue.asyn.save&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">receiveQueue</span><span class="params">(AyUserKillProduct killProduct)</span>&#123;</span><br><span class="line">        <span class="comment">//保存秒杀商品数据</span></span><br><span class="line">        ayUserKillProductService.save(killProduct);</span><br><span class="line">        <span class="comment">//记录日志</span></span><br><span class="line">        logger.info(<span class="string">&quot;ayUserKillProductService save, and killProduct: &quot;</span> + killProduct);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Service层"><a href="#Service层" class="headerlink" title="Service层"></a>Service层</h2><p>服务层</p>
+<h3 id="ProductService-java"><a href="#ProductService-java" class="headerlink" title="ProductService.java"></a>ProductService.java</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">ProductService</span> &#123;</span><br><span class="line">    List&lt;AyProduct&gt; <span class="title function_">findAll</span><span class="params">()</span>;</span><br><span class="line"></span><br><span class="line">    Collection&lt;AyProduct&gt; <span class="title function_">findAllCache</span><span class="params">()</span>;</span><br><span class="line"></span><br><span class="line">    AyProduct <span class="title function_">killProduct</span><span class="params">(Integer productId, Integer userId)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="AyUserKillProductService-java"><a href="#AyUserKillProductService-java" class="headerlink" title="AyUserKillProductService.java"></a>AyUserKillProductService.java</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">AyUserKillProductService</span> &#123;</span><br><span class="line">    AyUserKillProduct <span class="title function_">save</span><span class="params">(AyUserKillProduct killProduct)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="ProductServiceImpl-java"><a href="#ProductServiceImpl-java" class="headerlink" title="ProductServiceImpl.java"></a>ProductServiceImpl.java</h3><p>在该类中注入productRepository和ayUserKillProductService类<br>Service类只能注入自己的Repository</p>
+<p>RedisTemplate 中 opsForHash()使用：<br>entries(H key) ：获取变量中的键值对。<br>putAll(H key, Map&lt;? extends HK,? extends HV&gt; m) ：以map集合的形式添加键值对。<br>put(H key, HK hashKey, HV value) ：新增hashMap值</p>
+<p>redisTemplate.expire：设置缓存过期时间</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProductServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">ProductService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> ProductRepository productRepository;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> AyUserKillProductService ayUserKillProductService;</span><br><span class="line">    <span class="comment">//日志</span></span><br><span class="line">    <span class="type">Logger</span> <span class="variable">logger</span> <span class="operator">=</span> LoggerFactory.getLogger(ProductServiceImpl.class);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查询所有商品</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> List&lt;AyProduct&gt; <span class="title function_">findAll</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">try</span>&#123;</span><br><span class="line">            List&lt;AyProduct&gt; ayProducts = productRepository.findAll();</span><br><span class="line">            <span class="keyword">return</span> ayProducts;</span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            logger.error(<span class="string">&quot;ProductServiceImpl.findAll error&quot;</span>, e);</span><br><span class="line">            <span class="keyword">return</span> Collections.EMPTY_LIST;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//注入redisTemplate对象</span></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> RedisTemplate redisTemplate;</span><br><span class="line">    <span class="comment">//定义缓存key</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">KILL_PRODUCT_LIST</span> <span class="operator">=</span> <span class="string">&quot;kill_product_list&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查询商品数据（带缓存）</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Collection&lt;AyProduct&gt; <span class="title function_">findAllCache</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">try</span>&#123;</span><br><span class="line">            <span class="comment">//从缓存中查询商品数据</span></span><br><span class="line">            Map&lt;Integer, AyProduct&gt; productMap =</span><br><span class="line">                    redisTemplate.opsForHash().entries(KILL_PRODUCT_LIST);</span><br><span class="line">            Collection&lt;AyProduct&gt; ayProducts = <span class="literal">null</span>;</span><br><span class="line">            <span class="comment">//如果缓存中查询不到商品数据</span></span><br><span class="line">            <span class="keyword">if</span>(CollectionUtils.isEmpty(productMap))&#123;</span><br><span class="line">                <span class="comment">//从数据库中查询商品数据</span></span><br><span class="line">                ayProducts = productRepository.findAll();</span><br><span class="line">                <span class="comment">//将商品list转换为商品map</span></span><br><span class="line">                productMap = convertToMap(ayProducts);</span><br><span class="line">                <span class="comment">//将商品数据保存到缓存中</span></span><br><span class="line">                redisTemplate.opsForHash().putAll(KILL_PRODUCT_LIST, productMap);</span><br><span class="line">                <span class="comment">//设置缓存数据的过期时间，这里设置10s，具体时间需要结合业务需求而定</span></span><br><span class="line">                <span class="comment">//如果商品数据变化少，过期时间可以设置长一点；反之，过期时间可以设置短一点</span></span><br><span class="line">                redisTemplate.expire(KILL_PRODUCT_LIST,<span class="number">10000</span> , TimeUnit.MILLISECONDS);</span><br><span class="line">                <span class="keyword">return</span> ayProducts;</span><br><span class="line">            &#125;</span><br><span class="line">            ayProducts = productMap.values();</span><br><span class="line">            <span class="keyword">return</span> ayProducts;</span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            logger.error(<span class="string">&quot;ProductServiceImpl.findAllCache error&quot;</span>, e);</span><br><span class="line">            <span class="keyword">return</span> Collections.EMPTY_LIST;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * list转换为map</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> ayProducts</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> Map&lt;Integer, AyProduct&gt; <span class="title function_">convertToMap</span><span class="params">(Collection&lt;AyProduct&gt; ayProducts)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(CollectionUtils.isEmpty(ayProducts))&#123;</span><br><span class="line">            <span class="keyword">return</span> Collections.EMPTY_MAP;</span><br><span class="line">        &#125;</span><br><span class="line">        Map&lt;Integer, AyProduct&gt; productMap = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;(ayProducts.size());</span><br><span class="line">        <span class="keyword">for</span>(AyProduct product: ayProducts)&#123;</span><br><span class="line">            productMap.put(product.getId(), product);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> productMap;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> AyProductKillProducer ayProductKillProducer;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//队列</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">Destination</span> <span class="variable">destination</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ActiveMQQueue</span>(<span class="string">&quot;ay.queue.asyn.save&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 秒杀商品(引入MQ)</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> productId 商品id</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> userId 用户id</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> AyProduct <span class="title function_">killProduct</span><span class="params">(Integer productId, Integer userId)</span> &#123;</span><br><span class="line">        <span class="comment">//查询商品</span></span><br><span class="line">        <span class="type">AyProduct</span> <span class="variable">ayProduct</span> <span class="operator">=</span> productRepository.findById(productId).get();</span><br><span class="line">        <span class="comment">//判断商品是否还有库存</span></span><br><span class="line">        <span class="keyword">if</span>(ayProduct.getNumber() &lt; <span class="number">0</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//设置商品的库存：原库存数量 - 1</span></span><br><span class="line">        ayProduct.setNumber(ayProduct.getNumber() - <span class="number">1</span>);</span><br><span class="line">        <span class="comment">//更新商品库存</span></span><br><span class="line">        ayProduct = productRepository.save(ayProduct);</span><br><span class="line">        <span class="comment">//保存商品的秒杀记录</span></span><br><span class="line">        <span class="type">AyUserKillProduct</span> <span class="variable">killProduct</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AyUserKillProduct</span>();</span><br><span class="line">        killProduct.setCreateTime(<span class="keyword">new</span> <span class="title class_">Date</span>());</span><br><span class="line">        killProduct.setProductId(productId);</span><br><span class="line">        killProduct.setUserId(userId);</span><br><span class="line">        <span class="comment">//设置秒杀状态</span></span><br><span class="line">        killProduct.setState(KillStatus.SUCCESS.getCode());</span><br><span class="line">        <span class="comment">//保存秒杀记录详细信息</span></span><br><span class="line">        <span class="comment">//ayUserKillProductService.save(killProduct);</span></span><br><span class="line">        <span class="comment">//异步保存商品的秒杀记录</span></span><br><span class="line">        ayProductKillProducer.sendMessage(destination, killProduct);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//商品秒杀成功后，更新缓存中商品库存数量</span></span><br><span class="line">        redisTemplate.opsForHash().put(KILL_PRODUCT_LIST, killProduct.getProductId(),ayProduct);</span><br><span class="line">        <span class="keyword">return</span> ayProduct;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="AyUserKillProductServiceImpl-java"><a href="#AyUserKillProductServiceImpl-java" class="headerlink" title="AyUserKillProductServiceImpl.java"></a>AyUserKillProductServiceImpl.java</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AyUserKillProductServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">AyUserKillProductService</span> &#123;</span><br><span class="line">    <span class="comment">//注入ayUserKillProductRepository类</span></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> AyUserKillProductRepository ayUserKillProductRepository;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 保存用户秒杀商品记录</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> killProduct</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> AyUserKillProduct <span class="title function_">save</span><span class="params">(AyUserKillProduct killProduct)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> ayUserKillProductRepository.save(killProduct);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Controller层"><a href="#Controller层" class="headerlink" title="Controller层"></a>Controller层</h2><h3 id="ProductController-java"><a href="#ProductController-java" class="headerlink" title="ProductController.java"></a>ProductController.java</h3><p>@PathVariable是spring3.0的一个新功能：接收请求路径中占位符的值<br>@RequestParam用于将请求参数区数据映射到功能处理方法的参数上。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;/products&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProductController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> ProductService productService;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查询所有的商品</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> model</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@RequestMapping(&quot;/all&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">findAll</span><span class="params">(Model model)</span>&#123;</span><br><span class="line">        List&lt;AyProduct&gt; products = productService.findAll();</span><br><span class="line">        model.addAttribute(<span class="string">&quot;products&quot;</span>, products);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;product_list&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查询所有的商品（缓存）</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> model</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@RequestMapping(&quot;/all/cache&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">findAllCache</span><span class="params">(Model model)</span>&#123;</span><br><span class="line">        Collection&lt;AyProduct&gt; products = productService.findAllCache();</span><br><span class="line">        model.addAttribute(<span class="string">&quot;products&quot;</span>, products);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;product_list&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 秒杀商品</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> model</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> productId 商品id</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> userId  用户id</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@RequestMapping(&quot;/&#123;id&#125;/kill&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">killProduct</span><span class="params">(Model model,</span></span><br><span class="line"><span class="params">                              <span class="meta">@PathVariable(&quot;id&quot;)</span> Integer productId,</span></span><br><span class="line"><span class="params">                              <span class="meta">@RequestParam(&quot;userId&quot;)</span> Integer userId)</span>&#123;</span><br><span class="line">        <span class="type">AyProduct</span> <span class="variable">ayProduct</span> <span class="operator">=</span> productService.killProduct(productId, userId);</span><br><span class="line">        <span class="keyword">if</span>(<span class="literal">null</span> != ayProduct)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;success&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;fail&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="View层"><a href="#View层" class="headerlink" title="View层"></a>View层</h2><p>显示层中要展现的图片等静态资源文件统一放在resource目录下的static文件夹中。</p>
+<h3 id="product-list-html"><a href="#product-list-html" class="headerlink" title="product_list.html"></a>product_list.html</h3><p>SpringBoot中采用模板来作为视图层工作，Thymeleaf是基于Html语言的模板引擎，语法应用在Html标签中。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">HTML</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">xmlns:th</span>=<span class="string">&quot;http://www.thymeleaf.org&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>hello<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">&quot;Content-Type&quot;</span> <span class="attr">content</span>=<span class="string">&quot;text/html; charset=UTF-8&quot;</span> /&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 引入 Bootstrap --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">&quot;https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css&quot;</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- 页面显示部分--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;container&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;panel panel-default&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;panel-heading text-center&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">h1</span>&gt;</span>秒杀活动<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;panel-body&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">table</span> <span class="attr">class</span>=<span class="string">&quot;table table-hover&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">thead</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">tr</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">td</span>&gt;</span>图片<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">td</span>&gt;</span>名称<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">td</span>&gt;</span>库存<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">td</span>&gt;</span>开始时间<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">td</span>&gt;</span>结束时间<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">td</span>&gt;</span>操作<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">tr</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">thead</span>&gt;</span></span><br><span class="line"></span><br><span class="line">                <span class="tag">&lt;<span class="name">tbody</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">tr</span> <span class="attr">th:each</span>=<span class="string">&quot;product:$&#123;products&#125;&quot;</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">td</span>&gt;</span><span class="tag">&lt;<span class="name">img</span> <span class="attr">border</span>=<span class="string">&quot;1px&quot;</span> <span class="attr">width</span>=<span class="string">&quot;100px&quot;</span> <span class="attr">height</span>=<span class="string">&quot;110px&quot;</span></span></span><br><span class="line"><span class="tag">                             <span class="attr">th:src</span>=<span class="string">&quot;@&#123;$&#123;product.productImg&#125;&#125;&quot;</span>/&gt;</span><span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">td</span> <span class="attr">th:text</span>=<span class="string">&quot;$&#123;product.name&#125;&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">td</span> <span class="attr">th:text</span>=<span class="string">&quot;$&#123;product.number&#125;&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">td</span> <span class="attr">th:text</span>=<span class="string">&quot;$&#123;product.startTime&#125;&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">td</span> <span class="attr">th:text</span>=<span class="string">&quot;$&#123;product.endTime&#125;&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">td</span>&gt;</span></span><br><span class="line">                        <span class="comment">&lt;!-- 发起秒杀请求，用户id先简单写死为 1 --&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">a</span> <span class="attr">class</span>=<span class="string">&quot;btn btn-info&quot;</span> <span class="attr">th:href</span>=<span class="string">&quot;@&#123;&#x27;/products/&#x27;+$&#123;product.id&#125; + &#x27;/kill&#x27; + &#x27;?userId=1&#x27;&#125;&quot;</span>&gt;</span>秒杀<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">tr</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">tbody</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">table</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- jQuery文件。务必在bootstrap.min.js 之前引入 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 最新的 Bootstrap 核心 JavaScript 文件 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="success-html"><a href="#success-html" class="headerlink" title="success.html"></a>success.html</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">align</span>=<span class="string">&quot;center&quot;</span>&gt;</span></span><br><span class="line">    客官！！！ 恭喜您，秒杀成功~~~</span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="fail-html"><a href="#fail-html" class="headerlink" title="fail.html"></a>fail.html</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">align</span>=<span class="string">&quot;center&quot;</span>&gt;</span></span><br><span class="line">    不要灰心，继续加油~~~</span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E9%A1%B9%E7%9B%AE/" class="category-chain-item">项目</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/java%E5%AD%A6%E4%B9%A0/" class="print-no-link">#java学习</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>高并发秒杀系统</div>
+      <div>https://hukaichao.me/2023/06/18/高并发秒杀系统/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>凌冬</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年6月18日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/06/18/%E7%AC%AC%E5%8D%81%E4%B8%80%E5%B1%8A%20%E4%B8%AD%E5%9B%BD%E8%BD%AF%E4%BB%B6%E6%9D%AF%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1%E5%A4%A7%E8%B5%9B%20A1-%E9%AB%98%E6%80%A7%E8%83%BD%E6%B0%91%E8%88%AA%E6%97%85%E5%AE%A2%E8%A1%8C%E7%A8%8B%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" title="第十一届 中国软件杯大学生软件设计大赛 A1-高性能民航旅客行程推荐系统">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">第十一届 中国软件杯大学生软件设计大赛 A1-高性能民航旅客行程推荐系统</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/06/18/43zhou-sai-xiao-jie/" title="4/3 周赛小结">
+                        <span class="hidden-mobile">4/3 周赛小结</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

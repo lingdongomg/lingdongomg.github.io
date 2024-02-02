@@ -1,0 +1,654 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="凌冬">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言这个比赛是大学生竞赛里面的国家级A类竞赛，含金量看着还不错。参与的时候是系教研室老师找到我问我愿不愿意参加这个比赛，然后让我推荐了几个人组成团队一起参加。后面才知道学院有要求每个专业必须出一个队伍来参加这个比赛。团队组成了是四个人，从五月份开始进行筹备，开了一个短会后就开始做web系统了。 最初的一版最开始的时候只考虑题目中的功能性需求，即实现题目的功能要求，不考虑性能和创新等点。这个做出来其">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第十一届 中国软件杯大学生软件设计大赛 A1-高性能民航旅客行程推荐系统">
+<meta property="og:url" content="https://hukaichao.me/2023/06/18/%E7%AC%AC%E5%8D%81%E4%B8%80%E5%B1%8A%20%E4%B8%AD%E5%9B%BD%E8%BD%AF%E4%BB%B6%E6%9D%AF%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1%E5%A4%A7%E8%B5%9B%20A1-%E9%AB%98%E6%80%A7%E8%83%BD%E6%B0%91%E8%88%AA%E6%97%85%E5%AE%A2%E8%A1%8C%E7%A8%8B%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:site_name" content="凌冬的个人博客">
+<meta property="og:description" content="前言这个比赛是大学生竞赛里面的国家级A类竞赛，含金量看着还不错。参与的时候是系教研室老师找到我问我愿不愿意参加这个比赛，然后让我推荐了几个人组成团队一起参加。后面才知道学院有要求每个专业必须出一个队伍来参加这个比赛。团队组成了是四个人，从五月份开始进行筹备，开了一个短会后就开始做web系统了。 最初的一版最开始的时候只考虑题目中的功能性需求，即实现题目的功能要求，不考虑性能和创新等点。这个做出来其">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hukaichao.me/upload/2022/09/image-71709e66a2b94d03a379e06031812baf.png">
+<meta property="og:image" content="https://hukaichao.me/upload/2022/09/image-14a64c8b19184d1db1f1bba15af8e62f.png">
+<meta property="og:image" content="https://hukaichao.me/upload/2022/09/image-c509d5abb0c54bfea469640c0e533a54.png">
+<meta property="og:image" content="https://hukaichao.me/upload/2022/09/image-a72d4aee5f594af3a7022b518f014dba.png">
+<meta property="article:published_time" content="2023-06-18T11:47:28.000Z">
+<meta property="article:modified_time" content="2024-02-02T07:27:40.340Z">
+<meta property="article:author" content="凌冬">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://hukaichao.me/upload/2022/09/image-71709e66a2b94d03a379e06031812baf.png">
+  
+  
+  
+  <title>第十一届 中国软件杯大学生软件设计大赛 A1-高性能民航旅客行程推荐系统 - 凌冬的个人博客</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Fluid</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="第十一届 中国软件杯大学生软件设计大赛 A1-高性能民航旅客行程推荐系统"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-06-18 19:47" pubdate>
+          2023年6月18日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.6k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          31 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">第十一届 中国软件杯大学生软件设计大赛 A1-高性能民航旅客行程推荐系统</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>这个比赛是大学生竞赛里面的国家级A类竞赛，含金量看着还不错。参与的时候是系教研室老师找到我问我愿不愿意参加这个比赛，然后让我推荐了几个人组成团队一起参加。后面才知道学院有要求每个专业必须出一个队伍来参加这个比赛。<br>团队组成了是四个人，从五月份开始进行筹备，开了一个短会后就开始做web系统了。</p>
+<h2 id="最初的一版"><a href="#最初的一版" class="headerlink" title="最初的一版"></a>最初的一版</h2><p>最开始的时候只考虑题目中的功能性需求，即实现题目的功能要求，不考虑性能和创新等点。这个做出来其实挺简单的，就一个简单的Web系统，当时分配任务是一个人负责数据库的设计以及爬取数据，两个人写后端逻辑，一个人写前端框架。当时因为我们小组成员都是同一个专业，都没学过前端，我选修课选过前端的设计，所以就由我来负责前端的设计。<br>因为后端最初确定的技术是采用SpringBoot来搭建，我开始还在thymeleaf模板引擎和vue框架中犹豫过一下。thymeleaf和SpringBoot配套使用开发很便捷，没有那么多的网络传输数据，但性能方面好像更差一些，最后为了追求高性能还是采用前后端分离，前端框架采用Vue，这样前后端交互只有纯数据，也更简介一些。</p>
+<p>花了两周的时间把第一版完全做出来了，这一版就已经实现了题目中的功能性要求，后端行程推荐算法中最开始直接采用暴力检索的方法来查询，就是一段一段的去匹配，输入了八段行程，那么根据输入的八段行程一段一段去数据库中搜索对应的航班信息，再暴力的去计算每一种组合的航班价格，最后按照价格升序输出到前端。数据库最初是直接采用的mysql数据库加一个检索引擎来实现，这个我不太懂，设计数据库的那个成员也没怎么和我们解释。</p>
+<p>基础的功能已经做出来了，后续就考虑题目中的 高性能-高可用 以及创新的部分。</p>
+<h2 id="为了追求创新得分撤销SpringBoot"><a href="#为了追求创新得分撤销SpringBoot" class="headerlink" title="为了追求创新得分撤销SpringBoot"></a>为了追求创新得分撤销SpringBoot</h2><p>在比赛中是有创新得分的，即不用一些现成的框架，而去自研实现它，就能获得大量的创新学分。其中一点就是Http服务。<br>之前的SpringBoot中是内置了Tomcat服务器的，我们现在要实现自研Http服务，那自然不能用Tomcat，所以也就决定撤销使用SpringBoot,甚至决定连Spring都不使用，仅采用原生的Java代码来重新实现我们的系统。<br>这一步废了很大精力，Http服务直接采用socket获取输入&#x2F;输出流的方式实现数据的传递服务。实现起来其实不负责，但是刚做出来的时候效率是真的低，经过测试比对我们自研的Http服务传输效率仅为Tomcat的二十分之一，让人怀疑自我，但为了创新得分还是觉得采用自研，后面再进行优化Http服务。下图是我们所作的Http服务的建立连接过程。<br><img src="/upload/2022/09/image-71709e66a2b94d03a379e06031812baf.png" srcset="/img/loading.gif" lazyload alt="image.png"><br>其实无非就是使用Java的socket建立TCP&#x2F;IP连接而已。<br>HTTP请求详细流程图如下：<br><img src="/upload/2022/09/image-14a64c8b19184d1db1f1bba15af8e62f.png" srcset="/img/loading.gif" lazyload alt="image.png"><br>Http优化主要有三部分，分别是采用长连接、采用线程池、采用NIO通信</p>
+<h2 id="选择数据库为SQLite"><a href="#选择数据库为SQLite" class="headerlink" title="选择数据库为SQLite"></a>选择数据库为SQLite</h2><p>数据库主要分为关系型和非关系型，而航班数据又是非常典型的关系型数据库，因此数据库的选择就主要在关系型中。MySQL作为最主流的关系型数据库，虽然MySQL有着非常多的优点但是如果要在一个内存非常小的机器上做并发程序，维护那么多的数据库连接，对内存耗费是无法接受的。<br>因此寻找一个内存占用低的数据库至关重要，而应用最广的低内存数据库便是SQLite，其拥有着占用空间小，读取速度快的特点。虽然无法进行并发修改，但是根据需求，需要修改数据的情况极少，因此对于本项目是一个非常合适的选择。SQLite也是题目中比较推荐的嵌入式数据库。<br>选择完数据库还需要设计索引来提高查询效率，根据题目意思针对不同的表设计出不同的联合索引。<br>为了数据库的高可用，解决并发读写的问题采用了双缓存的思想，数据库存放两份，当不需要更新余座数据的时候两份均可以进行查询，当需要更新余座数据时，先将其中一个数据库锁起来待里面所有线程完成查询后对其数据进行修改，修改完成后将这个数据库解锁，再将另一个数据库锁起来待里面的所有线程完成查询后对其进行修改，修改完成后解锁，这样就完成了更新过程。</p>
+<h2 id="算法的设计和实现"><a href="#算法的设计和实现" class="headerlink" title="算法的设计和实现"></a>算法的设计和实现</h2><p>用户搜索前k个低价行程结果的需求可以类比到图论中寻求前k条最短路径，其中路径权重为每段行程的票价。因此只需要将用户查询的数据库中的航班数据构建为一张图，然后求出图中前k条最短路径即可。<br>建图采用了逆向建图的方法。如下图所示，为了便于后续求得k条最短路径，这里抽象出了一个逻辑上的起点和终点。这里通过三段航班的例子说明如何建图。<br><img src="/upload/2022/09/image-c509d5abb0c54bfea469640c0e533a54.png" srcset="/img/loading.gif" lazyload alt="image.png"><br>首先查询最后一段航班信息，因为最后一段不需要匹配运价规则，因此将最后一段行程中座位符合需求的航班与终点连一条边，其中边长为所有人的票价和。此时可以保证图中存在的点都一定能到终点。这里将图中存在的最后一段行程记为C，C满足两点：1. C为一个行程集合，其中包含所有最后一段行程；2. C中存在的行程一定能够到达终点；之后查询倒数第二段航班信息，根据倒数第二段行程的航班对应的运价规则找寻C中存在的航班，因为上一步保证了C中的行程一定能够到达终点，因此如果根据运价规则C中没有可以衔接的航班则可以直接匹配下一条运价规则，直到C中存在能够衔接的航班或所有运价规则均无法匹配（表示不可达）。倒数第二段航班向C中航班连的边的权重为根据运价规则浮动之后的所有人的票价总和。这里将图中存在的倒数第二段行程记为B，B满足两点：1. B为一个行程集合，其中包含所有最后一段行程，2.B中存在的行程一定能够到达终点。最后查询第一段行程对应的航班信息，其需要与B中的行程连边，连边的步骤与B中行程与C中行程连边步骤相同。这里还需要将起点和第一段行程对应的航班信息连一条边，边的权重为0，这一段行程记为A。<br>为了满足需要根据代理人匹配的需求，这里的节点会记录节点对应的航班能够到达终点的代理人的名称，在求出k条最短路径后只需要对每一个行程结果中的所有航班的代理人取交集即可。此时只需求得从起点到终点的k条最短路径即可。</p>
+<p>算法的实现<br>我们以下图为例，求有向图中A到F的前k短路径。首先，我们构造图中关于F点的最短路径树。 构造完最短路径树之后，我们需要计算所有侧边的代价，然后将其放入一个字典中。这里侧边的代价指从某种情况偏离到要经过这条边的情况时需要增加的长度，计算方法为S(u,v)&#x3D;w(u,v)-dist(v)+dist(u)，S(u,v)为这条边的代价，w(u,v)为从u到v这条边的长度，dist(v)表示从v到终点F的最短路径的长度，dist(v)可以直接从最短路径树中获得。经过计算可得，这张图所有侧边的代价如下：<br>A-&gt;B：4；B-&gt;E：5；D-&gt;B：4；C-&gt;E：6<br>然后声明一个优先队列，队列用来存储侧边，并对队列中的数据侧边代价从小到大排序。队列的初始值为最短路径，其代价为0，队列中的数据为路径的隐式表示。之后经过k次循环，每次循环先取出队头元素，将其转换为显式表示，然后加入到答案中，之后将其隐式表示中终点的所有出边加入到队列中，经过k次循环后便有了k个答案。<br><img src="/upload/2022/09/image-a72d4aee5f594af3a7022b518f014dba.png" srcset="/img/loading.gif" lazyload alt="image.png"><br>总体实现步骤如下：<br>（1）构造反图，构造最短路径树；<br>（2）计算所有侧边的代价集合S(u,v)&#x3D;w(u,v)-dist(v)+dist(u)；<br>（3）声明优先队列，将null-&gt;A入队；<br>（4）从优先队列中取出k次元素，获取k条最短路径，或者队列为空表示已经取出了所有最短路。每次更新时首先取出队头元素，将其转换为显示；然后加入到答案队列中；最后将当前路径的子节点入队。</p>
+<p>计算侧边代价<br>计算侧边代价需要两个参数：图和最短路径树。首先获取图的所有边，之后通过最短路径树判断经过这条边能否到达终点，因为最短路径树只是记录能够从起点到达终点的唯一的最短路径，因此如果不能够到达终点，那么就证明不是最短路径，属于侧边。<br>假设此时侧边的两个顶点为u、v，根据以上公式：S(u,v)&#x3D;dist(u)-dist(v)+w(u,v)；u到终点的距离dist(u)，减去v到终点的距离dist(v)，再加上u到v的距离w(u,v)，即是侧边u到v的代价S(u,v)。再将此侧边的代价加入到侧边代价字典中即可。如果能够到达终点，那么就不是侧边，继续遍历图的边即可。</p>
+<p>子节点的出边加入优先队列的过程<br>将子节点的出边加入优先队列需要5个参数：图、侧边代价的字典、当前边的隐式表示、当前路径表示第几个答案和优先队列。将子节点加入优先队列需要用到广度优先搜索，因此需要先声明一个栈，然后将当前节点的子节点的所有出边加入到栈中。当栈非空的时候，首先获取栈顶元素，如果当前栈顶元素的边是侧边，那么将当前栈顶元素的边的代价加上当前边的代价并添加到优先度列中。如果当前栈顶元素的边不是侧边，则将以当前栈顶元素的终点为起点的所有出边加入到栈中。重复上述过程直到栈非空即可。总体步骤如下：<br>1）初始化栈，将传入的隐式路径的所有终点作为起点，以这个起点为出边的所有边加入到栈用；<br>2）遍历栈，当栈非空的时候，获取栈顶元素进行如下操作；<br>3）如果这个元素是侧边则更新这条边的代价为传入的隐式路径的代价加上这条边的代价；<br>4）如果这个元素不是侧边，将这个元素所有终点作为起点，以这个起点为出边的所有边加入到栈用。</p>
+<p>将路径的隐式表示转换为显示<br>路径的隐式表示需要记录这条路径中侧边的起点、终点、边的代价、父路径（从哪条路径更新来的）、经过这条边到达终点的总长度。在将隐式路径转换为显示时需要先获取父路径，然后从后向前遍历父路径，找到偏离点，之后将偏离点替换为隐式路径中的边，之后在最短路径树中找到隐式路径边的终点到最终终点的路径即可。例如有隐式路径为C-&gt;D，其从A-&gt;B-&gt;C-&gt;E-&gt;F更新而来，则偏离点为C，这条路径的显示表示的前半段为A-&gt;B-&gt;C，之后为C-&gt;D，之后从最短路径树中找到D-&gt;F的路径，例如为D-&gt;E-&gt;F，则这条路径的显示表示为A-&gt;B-&gt;C-&gt;D-&gt;E-&gt;F。<br>我们在计算过程中，存放的都是隐式路径，只有在最后需要计算的时候才会将根据存放的转化规则转化为显示路径。因为图的边是非常多的，因此采用隐式路径表示法能够大大提高程序的效率，避免大量计算。</p>
+<h2 id="后续"><a href="#后续" class="headerlink" title="后续"></a>后续</h2><p>初赛过了之后为了参加答辩，又将文档进行了大改，前端界面也进一步完善。还录制了演示视频，这些都挺累人的，其实做一个系统不是特别难，为了应付各种各样的要求和文档才是麻烦事。不过后面好在比赛顺利，获取了国家二等奖。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E9%A1%B9%E7%9B%AE/" class="category-chain-item">项目</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>第十一届 中国软件杯大学生软件设计大赛 A1-高性能民航旅客行程推荐系统</div>
+      <div>https://hukaichao.me/2023/06/18/第十一届 中国软件杯大学生软件设计大赛 A1-高性能民航旅客行程推荐系统/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>凌冬</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年6月18日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/06/18/%E7%94%A8%E5%8F%8B%E9%87%91%E8%9E%8D%E5%AE%9E%E4%B9%A0%E4%B8%89%E5%91%A8%E5%B0%8F%E7%BB%93/" title="用友金融实习三周小结">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">用友金融实习三周小结</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/06/18/%E9%AB%98%E5%B9%B6%E5%8F%91%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F/" title="高并发秒杀系统">
+                        <span class="hidden-mobile">高并发秒杀系统</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
