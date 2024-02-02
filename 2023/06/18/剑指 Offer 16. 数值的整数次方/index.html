@@ -19,17 +19,17 @@
     <meta name="description" content="题目实现 pow(x, n) ，即计算 x 的 n 次幂函数（即，xn）。不得使用库函数，同时不需要考虑大数问题。 分析拿到题目需要计算幂函数，首先想到的是一个for循环解决，但是运行超时了，后面发现有快速幂这种解法，其思路和二分法相似，并且方法用到了位运算，效率更高，这种方式之前写程序都没有接触过。 题解转化为位运算：向下整除 n &#x2F;&#x2F; 2 等价于 右移一位 n &gt;&amp;g">
 <meta property="og:type" content="article">
 <meta property="og:title" content="剑指 Offer 16. 数值的整数次方">
-<meta property="og:url" content="https://hukaichao.me/2023/06/18/%E5%89%91%E6%8C%87%20Offer%2016.%20%E6%95%B0%E5%80%BC%E7%9A%84%E6%95%B4%E6%95%B0%E6%AC%A1%E6%96%B9/index.html">
+<meta property="og:url" content="https://lingdongomg.github.io/2023/06/18/%E5%89%91%E6%8C%87%20Offer%2016.%20%E6%95%B0%E5%80%BC%E7%9A%84%E6%95%B4%E6%95%B0%E6%AC%A1%E6%96%B9/index.html">
 <meta property="og:site_name" content="凌冬的个人博客">
 <meta property="og:description" content="题目实现 pow(x, n) ，即计算 x 的 n 次幂函数（即，xn）。不得使用库函数，同时不需要考虑大数问题。 分析拿到题目需要计算幂函数，首先想到的是一个for循环解决，但是运行超时了，后面发现有快速幂这种解法，其思路和二分法相似，并且方法用到了位运算，效率更高，这种方式之前写程序都没有接触过。 题解转化为位运算：向下整除 n &#x2F;&#x2F; 2 等价于 右移一位 n &gt;&amp;g">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/03/image-27e1cccecfc046b8a1d3e289c93ab0f7.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/03/image-27e1cccecfc046b8a1d3e289c93ab0f7.png">
 <meta property="article:published_time" content="2023-06-18T11:47:27.000Z">
 <meta property="article:modified_time" content="2024-02-02T07:27:40.310Z">
 <meta property="article:author" content="凌冬">
 <meta property="article:tag" content="位运算">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://hukaichao.me/upload/2022/03/image-27e1cccecfc046b8a1d3e289c93ab0f7.png">
+<meta name="twitter:image" content="https://lingdongomg.github.io/upload/2022/03/image-27e1cccecfc046b8a1d3e289c93ab0f7.png">
   
   
   
@@ -71,7 +71,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"lingdongomg.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -97,7 +97,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>Fluid</strong>
+      <strong>凌冬的个人博客</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
@@ -328,7 +328,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>剑指 Offer 16. 数值的整数次方</div>
-      <div>https://hukaichao.me/2023/06/18/剑指 Offer 16. 数值的整数次方/</div>
+      <div>https://lingdongomg.github.io/2023/06/18/剑指 Offer 16. 数值的整数次方/</div>
     </div>
     <div class="license-meta">
       

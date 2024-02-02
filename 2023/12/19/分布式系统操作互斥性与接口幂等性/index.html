@@ -19,17 +19,17 @@
     <meta name="description" content="本文以美团技术团队分享的“分布式系统互斥性与幂等性问题的分析与解决”一文为核心进行笔记记录。 操作互斥性问题并非分布式环境所独有，在传统的多线程、多进程情况下已经有了很好的解决方案。 多线程情况下的参考方案可见之前为了面试总结的文章 “并发框架（JUC）” 多进程的解决方案在多道程序系统中存在许多进程，它们共享各种资源，然而有很多资源一次只能供一个进程使用，这便是临界资源。多进程中的临界资源大致上">
 <meta property="og:type" content="article">
 <meta property="og:title" content="分布式系统操作互斥性与接口幂等性">
-<meta property="og:url" content="https://hukaichao.me/2023/12/19/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E6%93%8D%E4%BD%9C%E4%BA%92%E6%96%A5%E6%80%A7%E4%B8%8E%E6%8E%A5%E5%8F%A3%E5%B9%82%E7%AD%89%E6%80%A7/index.html">
+<meta property="og:url" content="https://lingdongomg.github.io/2023/12/19/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E6%93%8D%E4%BD%9C%E4%BA%92%E6%96%A5%E6%80%A7%E4%B8%8E%E6%8E%A5%E5%8F%A3%E5%B9%82%E7%AD%89%E6%80%A7/index.html">
 <meta property="og:site_name" content="凌冬的个人博客">
 <meta property="og:description" content="本文以美团技术团队分享的“分布式系统互斥性与幂等性问题的分析与解决”一文为核心进行笔记记录。 操作互斥性问题并非分布式环境所独有，在传统的多线程、多进程情况下已经有了很好的解决方案。 多线程情况下的参考方案可见之前为了面试总结的文章 “并发框架（JUC）” 多进程的解决方案在多道程序系统中存在许多进程，它们共享各种资源，然而有很多资源一次只能供一个进程使用，这便是临界资源。多进程中的临界资源大致上">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://hukaichao.me/upload/meituan-gtis.jpg">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/meituan-gtis.jpg">
 <meta property="article:published_time" content="2023-12-19T01:54:19.000Z">
 <meta property="article:modified_time" content="2024-02-02T07:27:40.304Z">
 <meta property="article:author" content="凌冬">
 <meta property="article:tag" content="面经笔经">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://hukaichao.me/upload/meituan-gtis.jpg">
+<meta name="twitter:image" content="https://lingdongomg.github.io/upload/meituan-gtis.jpg">
   
   
   
@@ -71,7 +71,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"lingdongomg.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -97,7 +97,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>Fluid</strong>
+      <strong>凌冬的个人博客</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
@@ -460,7 +460,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>分布式系统操作互斥性与接口幂等性</div>
-      <div>https://hukaichao.me/2023/12/19/分布式系统操作互斥性与接口幂等性/</div>
+      <div>https://lingdongomg.github.io/2023/12/19/分布式系统操作互斥性与接口幂等性/</div>
     </div>
     <div class="license-meta">
       

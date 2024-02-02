@@ -19,18 +19,18 @@
     <meta name="description" content="关键词：Android；源码编译； 入门培训 1、Android 基础1.1、APP 目录结构说明：  manifests：整个安卓项目的配置文件，在程序中定义的所有四大组件都需要在这个文件里注册，以及在此给应用程序添加权限声明 java：放置 java 代码的地方 cpp：放置 jni 代码的地方 res：放置资源文件、布局文件 gradle：这个目录下包含gradle wrapper的配置文件">
 <meta property="og:type" content="article">
 <meta property="og:title" content="安卓基础 源码编译">
-<meta property="og:url" content="https://hukaichao.me/2023/08/21/%E5%AE%89%E5%8D%93%E5%9F%BA%E7%A1%80%20%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/index.html">
+<meta property="og:url" content="https://lingdongomg.github.io/2023/08/21/%E5%AE%89%E5%8D%93%E5%9F%BA%E7%A1%80%20%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91/index.html">
 <meta property="og:site_name" content="凌冬的个人博客">
 <meta property="og:description" content="关键词：Android；源码编译； 入门培训 1、Android 基础1.1、APP 目录结构说明：  manifests：整个安卓项目的配置文件，在程序中定义的所有四大组件都需要在这个文件里注册，以及在此给应用程序添加权限声明 java：放置 java 代码的地方 cpp：放置 jni 代码的地方 res：放置资源文件、布局文件 gradle：这个目录下包含gradle wrapper的配置文件">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://hukaichao.me/upload/2023/08/image-tkgd.png">
-<meta property="og:image" content="https://hukaichao.me/upload/2023/08/image-lcqs.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2023/08/image-tkgd.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2023/08/image-lcqs.png">
 <meta property="article:published_time" content="2023-08-21T14:28:25.000Z">
 <meta property="article:modified_time" content="2024-02-02T07:27:40.324Z">
 <meta property="article:author" content="凌冬">
 <meta property="article:tag" content="android">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://hukaichao.me/upload/2023/08/image-tkgd.png">
+<meta name="twitter:image" content="https://lingdongomg.github.io/upload/2023/08/image-tkgd.png">
   
   
   
@@ -72,7 +72,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"lingdongomg.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -98,7 +98,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>Fluid</strong>
+      <strong>凌冬的个人博客</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
@@ -380,7 +380,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>安卓基础 源码编译</div>
-      <div>https://hukaichao.me/2023/08/21/安卓基础 源码编译/</div>
+      <div>https://lingdongomg.github.io/2023/08/21/安卓基础 源码编译/</div>
     </div>
     <div class="license-meta">
       

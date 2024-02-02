@@ -19,19 +19,19 @@
     <meta name="description" content="关键词：Docker；环境部署 1、前言这周的主要工作是将用Java写的后端和用Python写的深度学习模型进行联通，在联通成功后需要将环境打包成Docker镜像再次进行测试，确保最终提交出去的镜像能够正常启动。过程中踩了些坑，完成后发现有同事也有将环境打包成Docker镜像的需求，就简单写一下教程，并把自己的踩坑记录一下。 2、将环境打包成镜像方法2.1、利用dockerfile创建镜像一般来说">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Docker打包环境简单教程">
-<meta property="og:url" content="https://hukaichao.me/2023/08/20/Docker%E6%89%93%E5%8C%85%E7%8E%AF%E5%A2%83%E7%AE%80%E5%8D%95%E6%95%99%E7%A8%8B/index.html">
+<meta property="og:url" content="https://lingdongomg.github.io/2023/08/20/Docker%E6%89%93%E5%8C%85%E7%8E%AF%E5%A2%83%E7%AE%80%E5%8D%95%E6%95%99%E7%A8%8B/index.html">
 <meta property="og:site_name" content="凌冬的个人博客">
 <meta property="og:description" content="关键词：Docker；环境部署 1、前言这周的主要工作是将用Java写的后端和用Python写的深度学习模型进行联通，在联通成功后需要将环境打包成Docker镜像再次进行测试，确保最终提交出去的镜像能够正常启动。过程中踩了些坑，完成后发现有同事也有将环境打包成Docker镜像的需求，就简单写一下教程，并把自己的踩坑记录一下。 2、将环境打包成镜像方法2.1、利用dockerfile创建镜像一般来说">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://hukaichao.me/upload/2023/08/image-ahwc.png">
-<meta property="og:image" content="https://hukaichao.me/upload/2023/08/image-bogs.png">
-<meta property="og:image" content="https://hukaichao.me/upload/2023/08/image-cwgg.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2023/08/image-ahwc.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2023/08/image-bogs.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2023/08/image-cwgg.png">
 <meta property="article:published_time" content="2023-08-20T15:31:24.000Z">
 <meta property="article:modified_time" content="2024-02-02T07:27:40.242Z">
 <meta property="article:author" content="凌冬">
 <meta property="article:tag" content="linux">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://hukaichao.me/upload/2023/08/image-ahwc.png">
+<meta name="twitter:image" content="https://lingdongomg.github.io/upload/2023/08/image-ahwc.png">
   
   
   
@@ -73,7 +73,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"lingdongomg.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -99,7 +99,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>Fluid</strong>
+      <strong>凌冬的个人博客</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
@@ -343,7 +343,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>Docker打包环境简单教程</div>
-      <div>https://hukaichao.me/2023/08/20/Docker打包环境简单教程/</div>
+      <div>https://lingdongomg.github.io/2023/08/20/Docker打包环境简单教程/</div>
     </div>
     <div class="license-meta">
       

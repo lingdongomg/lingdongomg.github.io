@@ -19,7 +19,7 @@
     <meta name="description" content="0 AIDL介绍AIDL是一种用于在不同进程之间进行通信的安卓特定接口描述语言。它允许你定义客户端和服务端之间的接口，以便它们可以在不同的进程中进行跨进程通信（IPC）。这对于开发需要在不同组件或应用之间共享数据和功能的应用程序非常有用。 在进行AIDL通信时，客户端和服务端 的AIDL必须保证完全一样，包括包名，类名，接口名，及其里面的代码 1 使用常规方式的Intent绑定进行AIDL通信。1">
 <meta property="og:type" content="article">
 <meta property="og:title" content="AIDL通信学习">
-<meta property="og:url" content="https://hukaichao.me/2023/08/21/AIDL%E9%80%9A%E4%BF%A1%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:url" content="https://lingdongomg.github.io/2023/08/21/AIDL%E9%80%9A%E4%BF%A1%E5%AD%A6%E4%B9%A0/index.html">
 <meta property="og:site_name" content="凌冬的个人博客">
 <meta property="og:description" content="0 AIDL介绍AIDL是一种用于在不同进程之间进行通信的安卓特定接口描述语言。它允许你定义客户端和服务端之间的接口，以便它们可以在不同的进程中进行跨进程通信（IPC）。这对于开发需要在不同组件或应用之间共享数据和功能的应用程序非常有用。 在进行AIDL通信时，客户端和服务端 的AIDL必须保证完全一样，包括包名，类名，接口名，及其里面的代码 1 使用常规方式的Intent绑定进行AIDL通信。1">
 <meta property="og:locale" content="zh_CN">
@@ -69,7 +69,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"lingdongomg.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -95,7 +95,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>Fluid</strong>
+      <strong>凌冬的个人博客</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
@@ -356,7 +356,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>AIDL通信学习</div>
-      <div>https://hukaichao.me/2023/08/21/AIDL通信学习/</div>
+      <div>https://lingdongomg.github.io/2023/08/21/AIDL通信学习/</div>
     </div>
     <div class="license-meta">
       

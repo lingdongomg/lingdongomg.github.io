@@ -19,17 +19,17 @@
     <meta name="description" content="题目输入一个非负整数数组，把数组里所有数字拼接起来排成一个数，打印能拼接出的所有数字中最小的一个。 分析最初看到题目的想法是分析数据，发现可以通过比较整数的首位数字，如果首位数字大，那么这个数就应该排在后面，如果数字是0那就排在最前面。此外如果首位数字一样，十位数和个位数进行比较的话比较麻烦，不过也是可以进行比较的得出来结果的。但是当我开始编码的时候，不知道如何获取一个整数的首位数字，感觉写个函数">
 <meta property="og:type" content="article">
 <meta property="og:title" content="剑指 Offer 45. 把数组排成最小的数">
-<meta property="og:url" content="https://hukaichao.me/2023/06/18/%E5%89%91%E6%8C%87%20Offer%2045.%20%E6%8A%8A%E6%95%B0%E7%BB%84%E6%8E%92%E6%88%90%E6%9C%80%E5%B0%8F%E7%9A%84%E6%95%B0/index.html">
+<meta property="og:url" content="https://lingdongomg.github.io/2023/06/18/%E5%89%91%E6%8C%87%20Offer%2045.%20%E6%8A%8A%E6%95%B0%E7%BB%84%E6%8E%92%E6%88%90%E6%9C%80%E5%B0%8F%E7%9A%84%E6%95%B0/index.html">
 <meta property="og:site_name" content="凌冬的个人博客">
 <meta property="og:description" content="题目输入一个非负整数数组，把数组里所有数字拼接起来排成一个数，打印能拼接出的所有数字中最小的一个。 分析最初看到题目的想法是分析数据，发现可以通过比较整数的首位数字，如果首位数字大，那么这个数就应该排在后面，如果数字是0那就排在最前面。此外如果首位数字一样，十位数和个位数进行比较的话比较麻烦，不过也是可以进行比较的得出来结果的。但是当我开始编码的时候，不知道如何获取一个整数的首位数字，感觉写个函数">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/03/image-31d4a2aee3c64199a993e5f27396ba88.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/03/image-31d4a2aee3c64199a993e5f27396ba88.png">
 <meta property="article:published_time" content="2023-06-18T11:47:27.000Z">
 <meta property="article:modified_time" content="2024-02-02T07:27:40.315Z">
 <meta property="article:author" content="凌冬">
 <meta property="article:tag" content="排序算法">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://hukaichao.me/upload/2022/03/image-31d4a2aee3c64199a993e5f27396ba88.png">
+<meta name="twitter:image" content="https://lingdongomg.github.io/upload/2022/03/image-31d4a2aee3c64199a993e5f27396ba88.png">
   
   
   
@@ -71,7 +71,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"lingdongomg.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -97,7 +97,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>Fluid</strong>
+      <strong>凌冬的个人博客</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
@@ -331,7 +331,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>剑指 Offer 45. 把数组排成最小的数</div>
-      <div>https://hukaichao.me/2023/06/18/剑指 Offer 45. 把数组排成最小的数/</div>
+      <div>https://lingdongomg.github.io/2023/06/18/剑指 Offer 45. 把数组排成最小的数/</div>
     </div>
     <div class="license-meta">
       

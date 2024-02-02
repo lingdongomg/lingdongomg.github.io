@@ -19,19 +19,19 @@
     <meta name="description" content="数组中数字出现的次数题目一个整型数组 nums 里除两个数字之外，其他数字都出现了两次。请写程序找出这两个只出现一次的数字。要求时间复杂度是O(n)，空间复杂度是O(1)。 分析本题难点： 数组 nums 有 两个 只出现一次的数字，因此无法通过异或直接得到这两个数字。设两个只出现一次的数字为 x , y ，由于 x !&#x3D;y ，则 x 和 y 二进制至少有一位不同（即分别为 0 和 1">
 <meta property="og:type" content="article">
 <meta property="og:title" content="剑指 Offer 56 - I. 数组中数字出现的次数   II. 数组中数字出现的次数 II">
-<meta property="og:url" content="https://hukaichao.me/2023/06/18/%E5%89%91%E6%8C%87%20Offer%2056%20-%20I.%20%E6%95%B0%E7%BB%84%E4%B8%AD%E6%95%B0%E5%AD%97%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0%20%20%20II.%20%E6%95%B0%E7%BB%84%E4%B8%AD%E6%95%B0%E5%AD%97%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0%20II/index.html">
+<meta property="og:url" content="https://lingdongomg.github.io/2023/06/18/%E5%89%91%E6%8C%87%20Offer%2056%20-%20I.%20%E6%95%B0%E7%BB%84%E4%B8%AD%E6%95%B0%E5%AD%97%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0%20%20%20II.%20%E6%95%B0%E7%BB%84%E4%B8%AD%E6%95%B0%E5%AD%97%E5%87%BA%E7%8E%B0%E7%9A%84%E6%AC%A1%E6%95%B0%20II/index.html">
 <meta property="og:site_name" content="凌冬的个人博客">
 <meta property="og:description" content="数组中数字出现的次数题目一个整型数组 nums 里除两个数字之外，其他数字都出现了两次。请写程序找出这两个只出现一次的数字。要求时间复杂度是O(n)，空间复杂度是O(1)。 分析本题难点： 数组 nums 有 两个 只出现一次的数字，因此无法通过异或直接得到这两个数字。设两个只出现一次的数字为 x , y ，由于 x !&#x3D;y ，则 x 和 y 二进制至少有一位不同（即分别为 0 和 1">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/03/image-e74122e9223e412793e769b1eaca288b.png">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/03/image-757facb7ae24483e8824d6a4af186b66.png">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/03/image-ab92f48876fc44c281efc83fd54b3a5a.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/03/image-e74122e9223e412793e769b1eaca288b.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/03/image-757facb7ae24483e8824d6a4af186b66.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/03/image-ab92f48876fc44c281efc83fd54b3a5a.png">
 <meta property="article:published_time" content="2023-06-18T11:47:27.000Z">
 <meta property="article:modified_time" content="2024-02-02T07:27:40.317Z">
 <meta property="article:author" content="凌冬">
 <meta property="article:tag" content="位运算">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://hukaichao.me/upload/2022/03/image-e74122e9223e412793e769b1eaca288b.png">
+<meta name="twitter:image" content="https://lingdongomg.github.io/upload/2022/03/image-e74122e9223e412793e769b1eaca288b.png">
   
   
   
@@ -73,7 +73,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"lingdongomg.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -99,7 +99,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>Fluid</strong>
+      <strong>凌冬的个人博客</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
@@ -343,7 +343,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>剑指 Offer 56 - I. 数组中数字出现的次数   II. 数组中数字出现的次数 II</div>
-      <div>https://hukaichao.me/2023/06/18/剑指 Offer 56 - I. 数组中数字出现的次数   II. 数组中数字出现的次数 II/</div>
+      <div>https://lingdongomg.github.io/2023/06/18/剑指 Offer 56 - I. 数组中数字出现的次数   II. 数组中数字出现的次数 II/</div>
     </div>
     <div class="license-meta">
       

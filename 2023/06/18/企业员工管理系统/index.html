@@ -19,17 +19,17 @@
     <meta name="description" content="介绍学习完 Mybatis Spring SpringMVC 三大框架后进行的项目整合练习，通过实践发现自己在学习的过程中存在的问题。这个项目采用SSM框架，前端采用http标签简单处理（用jsp写的），主要在于后端框架的整合开发 项目开发搭建开发环境pom.xml首先配置 pom.xml 文件，添加相关依赖这一步直接搬运的别人的依赖，其中配置了    配置 介绍    spring Spring">
 <meta property="og:type" content="article">
 <meta property="og:title" content="企业员工管理系统">
-<meta property="og:url" content="https://hukaichao.me/2023/06/18/%E4%BC%81%E4%B8%9A%E5%91%98%E5%B7%A5%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:url" content="https://lingdongomg.github.io/2023/06/18/%E4%BC%81%E4%B8%9A%E5%91%98%E5%B7%A5%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/index.html">
 <meta property="og:site_name" content="凌冬的个人博客">
 <meta property="og:description" content="介绍学习完 Mybatis Spring SpringMVC 三大框架后进行的项目整合练习，通过实践发现自己在学习的过程中存在的问题。这个项目采用SSM框架，前端采用http标签简单处理（用jsp写的），主要在于后端框架的整合开发 项目开发搭建开发环境pom.xml首先配置 pom.xml 文件，添加相关依赖这一步直接搬运的别人的依赖，其中配置了    配置 介绍    spring Spring">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/04/image-0e1a8be4f294461c9883059bdeb19dd8.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/04/image-0e1a8be4f294461c9883059bdeb19dd8.png">
 <meta property="article:published_time" content="2023-06-18T11:47:27.000Z">
 <meta property="article:modified_time" content="2024-02-02T07:27:40.301Z">
 <meta property="article:author" content="凌冬">
 <meta property="article:tag" content="java学习">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://hukaichao.me/upload/2022/04/image-0e1a8be4f294461c9883059bdeb19dd8.png">
+<meta name="twitter:image" content="https://lingdongomg.github.io/upload/2022/04/image-0e1a8be4f294461c9883059bdeb19dd8.png">
   
   
   
@@ -71,7 +71,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"lingdongomg.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -97,7 +97,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>Fluid</strong>
+      <strong>凌冬的个人博客</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
@@ -448,7 +448,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>企业员工管理系统</div>
-      <div>https://hukaichao.me/2023/06/18/企业员工管理系统/</div>
+      <div>https://lingdongomg.github.io/2023/06/18/企业员工管理系统/</div>
     </div>
     <div class="license-meta">
       

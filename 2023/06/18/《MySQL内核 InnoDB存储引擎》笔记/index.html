@@ -19,17 +19,17 @@
     <meta name="description" content="前言从图书馆借了几本书，有工具类的，有知识类的，其中借了不少有关于数据库的书。这本《MySQL内核 InnoDB存储引擎》花了些时间过完了，个人感觉这本书很晦涩，里面介绍的东西很多，但是都是讲个大概就开始分析源码，想要真正全部看懂很困难，目前只是通读了一遍，对于其中一些比较有用的知识点进行记载。 学习存储引擎的时候出现了自己不太熟悉的概念：聚簇索引和非聚簇索引，其中内容感觉很多，发现了一篇博客对其">
 <meta property="og:type" content="article">
 <meta property="og:title" content="《MySQL内核 InnoDB存储引擎》笔记">
-<meta property="og:url" content="https://hukaichao.me/2023/06/18/%E3%80%8AMySQL%E5%86%85%E6%A0%B8%20InnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E3%80%8B%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:url" content="https://lingdongomg.github.io/2023/06/18/%E3%80%8AMySQL%E5%86%85%E6%A0%B8%20InnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E3%80%8B%E7%AC%94%E8%AE%B0/index.html">
 <meta property="og:site_name" content="凌冬的个人博客">
 <meta property="og:description" content="前言从图书馆借了几本书，有工具类的，有知识类的，其中借了不少有关于数据库的书。这本《MySQL内核 InnoDB存储引擎》花了些时间过完了，个人感觉这本书很晦涩，里面介绍的东西很多，但是都是讲个大概就开始分析源码，想要真正全部看懂很困难，目前只是通读了一遍，对于其中一些比较有用的知识点进行记载。 学习存储引擎的时候出现了自己不太熟悉的概念：聚簇索引和非聚簇索引，其中内容感觉很多，发现了一篇博客对其">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/08/image-3bb07c7ee79948638b8b4c56287e78c3.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/08/image-3bb07c7ee79948638b8b4c56287e78c3.png">
 <meta property="article:published_time" content="2023-06-18T11:47:28.000Z">
 <meta property="article:modified_time" content="2024-02-02T07:27:40.294Z">
 <meta property="article:author" content="凌冬">
 <meta property="article:tag" content="数据库">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://hukaichao.me/upload/2022/08/image-3bb07c7ee79948638b8b4c56287e78c3.png">
+<meta name="twitter:image" content="https://lingdongomg.github.io/upload/2022/08/image-3bb07c7ee79948638b8b4c56287e78c3.png">
   
   
   
@@ -71,7 +71,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"lingdongomg.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -97,7 +97,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>Fluid</strong>
+      <strong>凌冬的个人博客</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
@@ -355,7 +355,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>《MySQL内核 InnoDB存储引擎》笔记</div>
-      <div>https://hukaichao.me/2023/06/18/《MySQL内核 InnoDB存储引擎》笔记/</div>
+      <div>https://lingdongomg.github.io/2023/06/18/《MySQL内核 InnoDB存储引擎》笔记/</div>
     </div>
     <div class="license-meta">
       

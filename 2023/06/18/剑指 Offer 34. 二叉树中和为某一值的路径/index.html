@@ -19,12 +19,12 @@
     <meta name="description" content="题目给你二叉树的根节点 root 和一个整数目标和 targetSum ，找出所有 从根节点到叶子节点 路径总和等于给定目标和的路径。 叶子节点 是指没有子节点的节点。  分析我看到这题能够感觉到思路是深度优先，即使用先序遍历，但是要编码的时候感觉很困难，忘了如何去判断结束条件，也就是不知道如何记录路径。主要问题还是对树的遍历熟悉度不够，还需要多看多练，这题的解答直接搬运的题解。 解答解题思路：本">
 <meta property="og:type" content="article">
 <meta property="og:title" content="剑指 Offer 34. 二叉树中和为某一值的路径">
-<meta property="og:url" content="https://hukaichao.me/2023/06/18/%E5%89%91%E6%8C%87%20Offer%2034.%20%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B8%AD%E5%92%8C%E4%B8%BA%E6%9F%90%E4%B8%80%E5%80%BC%E7%9A%84%E8%B7%AF%E5%BE%84/index.html">
+<meta property="og:url" content="https://lingdongomg.github.io/2023/06/18/%E5%89%91%E6%8C%87%20Offer%2034.%20%E4%BA%8C%E5%8F%89%E6%A0%91%E4%B8%AD%E5%92%8C%E4%B8%BA%E6%9F%90%E4%B8%80%E5%80%BC%E7%9A%84%E8%B7%AF%E5%BE%84/index.html">
 <meta property="og:site_name" content="凌冬的个人博客">
 <meta property="og:description" content="题目给你二叉树的根节点 root 和一个整数目标和 targetSum ，找出所有 从根节点到叶子节点 路径总和等于给定目标和的路径。 叶子节点 是指没有子节点的节点。  分析我看到这题能够感觉到思路是深度优先，即使用先序遍历，但是要编码的时候感觉很困难，忘了如何去判断结束条件，也就是不知道如何记录路径。主要问题还是对树的遍历熟悉度不够，还需要多看多练，这题的解答直接搬运的题解。 解答解题思路：本">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/03/image-c9a27253cc1142b39b92b1ab94f35c10.png">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/03/image-46e2d00d8c51495f80b7efd1d2ebede4.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/03/image-c9a27253cc1142b39b92b1ab94f35c10.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/03/image-46e2d00d8c51495f80b7efd1d2ebede4.png">
 <meta property="article:published_time" content="2023-06-18T11:47:27.000Z">
 <meta property="article:modified_time" content="2024-02-02T07:27:40.311Z">
 <meta property="article:author" content="凌冬">
@@ -32,7 +32,7 @@
 <meta property="article:tag" content="二叉树">
 <meta property="article:tag" content="回溯">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://hukaichao.me/upload/2022/03/image-c9a27253cc1142b39b92b1ab94f35c10.png">
+<meta name="twitter:image" content="https://lingdongomg.github.io/upload/2022/03/image-c9a27253cc1142b39b92b1ab94f35c10.png">
   
   
   
@@ -74,7 +74,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"lingdongomg.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -100,7 +100,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>Fluid</strong>
+      <strong>凌冬的个人博客</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
@@ -339,7 +339,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>剑指 Offer 34. 二叉树中和为某一值的路径</div>
-      <div>https://hukaichao.me/2023/06/18/剑指 Offer 34. 二叉树中和为某一值的路径/</div>
+      <div>https://lingdongomg.github.io/2023/06/18/剑指 Offer 34. 二叉树中和为某一值的路径/</div>
     </div>
     <div class="license-meta">
       

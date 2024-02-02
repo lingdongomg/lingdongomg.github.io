@@ -19,7 +19,7 @@
     <meta name="description" content="给系统添加签名校验今天学习了给APK进行数字签名认证，学习到了认证一般是通过SHA1进行的，涉及到如何读取jks文件的证书，如何读取APK的签名。 要获得apk的签名则需要apk的路径，而apk的路径很难拿到。在packageManagerService中尝试使用getPackageInfo来获取未安装apk的签名了，但这条路上基本走不通，是Android11更新的包可见性导致的。 获取签名很重要">
 <meta property="og:type" content="article">
 <meta property="og:title" content="安卓APK签名校验">
-<meta property="og:url" content="https://hukaichao.me/2023/11/05/%E5%AE%89%E5%8D%93APK%E7%AD%BE%E5%90%8D%E6%A0%A1%E9%AA%8C/index.html">
+<meta property="og:url" content="https://lingdongomg.github.io/2023/11/05/%E5%AE%89%E5%8D%93APK%E7%AD%BE%E5%90%8D%E6%A0%A1%E9%AA%8C/index.html">
 <meta property="og:site_name" content="凌冬的个人博客">
 <meta property="og:description" content="给系统添加签名校验今天学习了给APK进行数字签名认证，学习到了认证一般是通过SHA1进行的，涉及到如何读取jks文件的证书，如何读取APK的签名。 要获得apk的签名则需要apk的路径，而apk的路径很难拿到。在packageManagerService中尝试使用getPackageInfo来获取未安装apk的签名了，但这条路上基本走不通，是Android11更新的包可见性导致的。 获取签名很重要">
 <meta property="og:locale" content="zh_CN">
@@ -69,7 +69,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"lingdongomg.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -95,7 +95,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>Fluid</strong>
+      <strong>凌冬的个人博客</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
@@ -348,7 +348,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>安卓APK签名校验</div>
-      <div>https://hukaichao.me/2023/11/05/安卓APK签名校验/</div>
+      <div>https://lingdongomg.github.io/2023/11/05/安卓APK签名校验/</div>
     </div>
     <div class="license-meta">
       

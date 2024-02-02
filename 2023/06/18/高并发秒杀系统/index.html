@@ -19,17 +19,17 @@
     <meta name="description" content="介绍学习完SpringBoot,实际上只是大致过了一遍，很多注释和深入的原理都没怎么看懂，跟着书上的内容试着做一下这个秒杀项目，书名为《一步一步学SpringBoot》从这个项目中巩固所学习的内容。秒杀架构的设计主要思想有以下四点：  缓存将部分业务逻辑迁移到内存的缓存或者Redis中，从而极大的提高并发读效率。 削峰秒杀开始的一瞬间会有一个瞬间流量峰值，如果使这个瞬间的流量峰值变得平缓是成功设计">
 <meta property="og:type" content="article">
 <meta property="og:title" content="高并发秒杀系统">
-<meta property="og:url" content="https://hukaichao.me/2023/06/18/%E9%AB%98%E5%B9%B6%E5%8F%91%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:url" content="https://lingdongomg.github.io/2023/06/18/%E9%AB%98%E5%B9%B6%E5%8F%91%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F/index.html">
 <meta property="og:site_name" content="凌冬的个人博客">
 <meta property="og:description" content="介绍学习完SpringBoot,实际上只是大致过了一遍，很多注释和深入的原理都没怎么看懂，跟着书上的内容试着做一下这个秒杀项目，书名为《一步一步学SpringBoot》从这个项目中巩固所学习的内容。秒杀架构的设计主要思想有以下四点：  缓存将部分业务逻辑迁移到内存的缓存或者Redis中，从而极大的提高并发读效率。 削峰秒杀开始的一瞬间会有一个瞬间流量峰值，如果使这个瞬间的流量峰值变得平缓是成功设计">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/05/image-87634531d1df4908b5846ed9c446c59a.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/05/image-87634531d1df4908b5846ed9c446c59a.png">
 <meta property="article:published_time" content="2023-06-18T11:47:28.000Z">
 <meta property="article:modified_time" content="2024-02-02T07:27:40.347Z">
 <meta property="article:author" content="凌冬">
 <meta property="article:tag" content="java学习">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://hukaichao.me/upload/2022/05/image-87634531d1df4908b5846ed9c446c59a.png">
+<meta name="twitter:image" content="https://lingdongomg.github.io/upload/2022/05/image-87634531d1df4908b5846ed9c446c59a.png">
   
   
   
@@ -71,7 +71,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"lingdongomg.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -97,7 +97,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>Fluid</strong>
+      <strong>凌冬的个人博客</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
@@ -407,7 +407,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>高并发秒杀系统</div>
-      <div>https://hukaichao.me/2023/06/18/高并发秒杀系统/</div>
+      <div>https://lingdongomg.github.io/2023/06/18/高并发秒杀系统/</div>
     </div>
     <div class="license-meta">
       

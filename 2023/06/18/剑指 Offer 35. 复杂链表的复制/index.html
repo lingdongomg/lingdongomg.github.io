@@ -19,20 +19,20 @@
     <meta name="description" content="题目请实现 copyRandomList 函数，复制一个复杂链表。在复杂链表中，每个节点除了有一个 next 指针指向下一个节点，还有一个 random 指针指向链表中的任意节点或者 null。 分析拿到这个题目最开始是没看懂，题目就是要复制一个链表，链表除了有next节点外还有一个random节点，当时想着挺奇怪的，想着直接return head不就行了？后面不通过因为力扣会检测链表的地址，如果">
 <meta property="og:type" content="article">
 <meta property="og:title" content="剑指 Offer 35. 复杂链表的复制">
-<meta property="og:url" content="https://hukaichao.me/2023/06/18/%E5%89%91%E6%8C%87%20Offer%2035.%20%E5%A4%8D%E6%9D%82%E9%93%BE%E8%A1%A8%E7%9A%84%E5%A4%8D%E5%88%B6/index.html">
+<meta property="og:url" content="https://lingdongomg.github.io/2023/06/18/%E5%89%91%E6%8C%87%20Offer%2035.%20%E5%A4%8D%E6%9D%82%E9%93%BE%E8%A1%A8%E7%9A%84%E5%A4%8D%E5%88%B6/index.html">
 <meta property="og:site_name" content="凌冬的个人博客">
 <meta property="og:description" content="题目请实现 copyRandomList 函数，复制一个复杂链表。在复杂链表中，每个节点除了有一个 next 指针指向下一个节点，还有一个 random 指针指向链表中的任意节点或者 null。 分析拿到这个题目最开始是没看懂，题目就是要复制一个链表，链表除了有next节点外还有一个random节点，当时想着挺奇怪的，想着直接return head不就行了？后面不通过因为力扣会检测链表的地址，如果">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/02/image-bd2c34d4438040609ef7ca0cfe857a89.png">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/02/image-dd96e1d842a44a60be1a25dc4d3c17e0.png">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/02/image-ff21b4aa8d8c4bdb8d9879988cbb8f43.png">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/02/image-c29813c1fc48407eb67c866e85908125.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/02/image-bd2c34d4438040609ef7ca0cfe857a89.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/02/image-dd96e1d842a44a60be1a25dc4d3c17e0.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/02/image-ff21b4aa8d8c4bdb8d9879988cbb8f43.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/02/image-c29813c1fc48407eb67c866e85908125.png">
 <meta property="article:published_time" content="2023-06-18T11:47:26.000Z">
 <meta property="article:modified_time" content="2024-02-02T07:29:59.454Z">
 <meta property="article:author" content="凌冬">
 <meta property="article:tag" content="链表">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://hukaichao.me/upload/2022/02/image-bd2c34d4438040609ef7ca0cfe857a89.png">
+<meta name="twitter:image" content="https://lingdongomg.github.io/upload/2022/02/image-bd2c34d4438040609ef7ca0cfe857a89.png">
   
   
   
@@ -74,7 +74,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"lingdongomg.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -100,7 +100,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>Fluid</strong>
+      <strong>凌冬的个人博客</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
@@ -336,7 +336,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>剑指 Offer 35. 复杂链表的复制</div>
-      <div>https://hukaichao.me/2023/06/18/剑指 Offer 35. 复杂链表的复制/</div>
+      <div>https://lingdongomg.github.io/2023/06/18/剑指 Offer 35. 复杂链表的复制/</div>
     </div>
     <div class="license-meta">
       

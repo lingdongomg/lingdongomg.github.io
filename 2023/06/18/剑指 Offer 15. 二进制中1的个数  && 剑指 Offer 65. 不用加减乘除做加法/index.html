@@ -19,20 +19,20 @@
     <meta name="description" content="二进制中1的个数题目编写一个函数，输入是一个无符号整数（以二进制串的形式），返回其二进制表达式中数字位数为 ‘1’ 的个数（也被称为 汉明重量).）。  提示：请注意，在某些语言（如 Java）中，没有无符号整数类型。在这种情况下，输入和输出都将被指定为有符号整数类型，并且不应影响您的实现，因为无论整数是有符号的还是无符号的，其内部的二进制表示形式都是相同的。在 Java 中，编译器使用 二进制补">
 <meta property="og:type" content="article">
 <meta property="og:title" content="剑指 Offer 15. 二进制中1的个数  &amp;&amp; 剑指 Offer 65. 不用加减乘除做加法">
-<meta property="og:url" content="https://hukaichao.me/2023/06/18/%E5%89%91%E6%8C%87%20Offer%2015.%20%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%B8%AD1%E7%9A%84%E4%B8%AA%E6%95%B0%20%20&&%20%E5%89%91%E6%8C%87%20Offer%2065.%20%E4%B8%8D%E7%94%A8%E5%8A%A0%E5%87%8F%E4%B9%98%E9%99%A4%E5%81%9A%E5%8A%A0%E6%B3%95/index.html">
+<meta property="og:url" content="https://lingdongomg.github.io/2023/06/18/%E5%89%91%E6%8C%87%20Offer%2015.%20%E4%BA%8C%E8%BF%9B%E5%88%B6%E4%B8%AD1%E7%9A%84%E4%B8%AA%E6%95%B0%20%20&&%20%E5%89%91%E6%8C%87%20Offer%2065.%20%E4%B8%8D%E7%94%A8%E5%8A%A0%E5%87%8F%E4%B9%98%E9%99%A4%E5%81%9A%E5%8A%A0%E6%B3%95/index.html">
 <meta property="og:site_name" content="凌冬的个人博客">
 <meta property="og:description" content="二进制中1的个数题目编写一个函数，输入是一个无符号整数（以二进制串的形式），返回其二进制表达式中数字位数为 ‘1’ 的个数（也被称为 汉明重量).）。  提示：请注意，在某些语言（如 Java）中，没有无符号整数类型。在这种情况下，输入和输出都将被指定为有符号整数类型，并且不应影响您的实现，因为无论整数是有符号的还是无符号的，其内部的二进制表示形式都是相同的。在 Java 中，编译器使用 二进制补">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/03/image-3da4fe69c29646c9b2ff2e1c2e980516.png">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/03/image-40c637d3b9284b81b762fa1ecfa55472.png">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/03/image-f139aa1f6fdc4a8980e1612d91ea6311.png">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/03/image-1303938835bf46f9a5489d70af77a926.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/03/image-3da4fe69c29646c9b2ff2e1c2e980516.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/03/image-40c637d3b9284b81b762fa1ecfa55472.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/03/image-f139aa1f6fdc4a8980e1612d91ea6311.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/03/image-1303938835bf46f9a5489d70af77a926.png">
 <meta property="article:published_time" content="2023-06-18T11:47:27.000Z">
 <meta property="article:modified_time" content="2024-02-02T07:27:40.309Z">
 <meta property="article:author" content="凌冬">
 <meta property="article:tag" content="位运算">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://hukaichao.me/upload/2022/03/image-3da4fe69c29646c9b2ff2e1c2e980516.png">
+<meta name="twitter:image" content="https://lingdongomg.github.io/upload/2022/03/image-3da4fe69c29646c9b2ff2e1c2e980516.png">
   
   
   
@@ -74,7 +74,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"lingdongomg.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -100,7 +100,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>Fluid</strong>
+      <strong>凌冬的个人博客</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
@@ -347,7 +347,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>剑指 Offer 15. 二进制中1的个数  &amp;&amp; 剑指 Offer 65. 不用加减乘除做加法</div>
-      <div>https://hukaichao.me/2023/06/18/剑指 Offer 15. 二进制中1的个数  &amp;&amp; 剑指 Offer 65. 不用加减乘除做加法/</div>
+      <div>https://lingdongomg.github.io/2023/06/18/剑指 Offer 15. 二进制中1的个数  &amp;&amp; 剑指 Offer 65. 不用加减乘除做加法/</div>
     </div>
     <div class="license-meta">
       

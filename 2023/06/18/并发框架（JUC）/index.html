@@ -19,24 +19,24 @@
     <meta name="description" content="多线程基础并发框架，其实也叫 JUC 即 java.util.concurrent 包，分为（锁框架、原子类框架、同步器框架、集合框架、执行器框架） 线程创建方式 继承Thread类重写run方法123456789101112131415public class Thread1 extends Thread &#123;    &#x2F;**     * 在run方法中实现业务代码     *&#x2F;    @">
 <meta property="og:type" content="article">
 <meta property="og:title" content="并发框架（JUC）">
-<meta property="og:url" content="https://hukaichao.me/2023/06/18/%E5%B9%B6%E5%8F%91%E6%A1%86%E6%9E%B6%EF%BC%88JUC%EF%BC%89/index.html">
+<meta property="og:url" content="https://lingdongomg.github.io/2023/06/18/%E5%B9%B6%E5%8F%91%E6%A1%86%E6%9E%B6%EF%BC%88JUC%EF%BC%89/index.html">
 <meta property="og:site_name" content="凌冬的个人博客">
 <meta property="og:description" content="多线程基础并发框架，其实也叫 JUC 即 java.util.concurrent 包，分为（锁框架、原子类框架、同步器框架、集合框架、执行器框架） 线程创建方式 继承Thread类重写run方法123456789101112131415public class Thread1 extends Thread &#123;    &#x2F;**     * 在run方法中实现业务代码     *&#x2F;    @">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/09/image-3261548c698141b3bec6117ec7e6fb16.png">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/09/image-50e694ea283446e3a7c431f910879965.png">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/09/image-127b2110d1934a4baddd5afa4545a0e0.png">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/09/image-0ee4bb04dcc54e9fa1d8314bfe4a5fdd.png">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/09/image-121c5c51bc664b2da521a399625b7ca0.png">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/09/image-f42cded7920644ef8ac6e35dace3e5cb.png">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/09/image-8424108c47a24c3191699b0a2e2cab7e.png">
-<meta property="og:image" content="https://hukaichao.me/upload/2022/09/image-7267354614b5453b803bb84866f0365a.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/09/image-3261548c698141b3bec6117ec7e6fb16.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/09/image-50e694ea283446e3a7c431f910879965.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/09/image-127b2110d1934a4baddd5afa4545a0e0.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/09/image-0ee4bb04dcc54e9fa1d8314bfe4a5fdd.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/09/image-121c5c51bc664b2da521a399625b7ca0.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/09/image-f42cded7920644ef8ac6e35dace3e5cb.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/09/image-8424108c47a24c3191699b0a2e2cab7e.png">
+<meta property="og:image" content="https://lingdongomg.github.io/upload/2022/09/image-7267354614b5453b803bb84866f0365a.png">
 <meta property="article:published_time" content="2023-06-18T11:47:28.000Z">
 <meta property="article:modified_time" content="2024-02-02T07:27:40.328Z">
 <meta property="article:author" content="凌冬">
 <meta property="article:tag" content="面经笔经">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://hukaichao.me/upload/2022/09/image-3261548c698141b3bec6117ec7e6fb16.png">
+<meta name="twitter:image" content="https://lingdongomg.github.io/upload/2022/09/image-3261548c698141b3bec6117ec7e6fb16.png">
   
   
   
@@ -78,7 +78,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"hukaichao.me","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
+    var CONFIG = {"hostname":"lingdongomg.github.io","root":"/","version":"1.9.7","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml","include_content_in_search":true};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -104,7 +104,7 @@
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <strong>Fluid</strong>
+      <strong>凌冬的个人博客</strong>
     </a>
 
     <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
@@ -580,7 +580,7 @@
   <div class="license-box my-3">
     <div class="license-title">
       <div>并发框架（JUC）</div>
-      <div>https://hukaichao.me/2023/06/18/并发框架（JUC）/</div>
+      <div>https://lingdongomg.github.io/2023/06/18/并发框架（JUC）/</div>
     </div>
     <div class="license-meta">
       
